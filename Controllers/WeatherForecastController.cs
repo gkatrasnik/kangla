@@ -62,10 +62,22 @@ namespace kangla_backend.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet]
         public IEnumerable<WateringDevice> Get()
         {
-            return this.wateringDevicesList;            
+            return this.wateringDevicesList;
+        }
+
+        [HttpGet("{id}")]
+        public WateringDevice? Get(int id)
+        {
+            var wateringDevice = this.wateringDevicesList.FirstOrDefault(device => device.Id == id);
+            if (wateringDevice == null)
+            {
+                return null;
+            }
+
+            return wateringDevice;
         }
     }
 }
