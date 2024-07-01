@@ -3,10 +3,10 @@ namespace kangla_backend
     public class WateringDevice
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Location { get; set; }
-        public string Notes { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
+        public string? Location { get; set; }
+        public string? Notes { get; set; }
         public bool Active { get; set; }
         public bool Deleted { get; set; }
         public double SoilHumidity { get; set; }
