@@ -4,30 +4,68 @@ namespace kangla_backend.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class WateringDevicesController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        WateringDevice[] wateringDevicesList =
+       [
+            new WateringDevice
+            {
+                Id = 1,
+                Name = "My device",
+                Description = "My device description",
+                Location = "My location",
+                Notes = "My notes",
+                Active = true,
+                Deleted = false,
+                SoilHumidity = 0.5,
+                LastWatering = DateTime.Now,
+                WateringInterval = 300,
+                WateringDuration = 3,
+                WaterNow = false
+            },
+            new WateringDevice
+            {
+                Id = 2,
+                Name = "My device 2",
+                Description = "My device description 2",
+                Location = "My location 2",
+                Notes = "My notes 2",
+                Active = true,
+                Deleted = false,
+                SoilHumidity = 0.5,
+                LastWatering = DateTime.Now,
+                WateringInterval = 300,
+                WateringDuration = 3,
+                WaterNow = false
+            },
+            new WateringDevice
+            {
+                Id = 3,
+                Name = "My device 3",
+                Description = "My device description 3",
+                Location = "My location 3",
+                Notes = "My notes 3",
+                Active = true,
+                Deleted = false,
+                SoilHumidity = 0.5,
+                LastWatering = DateTime.Now,
+                WateringInterval = 300,
+                WateringDuration = 3,
+                WaterNow = false
+            }
+       ];
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<WateringDevicesController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WateringDevicesController(ILogger<WateringDevicesController> logger)
         {
             _logger = logger;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WateringDevice> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return this.wateringDevicesList;            
         }
     }
 }
