@@ -1,4 +1,4 @@
-namespace kangla_backend
+namespace kangla_backend.Model
 {
     public class WateringDevice
     {
