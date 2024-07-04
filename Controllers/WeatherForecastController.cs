@@ -1,4 +1,7 @@
+using kangla_backend.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 
 namespace kangla_backend.Controllers
 {
@@ -6,75 +9,29 @@ namespace kangla_backend.Controllers
     [Route("[controller]")]
     public class WateringDevicesController : ControllerBase
     {
-        WateringDevice[] wateringDevicesList =
-       [
-            new WateringDevice
-            {
-                Id = 1,
-                Name = "My device",
-                Description = "My device description",
-                Location = "My location",
-                Notes = "My notes",
-                Active = true,
-                Deleted = false,
-                SoilHumidity = 0.5,
-                LastWatering = DateTime.Now,
-                WateringInterval = 300,
-                WateringDuration = 3,
-                WaterNow = false
-            },
-            new WateringDevice
-            {
-                Id = 2,
-                Name = "My device 2",
-                Description = "My device description 2",
-                Location = "My location 2",
-                Notes = "My notes 2",
-                Active = true,
-                Deleted = false,
-                SoilHumidity = 0.5,
-                LastWatering = DateTime.Now,
-                WateringInterval = 300,
-                WateringDuration = 3,
-                WaterNow = false
-            },
-            new WateringDevice
-            {
-                Id = 3,
-                Name = "My device 3",
-                Description = "My device description 3",
-                Location = "My location 3",
-                Notes = "My notes 3",
-                Active = true,
-                Deleted = false,
-                SoilHumidity = 0.5,
-                LastWatering = DateTime.Now,
-                WateringInterval = 300,
-                WateringDuration = 3,
-                WaterNow = false
-            }
-       ];
-
         private readonly ILogger<WateringDevicesController> _logger;
+        private readonly WateringContext _context;
 
-        public WateringDevicesController(ILogger<WateringDevicesController> logger)
+        public WateringDevicesController(ILogger<WateringDevicesController> logger, WateringContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
-        public IEnumerable<WateringDevice> Get()
+        public async Task<ActionResult<IEnumerable<WateringDevice>>> GetWateringDevices()
         {
-            return this.wateringDevicesList;
+            return await _context.WateringDevices.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public WateringDevice? Get(int id)
+        public async Task<ActionResult<WateringDevice>> GetWateringDevice(int id)
         {
-            var wateringDevice = this.wateringDevicesList.FirstOrDefault(device => device.Id == id);
+            var wateringDevice = await _context.WateringDevices.FindAsync(id);
+
             if (wateringDevice == null)
             {
-                return null;
+                return NotFound();
             }
 
             return wateringDevice;

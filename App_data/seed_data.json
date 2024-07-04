@@ -1,0 +1,44 @@
+[
+  {
+    "Id": 1,
+    "Name": "My device",
+    "Description": "My device description",
+    "Location": "My location",
+    "Notes": "My notes",
+    "Active": true,
+    "Deleted": false,
+    "SoilHumidity": 0.5,
+    "LastWatering": "2024-07-04T00:00:00",
+    "WateringInterval": 300,
+    "WateringDuration": 3,
+    "WaterNow": false
+  },
+  {
+    "Id": 2,
+    "Name": "My device 2",
+    "Description": "My device description 2",
+    "Location": "My location 2",
+    "Notes": "My notes 2",
+    "Active": true,
+    "Deleted": false,
+    "SoilHumidity": 0.5,
+    "LastWatering": "2024-07-04T00:00:00",
+    "WateringInterval": 300,
+    "WateringDuration": 3,
+    "WaterNow": false
+  },
+  {
+    "Id": 3,
+    "Name": "My device 3",
+    "Description": "My device description 3",
+    "Location": "My location 3",
+    "Notes": "My notes 3",
+    "Active": true,
+    "Deleted": false,
+    "SoilHumidity": 0.5,
+    "LastWatering": "2024-07-04T00:00:00",
+    "WateringInterval": 300,
+    "WateringDuration": 3,
+    "WaterNow": false
+  }
+]
