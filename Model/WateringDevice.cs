@@ -14,5 +14,6 @@ namespace kangla_backend.Model
         public bool WaterNow { get; set; }
         public int WateringInterval { get; set; }
         public int WateringDuration { get; set; }
+        public List<WateringEvent> WateringEvents { get; set; } 
     }
 }
