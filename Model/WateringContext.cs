@@ -12,13 +12,19 @@ namespace kangla_backend.Model
         }
 
         public DbSet<WateringDevice> WateringDevices { get; set; }
+        public DbSet<WateringEvent> WateringEvents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            var wateringDevices = GetWateringDevicesFromJson("App_data/seed_data.json");
+            modelBuilder.Entity<WateringDevice>()
+                .HasMany(wd => wd.WateringEvents)
+                .WithOne(we => we.WateringDevice)
+                .HasForeignKey(we => we.WateringDeviceId);
 
+            //seed db
+            var wateringDevices = GetWateringDevicesFromJson("App_data/seed_data.json");
             modelBuilder.Entity<WateringDevice>().HasData();
         }
 
