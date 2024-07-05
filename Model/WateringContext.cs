@@ -16,16 +16,14 @@ namespace kangla_backend.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);            
 
-            modelBuilder.Entity<WateringDevice>()
-                .HasMany(wd => wd.WateringEvents)
-                .WithOne(we => we.WateringDevice)
-                .HasForeignKey(we => we.WateringDeviceId);
+            //TODO seed db - only for dev
+            var wateringDevices = GetWateringDevicesFromJson("App_data/watering_devices_seed_data.json");
+            modelBuilder.Entity<WateringDevice>().HasData(wateringDevices);
 
-            //seed db
-            var wateringDevices = GetWateringDevicesFromJson("App_data/seed_data.json");
-            modelBuilder.Entity<WateringDevice>().HasData();
+            var wateringEvents = GetWateringEventsFromJson("App_data/watering_events_seed_data.json");
+            modelBuilder.Entity<WateringEvent>().HasData(wateringEvents);
         }
 
         private List<WateringDevice> GetWateringDevicesFromJson(string filePath)
@@ -33,6 +31,13 @@ namespace kangla_backend.Model
             using var reader = new StreamReader(filePath);
             var json = reader.ReadToEnd();
             return JsonSerializer.Deserialize<List<WateringDevice>>(json);
+        }
+
+        private List<WateringEvent> GetWateringEventsFromJson(string filePath)
+        {
+            using var reader = new StreamReader(filePath);
+            var json = reader.ReadToEnd();
+            return JsonSerializer.Deserialize<List<WateringEvent>>(json);
         }
     }
 }
