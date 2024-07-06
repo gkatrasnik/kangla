@@ -1,37 +1,38 @@
 [
   {
     "Id": 1,
-    "WateringDeviceId": 1,
-    "DateTime": "2024-07-01T08:30:00",
-    "Duration": 10,
-    "SoilHumidity": 0.4
+    "Start": "2024-07-06T08:00:00Z",
+    "End": "2024-07-06T08:05:00Z",
+    "WateringDeviceId": 1
   },
   {
     "Id": 2,
-    "WateringDeviceId": 2,
-    "DateTime": "2024-07-02T09:00:00",
-    "Duration": 15,
-    "SoilHumidity": 0.35
+    "Start": "2024-07-07T08:00:00Z",
+    "End": "2024-07-07T08:05:00Z",
+    "WateringDeviceId": 1
   },
   {
     "Id": 3,
-    "WateringDeviceId": 1,
-    "DateTime": "2024-07-03T07:45:00",
-    "Duration": 12,
-    "SoilHumidity": 0.42
+    "Start": "2024-07-06T09:00:00Z",
+    "End": "2024-07-06T09:04:00Z",
+    "WateringDeviceId": 2
   },
   {
     "Id": 4,
-    "WateringDeviceId": 3,
-    "DateTime": "2024-07-04T06:50:00",
-    "Duration": 8,
-    "SoilHumidity": 0.38
+    "Start": "2024-07-07T09:00:00Z",
+    "End": "2024-07-07T09:04:00Z",
+    "WateringDeviceId": 2
   },
   {
     "Id": 5,
-    "WateringDeviceId": 2,
-    "DateTime": "2024-07-05T10:15:00",
-    "Duration": 20,
-    "SoilHumidity": 0.33
+    "Start": "2024-07-06T10:00:00Z",
+    "End": "2024-07-06T10:03:00Z",
+    "WateringDeviceId": 3
+  },
+  {
+    "Id": 6,
+    "Start": "2024-07-07T10:00:00Z",
+    "End": "2024-07-07T10:03:00Z",
+    "WateringDeviceId": 3
   }
 ]
