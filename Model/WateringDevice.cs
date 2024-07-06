@@ -7,7 +7,7 @@ namespace kangla_backend.Model
         [Required]
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = default!;
         public string? Description { get; set; }
         public string? Location { get; set; }
         public string? Notes { get; set; }
@@ -18,6 +18,7 @@ namespace kangla_backend.Model
         public bool WaterNow { get; set; }
         public int WateringIntervalSetting { get; set; }
         public int WateringDurationSetting { get; set; }
-        public List<WateringEvent> WateringEvents { get; set; } 
+        public List<WateringEvent> WateringEvents { get; set; } = default!;
+        public List<HumidityMeasurement> HumidityMeasurement { get; set; } = default!;
     }
 }

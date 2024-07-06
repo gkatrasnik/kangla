@@ -13,31 +13,33 @@ namespace kangla_backend.Model
 
         public DbSet<WateringDevice> WateringDevices { get; set; }
         public DbSet<WateringEvent> WateringEvents { get; set; }
+        public DbSet<HumidityMeasurement> HumidityMeasurements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);            
+            base.OnModelCreating(modelBuilder);
 
-            //TODO seed db - only for dev
-            var wateringDevices = GetWateringDevicesFromJson("App_data/watering_devices_seed_data.json");
-            modelBuilder.Entity<WateringDevice>().HasData(wateringDevices);
+            // Extract relationships to a separate method for clarity
+            ConfigureRelationships(modelBuilder);
 
-            var wateringEvents = GetWateringEventsFromJson("App_data/watering_events_seed_data.json");
-            modelBuilder.Entity<WateringEvent>().HasData(wateringEvents);
+            // Seed data - only for dev - extract to separate class
+            var wateringDevicesPath = "App_data/watering_devices_seed_data.json";
+            var wateringEventsPath = "App_data/watering_events_seed_data.json";
+            var humidityMeasurementsPath = "App_data/humidity_measurements_seed_data.json";
+            SeedData.Seed(modelBuilder, wateringDevicesPath, wateringEventsPath, humidityMeasurementsPath);
         }
 
-        private List<WateringDevice> GetWateringDevicesFromJson(string filePath)
-        { 
-            using var reader = new StreamReader(filePath);
-            var json = reader.ReadToEnd();
-            return JsonSerializer.Deserialize<List<WateringDevice>>(json);
-        }
-
-        private List<WateringEvent> GetWateringEventsFromJson(string filePath)
+        private void ConfigureRelationships(ModelBuilder modelBuilder)
         {
-            using var reader = new StreamReader(filePath);
-            var json = reader.ReadToEnd();
-            return JsonSerializer.Deserialize<List<WateringEvent>>(json);
-        }
+            modelBuilder.Entity<WateringDevice>()
+                .HasMany(w => w.WateringEvents)
+                .WithOne(w => w.WateringDevice)
+                .HasForeignKey(w => w.WateringDeviceId);
+
+            modelBuilder.Entity<WateringDevice>()
+                .HasMany(w => w.HumidityMeasurement)
+                .WithOne(h => h.WateringDevice)
+                .HasForeignKey(h => h.WateringDeviceId);
+        }        
     }
 }

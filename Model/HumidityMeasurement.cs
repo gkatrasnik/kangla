@@ -2,14 +2,14 @@
 
 namespace kangla_backend.Model
 {
-    public class WateringEvent
+    public class HumidityMeasurement
     {
         [Required]
-        public required int Id  { get; set; }       
+        public required int Id  { get; set; }
         [Required]
-        public DateTime Start { get; set; }
+        public required DateTime DateTime { get; set; }
         [Required]
-        public DateTime End { get; set; }
+        public double SoilHumidity { get; set; }
         [Required]
         public int WateringDeviceId { get; set; }
         public WateringDevice WateringDevice { get; set; } = default!;
