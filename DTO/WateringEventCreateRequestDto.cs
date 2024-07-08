@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace kangla_backend.DTO
 {
-    public class WateringEventRequestDto
+    public class WateringEventCreateRequestDto
     {
         [Required]
         public DateTime Start { get; set; }
