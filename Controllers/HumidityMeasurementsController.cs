@@ -1,16 +1,15 @@
 ﻿using kangla_backend.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace kangla_backend.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
-    public class WateringEventsController : ControllerBase
+    public class HumidityMeasurementsController : Controller
     {
-        private readonly ILogger<WateringEventsController> _logger;
+        private readonly ILogger<HumidityMeasurementsController> _logger;
         private readonly WateringContext _context;
 
-        public WateringEventsController(ILogger<WateringEventsController> logger, WateringContext context)
+        public HumidityMeasurementsController(ILogger<HumidityMeasurementsController> logger, WateringContext context)
         {
             _logger = logger;
             _context = context;
