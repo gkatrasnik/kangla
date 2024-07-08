@@ -8,8 +8,12 @@ namespace kangla_backend.Model
         public required int Id  { get; set; }
         [Required]
         public required DateTime DateTime { get; set; }
+        /// <summary>
+        /// Soil humidity reading from capacitive sensor
+        /// </summary>
         [Required]
-        public double SoilHumidity { get; set; }
+        [Range(0,1000, ErrorMessage = "Value must be between 0 and 1000")]
+        public int SoilHumidity { get; set; }
         [Required]
         public int WateringDeviceId { get; set; }
         public WateringDevice WateringDevice { get; set; } = default!;
