@@ -86,7 +86,7 @@ namespace kangla_backend.Controllers
             _context.WateringDevices.Remove(wateringDevice);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent();                        
         }
 
         private bool WateringDeviceExists(int id)
