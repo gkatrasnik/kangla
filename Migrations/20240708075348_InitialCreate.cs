@@ -27,7 +27,8 @@ namespace kangla_backend.Migrations
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     WaterNow = table.Column<bool>(type: "INTEGER", nullable: false),
                     WateringIntervalSetting = table.Column<int>(type: "INTEGER", nullable: false),
-                    WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false)
+                    WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,12 +79,12 @@ namespace kangla_backend.Migrations
 
             migrationBuilder.InsertData(
                 table: "WateringDevices",
-                columns: new[] { "Id", "Active", "Deleted", "Description", "Location", "Name", "Notes", "WaterNow", "WateringDurationSetting", "WateringIntervalSetting" },
+                columns: new[] { "Id", "Active", "Deleted", "Description", "DeviceToken", "Location", "Name", "Notes", "WaterNow", "WateringDurationSetting", "WateringIntervalSetting" },
                 values: new object[,]
                 {
-                    { 1, true, false, "My device description", "My location", "My device", "My notes", false, 0, 0 },
-                    { 2, true, false, "My device description 2", "My location 2", "My device 2", "My notes 2", false, 0, 0 },
-                    { 3, true, false, "My device description 3", "My location 3", "My device 3", "My notes 3", false, 0, 0 }
+                    { 1, true, false, "First watering device", "abcdefghi0", "Garden", "Device 1", "Needs regular maintenance", false, 5, 30 },
+                    { 2, true, false, "Second watering device", "abcdefghi1", "Greenhouse", "Device 2", "Check humidity levels", true, 4, 20 },
+                    { 3, true, false, "Third watering device", "abcdefghi2", "Front Yard", "Device 3", "Monitor water usage", false, 3, 25 }
                 });
 
             migrationBuilder.InsertData(

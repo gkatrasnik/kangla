@@ -18,7 +18,10 @@ namespace kangla_backend.Model
         public bool WaterNow { get; set; }
         public int WateringIntervalSetting { get; set; }
         public int WateringDurationSetting { get; set; }
-        public List<WateringEvent> WateringEvents { get; set; } = default!;
-        public List<HumidityMeasurement> HumidityMeasurement { get; set; } = default!;
+        public List<WateringEvent>? WateringEvents { get; set; }
+        public List<HumidityMeasurement>? HumidityMeasurement { get; set; }
+        [Required]
+        [StringLength(10, MinimumLength = 10, ErrorMessage = "DeviceToken must be 10 characters long.")]
+        public string DeviceToken { get; set; } = default!;
     }
 }

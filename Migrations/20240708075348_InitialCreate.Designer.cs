@@ -11,7 +11,7 @@ using kangla_backend.Model;
 namespace kangla_backend.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240706180012_InitialCreate")]
+    [Migration("20240708075348_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -164,6 +164,11 @@ namespace kangla_backend.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DeviceToken")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Location")
                         .HasColumnType("TEXT");
 
@@ -193,39 +198,42 @@ namespace kangla_backend.Migrations
                             Id = 1,
                             Active = true,
                             Deleted = false,
-                            Description = "My device description",
-                            Location = "My location",
-                            Name = "My device",
-                            Notes = "My notes",
+                            Description = "First watering device",
+                            DeviceToken = "abcdefghi0",
+                            Location = "Garden",
+                            Name = "Device 1",
+                            Notes = "Needs regular maintenance",
                             WaterNow = false,
-                            WateringDurationSetting = 0,
-                            WateringIntervalSetting = 0
+                            WateringDurationSetting = 5,
+                            WateringIntervalSetting = 30
                         },
                         new
                         {
                             Id = 2,
                             Active = true,
                             Deleted = false,
-                            Description = "My device description 2",
-                            Location = "My location 2",
-                            Name = "My device 2",
-                            Notes = "My notes 2",
-                            WaterNow = false,
-                            WateringDurationSetting = 0,
-                            WateringIntervalSetting = 0
+                            Description = "Second watering device",
+                            DeviceToken = "abcdefghi1",
+                            Location = "Greenhouse",
+                            Name = "Device 2",
+                            Notes = "Check humidity levels",
+                            WaterNow = true,
+                            WateringDurationSetting = 4,
+                            WateringIntervalSetting = 20
                         },
                         new
                         {
                             Id = 3,
                             Active = true,
                             Deleted = false,
-                            Description = "My device description 3",
-                            Location = "My location 3",
-                            Name = "My device 3",
-                            Notes = "My notes 3",
+                            Description = "Third watering device",
+                            DeviceToken = "abcdefghi2",
+                            Location = "Front Yard",
+                            Name = "Device 3",
+                            Notes = "Monitor water usage",
                             WaterNow = false,
-                            WateringDurationSetting = 0,
-                            WateringIntervalSetting = 0
+                            WateringDurationSetting = 3,
+                            WateringIntervalSetting = 25
                         });
                 });
 
