@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace kangla_backend.DTO
 {
-    public class HumidityMeasurementRequestDto
+    public class HumidityMeasurementCreateRequestDto
     {
         [Required]
         public required DateTime DateTime { get; set; }

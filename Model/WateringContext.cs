@@ -19,14 +19,16 @@ namespace kangla_backend.Model
         {
             base.OnModelCreating(modelBuilder);
 
-            // Extract relationships to a separate method for clarity
             ConfigureRelationships(modelBuilder);
 
             // Seed data - only for dev - extract to separate class
-            var wateringDevicesPath = "App_data/watering_devices_seed_data.json";
-            var wateringEventsPath = "App_data/watering_events_seed_data.json";
-            var humidityMeasurementsPath = "App_data/humidity_measurements_seed_data.json";
-            SeedData.Seed(modelBuilder, wateringDevicesPath, wateringEventsPath, humidityMeasurementsPath);
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                var wateringDevicesPath = "SeedData/watering_devices_seed_data.json";
+                var wateringEventsPath = "SeedData/watering_events_seed_data.json";
+                var humidityMeasurementsPath = "SeedData/humidity_measurements_seed_data.json";
+                SeedData.Seed(modelBuilder, wateringDevicesPath, wateringEventsPath, humidityMeasurementsPath);
+            }            
         }
 
         private void ConfigureRelationships(ModelBuilder modelBuilder)
