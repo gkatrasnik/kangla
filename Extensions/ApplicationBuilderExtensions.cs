@@ -27,21 +27,16 @@ namespace kangla_backend.Extensions
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<WateringContext>();
                 var logger = services.GetRequiredService<ILogger<Program>>();
-
-                var env = app.ApplicationServices.GetRequiredService<IHostEnvironment>();
-
-                if (env.IsDevelopment())
+                try
                 {
-                    try
-                    {
-                        context.Database.Migrate();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred while migrating the database.");
-                        throw;
-                    }
-                }                
+                    context.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+                    throw;
+                }
+                               
             }
         }
     }
