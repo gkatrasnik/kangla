@@ -11,7 +11,7 @@ using kangla_backend.Model;
 namespace kangla_backend.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240708131534_InitialCreate")]
+    [Migration("20240710134942_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
