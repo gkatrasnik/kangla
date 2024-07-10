@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
 using kangla_backend.Model;
 namespace kangla_backend.Extensions
 {
@@ -30,15 +27,21 @@ namespace kangla_backend.Extensions
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<WateringContext>();
                 var logger = services.GetRequiredService<ILogger<Program>>();
-                try
+
+                var env = app.ApplicationServices.GetRequiredService<IHostEnvironment>();
+
+                if (env.IsDevelopment())
                 {
-                    context.Database.Migrate();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "An error occurred while migrating the database.");
-                    throw;
-                }
+                    try
+                    {
+                        context.Database.Migrate();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "An error occurred while migrating the database.");
+                        throw;
+                    }
+                }                
             }
         }
     }
