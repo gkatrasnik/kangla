@@ -20,16 +20,23 @@ namespace kangla_backend.Extensions
             return app;
         }
 
-        public static void ApplyMigrations(this IApplicationBuilder app)
+        public static void ApplyMigrationsAndSeed(this IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<WateringContext>();
                 var logger = services.GetRequiredService<ILogger<Program>>();
+                var env = services.GetRequiredService<IHostEnvironment>();
+
                 try
                 {
                     context.Database.Migrate();
+                    if (env == null || env.IsDevelopment())
+                    {
+                        var seeder = services.GetRequiredService<DatabaseSeeder>();
+                        seeder.Seed();
+                    }
                 }
                 catch (Exception ex)
                 {

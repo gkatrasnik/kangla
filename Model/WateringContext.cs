@@ -18,17 +18,7 @@ namespace kangla_backend.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            ConfigureRelationships(modelBuilder);
-
-            // Seed data - only for dev - extract to separate class
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-            {
-                var wateringDevicesPath = "SeedData/watering_devices_seed_data.json";
-                var wateringEventsPath = "SeedData/watering_events_seed_data.json";
-                var humidityMeasurementsPath = "SeedData/humidity_measurements_seed_data.json";
-                SeedData.Seed(modelBuilder, wateringDevicesPath, wateringEventsPath, humidityMeasurementsPath);
-            }            
+            ConfigureRelationships(modelBuilder);                       
         }
 
         private void ConfigureRelationships(ModelBuilder modelBuilder)
