@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace kangla_backend.Controllers
 {
+    [Route("[controller]")]
+    [ApiController]
     public class HumidityMeasurementsController : Controller
     {
         private readonly ILogger<HumidityMeasurementsController> _logger;
@@ -19,7 +21,7 @@ namespace kangla_backend.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "value11", "value12" };
         }
 
         // GET api/<ValuesController>/5
