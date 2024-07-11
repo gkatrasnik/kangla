@@ -17,17 +17,26 @@ namespace kangla_backend.Model
 
         public void Seed()
         {
-            var wateringDevices = _jsonFileLoader.LoadJson<List<WateringDevice>>("SeedData/watering_devices_seed_data.json");
-            _context.WateringDevices.AddRange(wateringDevices);
-            _context.SaveChanges();
+            if (!_context.WateringDevices.Any())
+            {
+                var wateringDevices = _jsonFileLoader.LoadJson<List<WateringDevice>>("SeedData/watering_devices_seed_data.json");
+                _context.WateringDevices.AddRange(wateringDevices);
+                _context.SaveChanges();
+            }
 
-            var wateringEvents = _jsonFileLoader.LoadJson<List<WateringEvent>>("SeedData/watering_events_seed_data.json");
-            _context.WateringEvents.AddRange(wateringEvents);
-            _context.SaveChanges();
+            if (!_context.WateringEvents.Any())
+            {
+                var wateringEvents = _jsonFileLoader.LoadJson<List<WateringEvent>>("SeedData/watering_events_seed_data.json");
+                _context.WateringEvents.AddRange(wateringEvents);
+                _context.SaveChanges();
+            }
 
-            var humidityMeasurements = _jsonFileLoader.LoadJson<List<HumidityMeasurement>>("SeedData/humidity_measurements_seed_data.json");
-            _context.HumidityMeasurements.AddRange(humidityMeasurements);
-            _context.SaveChanges();
+            if (!_context.HumidityMeasurements.Any())
+            {
+                var humidityMeasurements = _jsonFileLoader.LoadJson<List<HumidityMeasurement>>("SeedData/humidity_measurements_seed_data.json");
+                _context.HumidityMeasurements.AddRange(humidityMeasurements);
+                _context.SaveChanges();
+            }
 
             _logger.LogInformation("Database seeded with jsondata.");
 

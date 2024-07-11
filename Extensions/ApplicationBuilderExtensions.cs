@@ -22,7 +22,7 @@ namespace kangla_backend.Extensions
 
         public static void ApplyMigrationsAndSeed(this IApplicationBuilder app)
         {
-            using (var scope = app.ApplicationServices.CreateScope())
+            using var scope = app.ApplicationServices.CreateScope();
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<WateringContext>();
@@ -32,18 +32,27 @@ namespace kangla_backend.Extensions
                 try
                 {
                     context.Database.Migrate();
-                    if (env == null || env.IsDevelopment())
-                    {
-                        var seeder = services.GetRequiredService<DatabaseSeeder>();
-                        seeder.Seed();
-                    }
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "An error occurred while migrating the database.");
                     throw;
                 }
-                               
+
+                if (env.IsDevelopment())
+                {
+                    try
+                    {
+                        var seeder = services.GetRequiredService<DatabaseSeeder>();
+                        seeder.Seed();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "An error occurred while seeding the database.");
+                        throw;
+                    }
+                }
+
             }
         }
     }
