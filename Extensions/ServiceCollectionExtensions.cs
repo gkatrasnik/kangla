@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using kangla_backend.Model;
 using kangla_backend.Mappings;
+using kangla_backend.Utilities;
 
 namespace kangla_backend.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment env)
         {
             services.AddControllers();
 
@@ -14,9 +15,14 @@ namespace kangla_backend.Extensions
 
             services.AddDbContext<WateringContext>(options =>
                 options.UseSqlite(configuration.GetConnectionString("WateringContextSQLite")));
-
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+           
+            if (env.IsDevelopment())
+            {
+                services.AddTransient<JsonFileLoader>();
+                services.AddTransient<DatabaseSeeder>();
+                services.AddEndpointsApiExplorer();
+                services.AddSwaggerGen();
+            }            
 
             return services;
         }

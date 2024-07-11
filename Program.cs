@@ -2,13 +2,12 @@ using kangla_backend.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.ConfigureServices(builder.Configuration);
+builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
-// Apply migrations and ensure the database is created
-app.ApplyMigrations();
+// Apply migrations and seed if development
+app.ApplyMigrationsAndSeed();
 
 // Configure the HTTP request pipeline.
 app.ConfigureMiddlewares();
