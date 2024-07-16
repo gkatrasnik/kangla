@@ -1,0 +1,38 @@
+[
+  {
+    "Id": 1,
+    "Start": "2024-07-06T08:00:00Z",
+    "End": "2024-07-06T08:05:00Z",
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 2,
+    "Start": "2024-07-07T08:00:00Z",
+    "End": "2024-07-07T08:05:00Z",
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 3,
+    "Start": "2024-07-06T09:00:00Z",
+    "End": "2024-07-06T09:04:00Z",
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 4,
+    "Start": "2024-07-07T09:00:00Z",
+    "End": "2024-07-07T09:04:00Z",
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 5,
+    "Start": "2024-07-06T10:00:00Z",
+    "End": "2024-07-06T10:03:00Z",
+    "WateringDeviceId": 3
+  },
+  {
+    "Id": 6,
+    "Start": "2024-07-07T10:00:00Z",
+    "End": "2024-07-07T10:03:00Z",
+    "WateringDeviceId": 3
+  }
+]
