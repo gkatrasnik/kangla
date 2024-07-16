@@ -8,12 +8,10 @@ namespace kangla_backend.Controllers
     public class WateringEventsController : ControllerBase
     {
         private readonly ILogger<WateringEventsController> _logger;
-        private readonly WateringContext _context;
 
-        public WateringEventsController(ILogger<WateringEventsController> logger, WateringContext context)
+        public WateringEventsController(ILogger<WateringEventsController> logger)
         {
             _logger = logger;
-            _context = context;
         }
 
         // GET: api/<ValuesController>
