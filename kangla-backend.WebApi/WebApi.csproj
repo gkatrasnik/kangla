@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\kangla-backend.Application\Application.csproj" />
+    <ProjectReference Include="..\kangla-backend.Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

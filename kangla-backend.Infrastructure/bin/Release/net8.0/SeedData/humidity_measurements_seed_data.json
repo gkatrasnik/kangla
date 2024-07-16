@@ -1,0 +1,92 @@
+[
+  {
+    "Id": 1,
+    "DateTime": "2024-07-06T06:00:00Z",
+    "SoilHumidity": 657,
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 2,
+    "DateTime": "2024-07-06T07:00:00Z",
+    "SoilHumidity": 349,
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 3,
+    "DateTime": "2024-07-06T08:00:00Z",
+    "SoilHumidity": 472,
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 4,
+    "DateTime": "2024-07-06T09:00:00Z",
+    "SoilHumidity": 512,
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 5,
+    "DateTime": "2024-07-06T10:00:00Z",
+    "SoilHumidity": 276,
+    "WateringDeviceId": 1
+  },
+  {
+    "Id": 6,
+    "DateTime": "2024-07-06T06:00:00Z",
+    "SoilHumidity": 362,
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 7,
+    "DateTime": "2024-07-06T07:00:00Z",
+    "SoilHumidity": 693,
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 8,
+    "DateTime": "2024-07-06T08:00:00Z",
+    "SoilHumidity": 448,
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 9,
+    "DateTime": "2024-07-06T09:00:00Z",
+    "SoilHumidity": 275,
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 10,
+    "DateTime": "2024-07-06T10:00:00Z",
+    "SoilHumidity": 508,
+    "WateringDeviceId": 2
+  },
+  {
+    "Id": 11,
+    "DateTime": "2024-07-06T06:00:00Z",
+    "SoilHumidity": 731,
+    "WateringDeviceId": 3
+  },
+  {
+    "Id": 12,
+    "DateTime": "2024-07-06T07:00:00Z",
+    "SoilHumidity": 371,
+    "WateringDeviceId": 3
+  },
+  {
+    "Id": 13,
+    "DateTime": "2024-07-06T08:00:00Z",
+    "SoilHumidity": 689,
+    "WateringDeviceId": 3
+  },
+  {
+    "Id": 14,
+    "DateTime": "2024-07-06T09:00:00Z",
+    "SoilHumidity": 381,
+    "WateringDeviceId": 3
+  },
+  {
+    "Id": 15,
+    "DateTime": "2024-07-06T10:00:00Z",
+    "SoilHumidity": 585,
+    "WateringDeviceId": 3
+  }
+]
