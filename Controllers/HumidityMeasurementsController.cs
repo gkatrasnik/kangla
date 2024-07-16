@@ -1,6 +1,4 @@
-﻿using kangla_backend.Model;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace kangla_backend.Controllers
 {
@@ -9,12 +7,10 @@ namespace kangla_backend.Controllers
     public class HumidityMeasurementsController : Controller
     {
         private readonly ILogger<HumidityMeasurementsController> _logger;
-        private readonly WateringContext _context;
 
-        public HumidityMeasurementsController(ILogger<HumidityMeasurementsController> logger, WateringContext context)
+        public HumidityMeasurementsController(ILogger<HumidityMeasurementsController> logger)
         {
             _logger = logger;
-            _context = context;
         }
 
         // GET: api/<ValuesController>
