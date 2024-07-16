@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
 using Application;
+using Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
@@ -32,30 +33,18 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<WateringContext>();
+    var migrationService = services.GetRequiredService<IDatabaseMigrationService>();
+    var seeder = services.GetRequiredService<DatabaseSeeder>();
 
     try
     {
-        context.Database.Migrate();
+        migrationService.MigrateDatabase();
+        seeder.Seed();
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "An error occurred while migrating the database.");
+        logger.LogError(ex, "An error occurred during database migration or seeding.");
         throw;
-    }
-
-    if (env.IsDevelopment())
-    {
-        try
-        {
-            var seeder = services.GetRequiredService<DatabaseSeeder>();
-            seeder.Seed();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occurred while seeding the database.");
-            throw;
-        }
     }
 }
 
