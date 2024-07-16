@@ -13,9 +13,6 @@ C:\Users\GasperKatrasnik\workfolder_gkatrasnik\Application\obj\Debug\net8.0\Appl
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\Application\obj\Debug\net8.0\refint\Application.dll
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\Application\obj\Debug\net8.0\Application.pdb
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\Application\obj\Debug\net8.0\ref\Application.dll
-C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Application.dll
-C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\refint\Application.dll
-C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Application.pdb
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\bin\Debug\net8.0\Application.deps.json
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\bin\Debug\net8.0\Application.dll
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\bin\Debug\net8.0\Application.pdb
@@ -28,4 +25,7 @@ C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.App
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Application.csproj.CoreCompileInputs.cache
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Application.sourcelink.json
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Applicat.44B5EDA2.Up2Date
+C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Application.dll
+C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\refint\Application.dll
+C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\Application.pdb
 C:\Users\GasperKatrasnik\workfolder_gkatrasnik\kangla-backend\kangla-backend.Application\obj\Debug\net8.0\ref\Application.dll
