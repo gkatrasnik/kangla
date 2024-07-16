@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "c0fsQQ6WOwM=",
+  "dgSpecHash": "SI7du6uI2Hc=",
   "success": true,
   "projectFilePath": "C:\\Users\\GasperKatrasnik\\workfolder_gkatrasnik\\kangla-backend\\kangla-backend.Infrastructure\\Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -18,6 +18,7 @@
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.7\\microsoft.entityframeworkcore.analyzers.8.0.7.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.entityframeworkcore.design\\8.0.7\\microsoft.entityframeworkcore.design.8.0.7.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\8.0.7\\microsoft.entityframeworkcore.relational.8.0.7.nupkg.sha512",
+    "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.entityframeworkcore.sqlite\\8.0.7\\microsoft.entityframeworkcore.sqlite.8.0.7.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.entityframeworkcore.sqlite.core\\8.0.7\\microsoft.entityframeworkcore.sqlite.core.8.0.7.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\8.0.7\\microsoft.entityframeworkcore.tools.8.0.7.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\8.0.0\\microsoft.extensions.caching.abstractions.8.0.0.nupkg.sha512",
@@ -31,7 +32,10 @@
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.6\\sqlitepclraw.bundle_e_sqlite3.2.1.6.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\sqlitepclraw.core\\2.1.6\\sqlitepclraw.core.2.1.6.nupkg.sha512",
+    "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.6\\sqlitepclraw.lib.e_sqlite3.2.1.6.nupkg.sha512",
+    "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.6\\sqlitepclraw.provider.e_sqlite3.2.1.6.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
     "C:\\Users\\GasperKatrasnik\\.nuget\\packages\\system.composition\\6.0.0\\system.composition.6.0.0.nupkg.sha512",

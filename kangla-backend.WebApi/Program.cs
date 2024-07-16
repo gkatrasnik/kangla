@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Infrastructure;
 using Application;
 using Infrastructure.Services;
@@ -6,7 +5,6 @@ using Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
-//configure services
 builder.Services.AddControllers();
 
 var loggerFactory = LoggerFactory.Create(loggingBuilder =>
@@ -28,7 +26,6 @@ if (env.IsDevelopment())
 var app = builder.Build();
 
 
-
 // Apply migrations and seed 
 using (var scope = app.Services.CreateScope())
 {
@@ -39,7 +36,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         migrationService.MigrateDatabase();
-        seeder.Seed();
+        await seeder.SeedAsync();
     }
     catch (Exception ex)
     {
@@ -49,13 +46,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-
-
-
-// Configure the HTTP request pipeline.
-
-
-//configure middlewares
 if (env.IsDevelopment())
 {
     app.UseSwagger();
@@ -64,11 +54,6 @@ if (env.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
-
-
-
-
 
 app.MapControllers();
 

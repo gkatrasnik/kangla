@@ -29,7 +29,7 @@ namespace Infrastructure
                 .HasForeignKey(w => w.WateringDeviceId);
 
             modelBuilder.Entity<WateringDevice>()
-                .HasMany(w => w.HumidityMeasurement)
+                .HasMany(w => w.HumidityMeasurements)
                 .WithOne(h => h.WateringDevice)
                 .HasForeignKey(h => h.WateringDeviceId);
         }        

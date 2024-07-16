@@ -47,7 +47,7 @@ namespace Domain.Model
         [Range(1, 60, ErrorMessage = "Duration must be between 1 and 1000 seconds.")]
         public int WateringDurationSetting { get; set; } = 3;
         public List<WateringEvent>? WateringEvents { get; set; }
-        public List<HumidityMeasurement>? HumidityMeasurement { get; set; }
+        public List<HumidityMeasurement>? HumidityMeasurements { get; set; }
         /// <summary>
         /// Device token by which user adds watering device to his account
         /// Should be written on device
