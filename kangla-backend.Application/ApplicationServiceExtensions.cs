@@ -1,4 +1,6 @@
-﻿using Application.Mappings;
+﻿using Application.Interfaces;
+using Application.Mappings;
+using Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -11,6 +13,7 @@ namespace Application
           ILogger logger)
         {
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddScoped<IWateringDeviceService, WateringDeviceService>();
             logger.LogInformation("{Project} services registered", "Application");
 
             return services;

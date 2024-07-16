@@ -21,11 +21,9 @@ namespace Infrastructure
 
             if (isDevelopement)
             {
-                services.AddTransient<JsonFileLoader>();
                 services.AddTransient<DatabaseSeeder>();                
                 services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();                
             }
-
 
             logger.LogInformation("{Project} services registered", "Infrastructure");
 
