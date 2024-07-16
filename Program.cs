@@ -1,13 +1,12 @@
-using kangla_backend.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Application;
 
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
 //configure services
 builder.Services.AddControllers();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var loggerFactory = LoggerFactory.Create(loggingBuilder =>
 {
@@ -16,13 +15,15 @@ var loggerFactory = LoggerFactory.Create(loggingBuilder =>
 });
 var logger = loggerFactory.CreateLogger<Program>();
 
+builder.Services.AddInfrastructureServices(builder.Configuration, logger, env.IsDevelopment());
+builder.Services.AddApplicationServices(logger);
+
 if (env.IsDevelopment())
 {
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 }
 
-builder.Services.AddInfrastructureServices(builder.Configuration, logger, env.IsDevelopment());
 var app = builder.Build();
 
 
