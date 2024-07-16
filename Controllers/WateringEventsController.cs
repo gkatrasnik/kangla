@@ -1,5 +1,4 @@
-﻿using kangla_backend.Model;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace kangla_backend.Controllers
 {

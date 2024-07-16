@@ -1,8 +1,6 @@
-using kangla_backend.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using kangla_backend.DTO;
-using AutoMapper;
+using Application.Interfaces;
+using Application.DTO;
 
 namespace kangla_backend.Controllers
 {
@@ -11,111 +9,62 @@ namespace kangla_backend.Controllers
     public class WateringDevicesController : ControllerBase
     {
         private readonly ILogger<WateringDevicesController> _logger;
-        private readonly WateringContext _context;
-        private readonly IMapper _mapper;
+        private readonly IWateringDeviceService _wateringDeviceService;
 
-        public WateringDevicesController(ILogger<WateringDevicesController> logger, WateringContext context, IMapper mapper)
+        public WateringDevicesController(ILogger<WateringDevicesController> logger, IWateringDeviceService wateringDeviceService)
         {
             _logger = logger;
-            _context = context;
-            _mapper = mapper;
+            _wateringDeviceService = wateringDeviceService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices()
         {
-            var wateringDevices = await _context.WateringDevices.ToListAsync();
-            var wateringDevicesDto = _mapper.Map<List<WateringDeviceResponseDto>>(wateringDevices);
-
-            return Ok(wateringDevicesDto);
+            var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync();
+            return Ok(wateringDevices);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<WateringDevice>> GetWateringDevice(int id)
+        public async Task<ActionResult<WateringDeviceResponseDto>> GetWateringDevice(int id)
         {
-            var wateringDevice = await _context.WateringDevices.FindAsync(id);
-
+            var wateringDevice = await _wateringDeviceService.GetWateringDeviceAsync(id);
             if (wateringDevice == null)
             {
                 return NotFound();
             }
-
-            var wateringDeviceResponseDto = _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
-
-            return Ok(wateringDeviceResponseDto);
+            return Ok(wateringDevice);
         }
 
         [HttpPost]
-        public async Task<ActionResult<WateringDevice>> PostWateringDevice(WateringDeviceCreateRequestDto wateringDevice)
+        public async Task<ActionResult<WateringDeviceResponseDto>> PostWateringDevice(WateringDeviceCreateRequestDto wateringDevice)
         {
-            var wateringDeviceEntity = _mapper.Map<WateringDevice>(wateringDevice);
-            _context.WateringDevices.Add(wateringDeviceEntity);
-            await _context.SaveChangesAsync();         
-            var wateringDeviceResponseDto = _mapper.Map<WateringDeviceResponseDto>(wateringDeviceEntity);
-
-            // Return a 201 Created response with the created entity DTO
-            return CreatedAtAction(nameof(GetWateringDevice), new { id = wateringDeviceResponseDto.Id }, wateringDeviceResponseDto);
+            var createdDevice = await _wateringDeviceService.CreateWateringDeviceAsync(wateringDevice);
+            return CreatedAtAction(nameof(GetWateringDevice), new { id = createdDevice.Id }, createdDevice);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWateringDevice(int id, WateringDeviceUpdateRequestDto wateringDevice)
         {
-            var existingDeviceEntity = await _context.WateringDevices.FindAsync(id);
-
-            if (existingDeviceEntity == null)
+            try
+            {
+                var updatedDevice = await _wateringDeviceService.UpdateWateringDeviceAsync(id, wateringDevice);
+                return Ok(updatedDevice);
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-
-            existingDeviceEntity.Name = wateringDevice.Name;
-            existingDeviceEntity.Description = wateringDevice.Description;
-            existingDeviceEntity.Location = wateringDevice.Location;
-            existingDeviceEntity.Notes = wateringDevice.Notes;
-            existingDeviceEntity.WaterNow = wateringDevice.WaterNow;
-            existingDeviceEntity.MinimumSoilHumidity = wateringDevice.MinimumSoilHumidity;
-            existingDeviceEntity.WateringIntervalSetting = wateringDevice.WateringIntervalSetting;
-            existingDeviceEntity.WateringDurationSetting = wateringDevice.WateringDurationSetting;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!WateringDeviceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            var wateringDeviceResponseDto = _mapper.Map<WateringDeviceResponseDto>(existingDeviceEntity);
-
-            return Ok(wateringDeviceResponseDto);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWateringDevice(int id)
         {
-            var wateringDeviceEntity = await _context.WateringDevices.FindAsync(id);
-            if (wateringDeviceEntity == null)
+            var deleted = await _wateringDeviceService.DeleteWateringDeviceAsync(id);
+            if (!deleted)
             {
                 return NotFound();
             }
-
-            _context.WateringDevices.Remove(wateringDeviceEntity);
-            await _context.SaveChangesAsync();
-
-            return NoContent();                        
+            return NoContent();
         }
-
-        //Todo move to service
-        private bool WateringDeviceExists(int id)
-        {
-            return _context.WateringDevices.Any(e => e.Id == id);
-        }       
     }
 }
