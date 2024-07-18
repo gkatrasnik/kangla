@@ -37,12 +37,7 @@ namespace Application.Services
 
         public async Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int id, WateringDeviceUpdateRequestDto wateringDevice)
         {
-            var existingEntity = await _repository.GetWateringDeviceByIdAsync(id);
-            if (existingEntity == null)
-            {
-                throw new Exception($"Watering device with id {id} not found.");
-            }
-
+            var existingEntity = await _repository.GetWateringDeviceByIdAsync(id) ?? throw new Exception($"Watering device with id {id} not found.");
             _mapper.Map(wateringDevice, existingEntity);
 
             await _repository.UpdateWateringDeviceAsync(existingEntity);

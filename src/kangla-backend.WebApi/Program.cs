@@ -1,60 +1,81 @@
 using Infrastructure;
 using Application;
 using Infrastructure.Services;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-var env = builder.Environment;
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddControllers();
+Log.Information("Starting up!");
 
-var loggerFactory = LoggerFactory.Create(loggingBuilder =>
+try
 {
-    loggingBuilder.AddConsole();
-    loggingBuilder.AddDebug();
-});
-var logger = loggerFactory.CreateLogger<Program>();
+    var builder = WebApplication.CreateBuilder(args);
+    var env = builder.Environment;
+    
+    builder.Services.AddSerilog((services, lc) => lc
+      .ReadFrom.Configuration(builder.Configuration)
+      .ReadFrom.Services(services)
+      .Enrich.FromLogContext()
+      .WriteTo.Console());
 
-builder.Services.AddInfrastructureServices(builder.Configuration, logger);
-builder.Services.AddApplicationServices(logger);
+    builder.Services.AddControllers();
 
-if (env.IsDevelopment())
-{
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
-}
+    builder.Services.AddInfrastructureServices(builder.Configuration);
+    builder.Services.AddApplicationServices();
 
-var app = builder.Build();
-
-
-// Apply migrations and seed 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var migrationService = services.GetRequiredService<IDatabaseMigrationService>();
-    var seeder = services.GetRequiredService<DatabaseSeeder>();
-
-    try
+    if (env.IsDevelopment())
     {
-        migrationService.MigrateDatabase();
-        await seeder.SeedAsync();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
     }
-    catch (Exception ex)
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+    
+    // Apply migrations and seed 
+    using (var scope = app.Services.CreateScope())
     {
-        logger.LogError(ex, "An error occurred during database migration or seeding.");
-        throw;
+        var services = scope.ServiceProvider;
+        var migrationService = services.GetRequiredService<IDatabaseMigrationService>();
+        var seeder = services.GetRequiredService<DatabaseSeeder>(); 
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        try
+        {
+            migrationService.MigrateDatabase();
+            await seeder.SeedAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred during database migration or seeding.");
+            throw;
+        }
     }
+
+    if (env.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+    Log.Information("Stopped cleanly");
+    return 0;
 }
-
-
-if (env.IsDevelopment())
+catch (Exception ex)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Fatal(ex, "Application terminated unexpectedly");
+    return 1;
 }
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+finally
+{
+    Log.CloseAndFlush();
+}
