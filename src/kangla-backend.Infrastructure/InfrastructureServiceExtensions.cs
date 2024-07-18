@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Infrastructure
 {
@@ -10,8 +9,7 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(
           this IServiceCollection services,
-          IConfiguration configuration,
-          ILogger logger)
+          IConfiguration configuration)
         {
             services.AddDbContext<WateringContext>(options =>
                 options.UseSqlite(configuration.GetConnectionString("WateringContextSQLite")));
@@ -19,8 +17,6 @@ namespace Infrastructure
             services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();            
             services.AddTransient<DatabaseSeeder>();                
             services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();                
-
-            logger.LogInformation("{Project} services registered", "Infrastructure");
 
             return services;
         }
