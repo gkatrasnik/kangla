@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Model
 {
-    public class HumidityMeasurement
+    public class HumidityMeasurement: IEntity
     {
-        [Required]
-        public required int Id  { get; set; }
         [Required]
         public required DateTime DateTime { get; set; }
         /// <summary>
