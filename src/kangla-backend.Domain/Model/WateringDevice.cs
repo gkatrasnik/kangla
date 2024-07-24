@@ -1,8 +1,9 @@
+using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Model
 {
-    public class WateringDevice
+    public class WateringDevice: IEntity
     {
         [Required]
         public int Id { get; set; }

@@ -28,7 +28,9 @@ namespace Infrastructure.Migrations
                     MinimumSoilHumidity = table.Column<int>(type: "INTEGER", nullable: false),
                     WateringIntervalSetting = table.Column<int>(type: "INTEGER", nullable: false),
                     WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),
-                    DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false)
+                    DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,7 +45,9 @@ namespace Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     SoilHumidity = table.Column<int>(type: "INTEGER", nullable: false),
-                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false)
+                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,7 +68,9 @@ namespace Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Start = table.Column<DateTime>(type: "TEXT", nullable: false),
                     End = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false)
+                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

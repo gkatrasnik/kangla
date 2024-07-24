@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Model
 {
-    public class WateringEvent
+    public class WateringEvent: IEntity
     {
         [Required]
         public required int Id  { get; set; }       
