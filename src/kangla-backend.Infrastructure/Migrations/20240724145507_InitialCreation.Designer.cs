@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240724142934_InitialCreation")]
+    [Migration("20240724145507_InitialCreation")]
     partial class InitialCreation
     {
         /// <inheritdoc />
@@ -70,9 +70,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("DeviceToken")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("LastWatered")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Location")

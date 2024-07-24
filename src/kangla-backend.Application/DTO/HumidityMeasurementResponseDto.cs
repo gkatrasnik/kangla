@@ -13,5 +13,7 @@ namespace Application.DTO
         public int SoilHumidity { get; set; }
         [Required]
         public int WateringDeviceId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

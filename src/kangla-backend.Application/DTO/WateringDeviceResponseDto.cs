@@ -20,7 +20,6 @@ namespace Application.DTO
         [Required]
         public bool Deleted { get; set; }
         public bool WaterNow { get; set; }
-        public DateTime LastWatered { get; set; }
         [Required]
         [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]
         public int MinimumSoilHumidity { get; set; } = 400;
@@ -30,5 +29,7 @@ namespace Application.DTO
         [Required]
         [Range(1, 60, ErrorMessage = "Duration must be between 1 and 1000 seconds.")]
         public int WateringDurationSetting { get; set; } = 3;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }
