@@ -29,7 +29,32 @@ public class WateringDeviceRepository : IWateringDeviceRepository
 
     public async Task UpdateWateringDeviceAsync(WateringDevice device)
     {
-        _context.Entry(device).State = EntityState.Modified;
+        if (device == null)
+        {
+            throw new ArgumentNullException(nameof(device));
+        }
+
+        var existingDevice = await _context.WateringDevices
+            .FirstOrDefaultAsync(d => d.Id == device.Id);
+
+        if (existingDevice == null)
+        {
+            throw new InvalidOperationException($"WateringDevice with Id {device.Id} does not exist.");
+        }
+
+        existingDevice.Name = device.Name;
+        existingDevice.Description = device.Description;
+        existingDevice.Location = device.Location;
+        existingDevice.Notes = device.Notes;
+        existingDevice.Active = device.Active;
+        existingDevice.Deleted = device.Deleted;
+        existingDevice.WaterNow = device.WaterNow;
+        existingDevice.LastWatered = device.LastWatered;
+        existingDevice.MinimumSoilHumidity = device.MinimumSoilHumidity;
+        existingDevice.WateringIntervalSetting = device.WateringIntervalSetting;
+        existingDevice.WateringDurationSetting = device.WateringDurationSetting;
+        existingDevice.DeviceToken = device.DeviceToken;
+
         await _context.SaveChangesAsync();
     }
 
