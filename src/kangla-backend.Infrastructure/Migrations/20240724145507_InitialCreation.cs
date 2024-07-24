@@ -24,7 +24,6 @@ namespace Infrastructure.Migrations
                     Active = table.Column<bool>(type: "INTEGER", nullable: false),
                     Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     WaterNow = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LastWatered = table.Column<DateTime>(type: "TEXT", nullable: false),
                     MinimumSoilHumidity = table.Column<int>(type: "INTEGER", nullable: false),
                     WateringIntervalSetting = table.Column<int>(type: "INTEGER", nullable: false),
                     WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),

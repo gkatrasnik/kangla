@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Domain.Interfaces;
+using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure
@@ -32,6 +33,28 @@ namespace Infrastructure
                 .HasMany(w => w.HumidityMeasurements)
                 .WithOne(h => h.WateringDevice)
                 .HasForeignKey(h => h.WateringDeviceId);
-        }        
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            UpdateTimestamps();
+            return base.SaveChangesAsync();
+        }
+
+        private void UpdateTimestamps()
+        {
+            foreach (var entry in ChangeTracker.Entries<IEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                { 
+                    entry.Entity.CreatedAt = DateTime.Now;
+                    entry.Entity.UpdatedAt = DateTime.Now;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedAt = DateTime.Now;
+                }
+            }
+        }
     }
 }

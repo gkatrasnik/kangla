@@ -69,9 +69,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("LastWatered")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Location")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");

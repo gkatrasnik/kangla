@@ -12,5 +12,7 @@ namespace Application.DTO
         public DateTime End { get; set; }
         [Required]
         public int WateringDeviceId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

@@ -49,7 +49,6 @@ public class WateringDeviceRepository : IWateringDeviceRepository
         existingDevice.Active = device.Active;
         existingDevice.Deleted = device.Deleted;
         existingDevice.WaterNow = device.WaterNow;
-        existingDevice.LastWatered = device.LastWatered;
         existingDevice.MinimumSoilHumidity = device.MinimumSoilHumidity;
         existingDevice.WateringIntervalSetting = device.WateringIntervalSetting;
         existingDevice.WateringDurationSetting = device.WateringDurationSetting;

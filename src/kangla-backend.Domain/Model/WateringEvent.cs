@@ -4,9 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Domain.Model
 {
     public class WateringEvent: IEntity
-    {
-        [Required]
-        public required int Id  { get; set; }       
+    {    
         [Required]
         public DateTime Start { get; set; }
         [Required]
