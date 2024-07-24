@@ -118,7 +118,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Model.HumidityMeasurement", b =>
                 {
                     b.HasOne("Domain.Model.WateringDevice", "WateringDevice")
-                        .WithMany("HumidityMeasurement")
+                        .WithMany("HumidityMeasurements")
                         .HasForeignKey("WateringDeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -139,7 +139,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Model.WateringDevice", b =>
                 {
-                    b.Navigation("HumidityMeasurement");
+                    b.Navigation("HumidityMeasurements");
 
                     b.Navigation("WateringEvents");
                 });

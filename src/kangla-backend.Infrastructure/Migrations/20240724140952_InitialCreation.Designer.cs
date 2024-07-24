@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240716115950_InitialCreation")]
+    [Migration("20240724140952_InitialCreation")]
     partial class InitialCreation
     {
         /// <inheritdoc />
@@ -121,7 +121,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Model.HumidityMeasurement", b =>
                 {
                     b.HasOne("Domain.Model.WateringDevice", "WateringDevice")
-                        .WithMany("HumidityMeasurement")
+                        .WithMany("HumidityMeasurements")
                         .HasForeignKey("WateringDeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -142,7 +142,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Model.WateringDevice", b =>
                 {
-                    b.Navigation("HumidityMeasurement");
+                    b.Navigation("HumidityMeasurements");
 
                     b.Navigation("WateringEvents");
                 });
