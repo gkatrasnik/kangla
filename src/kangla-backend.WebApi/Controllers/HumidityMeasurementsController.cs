@@ -21,8 +21,24 @@ namespace kangla_backend.Controllers
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId)
         {
-            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId);
-            return Ok(humidityMeasurements);
+            try
+            {
+                var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId);
+                if (humidityMeasurements == null || !humidityMeasurements.Any())
+                {
+                    return NotFound(new { message = $"No humidity measurements found for device with ID {deviceId}." });
+                }
+
+                return Ok(humidityMeasurements);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
         }
 
         [HttpPost]
