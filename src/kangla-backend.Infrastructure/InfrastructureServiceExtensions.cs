@@ -14,9 +14,11 @@ namespace Infrastructure
             services.AddDbContext<WateringContext>(options =>
                 options.UseSqlite(configuration.GetConnectionString("WateringContextSQLite")));
 
-            services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();            
             services.AddTransient<DatabaseSeeder>();                
-            services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();                
+            services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();
+            services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();
+            services.AddScoped<IWateringEventRepository, WateringEventRepository>();
+            services.AddScoped<IHumidityMeasurementRepository, HumidityMeasurementRepository>();
 
             return services;
         }
