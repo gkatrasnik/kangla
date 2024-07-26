@@ -12,7 +12,8 @@ namespace Application
         {
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddScoped<IWateringDeviceService, WateringDeviceService>();
-
+            services.AddScoped<IWateringEventService, WateringEventService>();
+            services.AddScoped<IHumidityMeasurementService, HumidityMeasurementService>();
             return services;
         }
     }

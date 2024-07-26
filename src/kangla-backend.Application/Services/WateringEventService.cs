@@ -8,25 +8,33 @@ namespace Application.Services
 {
     public class WateringEventService : IWateringEventService
     {
-        private readonly IWateringEventRepository _repository;
+        private readonly IWateringEventRepository _wateringEventRepository;
+        private readonly IWateringDeviceRepository _wateringDeviceRepository;
         private readonly IMapper _mapper;
 
-        public WateringEventService(IWateringEventRepository repository, IMapper mapper)
+        public WateringEventService(IWateringEventRepository wateringEventRepository, IWateringDeviceRepository wateringDeviceRepository, IMapper mapper)
         {
-            _repository = repository;
+            _wateringEventRepository = wateringEventRepository;
+            _wateringDeviceRepository = wateringDeviceRepository;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId)
         {
-            var wateringEvents = await _repository.GetWateringEventsByDeviceIdAsync(deviceId);
+            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId);
             return _mapper.Map<IEnumerable<WateringEventResponseDto>>(wateringEvents);
         }
 
         public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEvent)
         {
+            var deviceExists = _wateringDeviceRepository.WateringDeviceExists(wateringEvent.WateringDeviceId);
+            if (!deviceExists)
+            {
+                throw new ArgumentException($"Device with ID {wateringEvent.WateringDeviceId} does not exist.");
+            }
+
             var entity = _mapper.Map<WateringEvent>(wateringEvent);
-            await _repository.AddWateringEventAsync(entity);
+            await _wateringEventRepository.AddWateringEventAsync(entity);
             return _mapper.Map<WateringEventResponseDto>(entity);
         }
     }
