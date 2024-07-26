@@ -11,7 +11,7 @@ namespace Application.Services
         private readonly IWateringDeviceRepository _wateringDeviceRepository;
         private readonly IMapper _mapper;
 
-        public HumidityMeasurementService(IHumidityMeasurementRepository humidityMeasurementRepository, IWateringDeviceRepository wateringDeviceRepository, IWateringDeviceRepository,IMapper mapper)
+        public HumidityMeasurementService(IHumidityMeasurementRepository humidityMeasurementRepository, IWateringDeviceRepository wateringDeviceRepository, IMapper mapper)
         {
             _humidityMeasurementRepository = humidityMeasurementRepository;
             _wateringDeviceRepository = wateringDeviceRepository;

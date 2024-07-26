@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
+using Application.Services;
+using Domain.Model;
 
 namespace kangla_backend.Controllers
 {
@@ -27,8 +29,19 @@ namespace kangla_backend.Controllers
         [HttpPost]
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
         {
-            var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
-            return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.WateringDeviceId }, createdEvent);
+            try
+            {
+                var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
+                return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.WateringDeviceId }, createdEvent);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
         }
     }
 }
