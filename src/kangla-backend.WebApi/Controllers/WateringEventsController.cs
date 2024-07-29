@@ -21,42 +21,20 @@ namespace kangla_backend.Controllers
 
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<WateringEventResponseDto>>> GetWateringEventsForDevice(int deviceId)
-        {
-            try
+        {           
+            var wateringEvents = await _wateringEventService.GetWateringEventsForDeviceAsync(deviceId);
+            if (wateringEvents == null || !wateringEvents.Any())
             {
-                var wateringEvents = await _wateringEventService.GetWateringEventsForDeviceAsync(deviceId);
-                if (wateringEvents == null || !wateringEvents.Any())
-                {
-                    return NotFound(new { message = $"No humidity measurements found for device with ID {deviceId}." });
-                }
-                return Ok(wateringEvents);
+                return NotFound(new { message = $"No humidity measurements found for device with ID {deviceId}." });
             }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception   ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
-            }
+            return Ok(wateringEvents);           
         }
 
         [HttpPost]
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
-        {
-            try
-            {
-                var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
-                return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.WateringDeviceId }, createdEvent);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred.", details = ex.Message });
-            }
+        {            
+            var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
+            return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.WateringDeviceId }, createdEvent);          
         }
     }
 }

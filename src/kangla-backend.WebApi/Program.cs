@@ -20,6 +20,8 @@ try
       .Enrich.FromLogContext()
       .WriteTo.Console());
 
+    builder.Services.AddProblemDetails();
+
     builder.Services.AddControllers();
 
     builder.Services.AddInfrastructureServices(builder.Configuration);
@@ -32,7 +34,7 @@ try
     }
 
     var app = builder.Build();
-
+    app.UseExceptionHandler();
     // Write streamlined request completion events, instead of the more verbose ones from the framework.
     // To use the default framework request logging instead, remove this line and set the "Microsoft"
     // level in appsettings.json to "Information".
