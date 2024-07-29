@@ -20,54 +20,28 @@ namespace Application.Services
 
         public async Task<IEnumerable<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId)
         {
-            try
-            {
-                var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId);
+            var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId);
 
-                if (humidityMeasurements == null)
-                {
-                    return Enumerable.Empty<HumidityMeasurementResponseDto>();
-                }
+            if (humidityMeasurements == null)
+            {
+                return Enumerable.Empty<HumidityMeasurementResponseDto>();
+            }
 
-                return _mapper.Map<IEnumerable<HumidityMeasurementResponseDto>>(humidityMeasurements);
-            }
-            catch (ArgumentException ex)
-            {
-                // log
-                throw new ArgumentException("Invalid device ID or other argument-related issue.", ex);
-            }
-            catch (Exception ex)
-            {
-                // log
-                throw new Exception("An error occurred while retrieving humidity measurements.", ex);
-            }
+            return _mapper.Map<IEnumerable<HumidityMeasurementResponseDto>>(humidityMeasurements);            
         }
 
         public async Task<HumidityMeasurementResponseDto> CreateHumidityMeasurementAsync(HumidityMeasurementCreateRequestDto humidityMeasurement)
-        {
-            try
+        {           
+            var deviceExists = _wateringDeviceRepository.WateringDeviceExists(humidityMeasurement.WateringDeviceId);
+            if (!deviceExists)
             {
-                var deviceExists = _wateringDeviceRepository.WateringDeviceExists(humidityMeasurement.WateringDeviceId);
-                if (!deviceExists)
-                {
-                    throw new ArgumentException($"Device with ID {humidityMeasurement.WateringDeviceId} does not exist.");
-                }
+                throw new ArgumentException($"Device with ID {humidityMeasurement.WateringDeviceId} does not exist.");
+            }
 
-                var entity = _mapper.Map<HumidityMeasurement>(humidityMeasurement);
-                await _humidityMeasurementRepository.AddHumidityMeasurementAsync(entity);
+            var entity = _mapper.Map<HumidityMeasurement>(humidityMeasurement);
+            await _humidityMeasurementRepository.AddHumidityMeasurementAsync(entity);
 
-                return _mapper.Map<HumidityMeasurementResponseDto>(entity);
-            }
-            catch (ArgumentException ex)
-            {
-                // Log specific exception and rethrow
-                throw new ArgumentException("Validation error: " + ex.Message, ex);
-            }
-            catch (Exception ex)
-            {
-                // Log unexpected exceptions and rethrow
-                throw new Exception("An error occurred while creating humidity measurement.", ex);
-            }
+            return _mapper.Map<HumidityMeasurementResponseDto>(entity);            
         }
     }
 }
