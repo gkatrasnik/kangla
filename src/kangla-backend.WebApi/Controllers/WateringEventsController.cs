@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
-using Application.Services;
-using Domain.Model;
 
 namespace kangla_backend.Controllers
 {
