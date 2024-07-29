@@ -16,25 +16,27 @@ public class InvalidOperationExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "An invalid operation was attempted");
 
-        if (exception is InvalidOperationException)
-        {
-            var problemDetails = new ProblemDetails
-            {
-                Status = (int)HttpStatusCode.BadRequest,
-                Type = exception.GetType().Name,
-                Title = "Invalid Operation",
-                Detail = exception.Message,
-                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-            };
-
-            httpContext.Response.StatusCode = problemDetails.Status.Value;
-
-            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
-
-            return true;
+        if (exception is not InvalidOperationException invalidOperationException)
+        { 
+            return false;
         }
-        return false;
+
+        _logger.LogError(invalidOperationException, "An invalid operation was attempted");
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = (int)HttpStatusCode.BadRequest,
+            Type = invalidOperationException.GetType().Name,
+            Title = "Invalid Operation",
+            Detail = invalidOperationException.Message,
+            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+        };
+
+        httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+
+        return true;        
     }
 }

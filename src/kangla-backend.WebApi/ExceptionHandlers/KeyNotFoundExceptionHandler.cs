@@ -15,27 +15,28 @@ public class KeyNotFoundExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Key was not found");
 
-        if (exception is KeyNotFoundException)
+        if (exception is not KeyNotFoundException keyNotFoundException)
         {
-
-            var problemDetails = new ProblemDetails
-            {
-                Status = (int)HttpStatusCode.NotFound,
-                Type = exception.GetType().Name,
-                Title = "Key was not found",
-                Detail = exception.Message,
-                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-            };
-
-            httpContext.Response.StatusCode = problemDetails.Status.Value;
-
-            await httpContext.Response
-                .WriteAsJsonAsync(problemDetails, cancellationToken);
-
-            return true;
+            return false;
         }
-        return false;
+
+        _logger.LogError(keyNotFoundException, "Key was not found");
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = (int)HttpStatusCode.NotFound,
+            Type = keyNotFoundException.GetType().Name,
+            Title = "Key was not found",
+            Detail = keyNotFoundException.Message,
+            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+        };
+
+        httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+        await httpContext.Response
+            .WriteAsJsonAsync(problemDetails, cancellationToken);
+
+        return true;
     }
 }

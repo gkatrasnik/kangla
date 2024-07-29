@@ -15,27 +15,27 @@ public class TimeOutExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "A timeout occurred");
-
-        if (exception is TimeoutException)
+        if (exception is not TimeoutException timeoutException)
         {
-
-            var problemDetails = new ProblemDetails
-            {
-                Status = (int)HttpStatusCode.RequestTimeout,
-                Type = exception.GetType().Name,
-                Title = "A timeout occurred",
-                Detail = exception.Message,
-                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-            };
-
-            httpContext.Response.StatusCode = problemDetails.Status.Value;
-
-            await httpContext.Response
-                .WriteAsJsonAsync(problemDetails, cancellationToken);
-
-            return true;
+            return false;
         }
-        return false;
+
+        _logger.LogError(timeoutException, "A timeout occurred");
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = (int)HttpStatusCode.RequestTimeout,
+            Type = timeoutException.GetType().Name,
+            Title = "A timeout occurred",
+            Detail = timeoutException.Message,
+            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+        };
+
+        httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+        await httpContext.Response
+            .WriteAsJsonAsync(problemDetails, cancellationToken);
+
+        return true;
     }
 }
