@@ -20,12 +20,13 @@ namespace Application.Services
 
         public async Task<IEnumerable<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId)
         {
-            var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId);
-
-            if (humidityMeasurements == null)
+            var deviceExists = _wateringDeviceRepository.WateringDeviceExists(deviceId);
+            if (!deviceExists)
             {
-                return Enumerable.Empty<HumidityMeasurementResponseDto>();
+                throw new ArgumentException($"Device with ID {deviceId} does not exist.");
             }
+
+            var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId);
 
             return _mapper.Map<IEnumerable<HumidityMeasurementResponseDto>>(humidityMeasurements);            
         }
