@@ -19,7 +19,7 @@ namespace kangla_backend.Controllers
 
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId)
-        {           
+        {
             var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId);           
             return Ok(humidityMeasurements);
         }

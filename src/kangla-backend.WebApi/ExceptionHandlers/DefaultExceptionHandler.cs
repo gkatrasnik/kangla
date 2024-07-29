@@ -15,8 +15,7 @@ internal sealed class DefaultExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(
-            exception, "An unexpected error occurred");
+        _logger.LogError(exception, "An unexpected error occurred");
 
         var problemDetails = new ProblemDetails
         {
