@@ -20,7 +20,7 @@ namespace kangla_backend.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices()
-        {            
+        {
             var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync();
             return Ok(wateringDevices);            
         }

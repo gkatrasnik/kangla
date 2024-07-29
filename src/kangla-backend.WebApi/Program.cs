@@ -1,7 +1,6 @@
-using Infrastructure;
-using Application;
-using Infrastructure.Services;
 using Serilog;
+using Infrastructure.Services;
+using Infrastructure;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -13,39 +12,24 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     var env = builder.Environment;
-    
-    builder.Services.AddSerilog((services, lc) => lc
-      .ReadFrom.Configuration(builder.Configuration)
-      .ReadFrom.Services(services)
-      .Enrich.FromLogContext()
-      .WriteTo.Console());
 
-    builder.Services.AddProblemDetails();
+    builder.Services.AddCustomLogging(builder.Configuration);
+    builder.Services.AddCustomExceptionHandlers();
+    builder.Services.AddCustomSwagger(env);
 
     builder.Services.AddControllers();
-
-    builder.Services.AddInfrastructureServices(builder.Configuration);
-    builder.Services.AddApplicationServices();
-
-    if (env.IsDevelopment())
-    {
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-    }
+    builder.Services.AddCustomServices(builder.Configuration);
 
     var app = builder.Build();
-    app.UseExceptionHandler();
-    // Write streamlined request completion events, instead of the more verbose ones from the framework.
-    // To use the default framework request logging instead, remove this line and set the "Microsoft"
-    // level in appsettings.json to "Information".
-    app.UseSerilogRequestLogging();
-    
+
+    app.UseCustomMiddleware(env);
+
     // Apply migrations and seed 
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
         var migrationService = services.GetRequiredService<IDatabaseMigrationService>();
-        var seeder = services.GetRequiredService<DatabaseSeeder>(); 
+        var seeder = services.GetRequiredService<DatabaseSeeder>();
         var logger = services.GetRequiredService<ILogger<Program>>();
 
         try
@@ -60,17 +44,7 @@ try
         }
     }
 
-    if (env.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    app.UseHttpsRedirection();
-    app.UseAuthorization();
-
     app.MapControllers();
-
     app.Run();
     Log.Information("Stopped cleanly");
     return 0;
