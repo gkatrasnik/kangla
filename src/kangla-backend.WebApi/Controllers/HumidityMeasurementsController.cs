@@ -2,7 +2,6 @@
 using Application.Interfaces;
 using Application.DTO;
 
-
 namespace kangla_backend.Controllers
 {
     [Route("[controller]")]
@@ -21,12 +20,7 @@ namespace kangla_backend.Controllers
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId)
         {           
-            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId);
-            if (humidityMeasurements == null || !humidityMeasurements.Any())
-            {
-                return NotFound(new { message = $"No humidity measurements found for device with ID {deviceId}." });
-            }
-
+            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId);           
             return Ok(humidityMeasurements);
         }
 

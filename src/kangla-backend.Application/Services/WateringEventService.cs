@@ -3,7 +3,6 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Model;
 
-
 namespace Application.Services
 {
     public class WateringEventService : IWateringEventService
@@ -21,12 +20,13 @@ namespace Application.Services
 
         public async Task<IEnumerable<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId)
         {
-            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId);
-
-            if (wateringEvents == null)
+            var deviceExists = _wateringDeviceRepository.WateringDeviceExists(deviceId);
+            if (!deviceExists)
             {
-                return Enumerable.Empty<WateringEventResponseDto>();
+                throw new ArgumentException($"Device with ID {deviceId} does not exist.");
             }
+
+            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId);           
 
             return _mapper.Map<IEnumerable<WateringEventResponseDto>>(wateringEvents);            
         }

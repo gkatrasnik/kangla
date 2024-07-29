@@ -24,16 +24,9 @@ namespace Application.Services
 
         public async Task<WateringDeviceResponseDto> GetWateringDeviceAsync(int id)
         {            
-            var wateringDevice = await _repository.GetWateringDeviceByIdAsync(id);
-
-            if (wateringDevice == null)
-            {
-                throw new KeyNotFoundException($"Watering device with ID {id} not found.");
-            }
-
+            var wateringDevice = await _repository.GetWateringDeviceByIdAsync(id) ?? throw new KeyNotFoundException($"Watering device with ID {id} not found.");
             return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);            
         }
-
 
         public async Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDevice)
         {
@@ -44,13 +37,7 @@ namespace Application.Services
 
         public async Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int id, WateringDeviceUpdateRequestDto wateringDevice)
         {
-            var existingEntity = await _repository.GetWateringDeviceByIdAsync(id);
-
-            if (existingEntity == null)
-            {
-                throw new KeyNotFoundException($"Watering device with id {id} not found.");
-            }
-
+            var existingEntity = await _repository.GetWateringDeviceByIdAsync(id) ?? throw new KeyNotFoundException($"Watering device with id {id} not found.");
             _mapper.Map(wateringDevice, existingEntity);
             await _repository.UpdateWateringDeviceAsync(existingEntity);
 

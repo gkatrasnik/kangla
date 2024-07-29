@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddCustomExceptionHandlers(this IServiceCollection services)
     {
+        services.AddExceptionHandler<InvalidOperationExceptionHandler>();
         services.AddExceptionHandler<ArgumentExceptionHandler>();
         services.AddExceptionHandler<KeyNotFoundExceptionHandler>();
         services.AddExceptionHandler<TimeOutExceptionHandler>();
