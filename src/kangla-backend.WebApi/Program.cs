@@ -1,6 +1,8 @@
 using Serilog;
 using Infrastructure.Services;
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -17,7 +19,12 @@ try
     builder.Services.AddCustomExceptionHandlers();
     builder.Services.AddCustomSwagger(env);
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            options.ConfigureCustomInvalidModelStateResponse();
+        });
+
     builder.Services.AddCustomServices(builder.Configuration);
 
     var app = builder.Build();

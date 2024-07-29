@@ -1,13 +1,8 @@
 ﻿using Serilog;
-
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Serilog;
 using Infrastructure;
 using Application;
-using Infrastructure.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 public static class ServiceCollectionExtensions
 {
@@ -47,6 +42,46 @@ public static class ServiceCollectionExtensions
             services.AddSwaggerGen();
         }
         return services;
+    }
+
+    public static void ConfigureCustomInvalidModelStateResponse(this ApiBehaviorOptions options)
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var logger = context.HttpContext.RequestServices.GetService<ILogger<Program>>();
+
+            if (logger == null)
+            {
+                throw new InvalidOperationException("Logger not available.");
+            }
+
+            var errors = context.ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .Select(x => new
+                {
+                    Field = x.Key,
+                    Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                });
+
+            logger.LogWarning("Validation errors occurred: {@Errors}", errors);
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Type = "https://tools.ietf.org/html/rfc7807",
+                Title = "One or more validation errors occurred.",
+                Detail = "Please refer to the errors property for details.",
+                Instance = $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}",
+                Extensions = { ["errors"] = errors }
+            };
+
+            var result = new BadRequestObjectResult(problemDetails)
+            {
+                ContentTypes = { "application/json" }
+            };
+
+            return result;
+        };
     }
 
     public static void UseCustomMiddleware(this IApplicationBuilder app, IHostEnvironment env)
