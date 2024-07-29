@@ -1,8 +1,6 @@
 using Serilog;
 using Infrastructure.Services;
 using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
