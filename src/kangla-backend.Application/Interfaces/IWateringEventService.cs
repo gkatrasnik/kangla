@@ -5,7 +5,7 @@ namespace Application.Interfaces
 {
     public interface IWateringEventService
     {
-        Task<IEnumerable<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId);
+        Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId, int pageNumber, int pageSize);
         Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEvent);
     }
 }

@@ -2,6 +2,6 @@
 
 public interface IHumidityMeasurementRepository
 {
-    Task<IEnumerable<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId);
+    Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, int pageNumber, int pageSize);
     Task AddHumidityMeasurementAsync(HumidityMeasurement humidityMeasurement);
 }

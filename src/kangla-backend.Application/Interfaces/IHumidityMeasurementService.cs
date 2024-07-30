@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IHumidityMeasurementService
     {
-        Task<IEnumerable<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId);
+        Task<PagedResponseDto<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId, int pageNumber, int pageSize);
         Task<HumidityMeasurementResponseDto> CreateHumidityMeasurementAsync(HumidityMeasurementCreateRequestDto humidityMeasurement);
     }
 }

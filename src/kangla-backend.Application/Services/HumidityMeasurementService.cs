@@ -18,7 +18,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId)
+        public async Task<PagedResponseDto<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId, int pageNumber, int pageSize)
         {
             var deviceExists = _wateringDeviceRepository.WateringDeviceExists(deviceId);
             if (!deviceExists)
@@ -26,9 +26,9 @@ namespace Application.Services
                 throw new ArgumentException($"Device with ID {deviceId} does not exist.");
             }
 
-            var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId);
+            var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId, pageNumber, pageSize);
 
-            return _mapper.Map<IEnumerable<HumidityMeasurementResponseDto>>(humidityMeasurements);            
+            return _mapper.Map<PagedResponseDto<HumidityMeasurementResponseDto>>(humidityMeasurements);            
         }
 
         public async Task<HumidityMeasurementResponseDto> CreateHumidityMeasurementAsync(HumidityMeasurementCreateRequestDto humidityMeasurement)

@@ -18,9 +18,9 @@ namespace kangla_backend.Controllers
         }
 
         [HttpGet("device/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<WateringEventResponseDto>>> GetWateringEventsForDevice(int deviceId)
+        public async Task<ActionResult<IEnumerable<WateringEventResponseDto>>> GetWateringEventsForDevice(int deviceId, int pageNumber, int pageSize)
         {           
-            var wateringEvents = await _wateringEventService.GetWateringEventsForDeviceAsync(deviceId);            
+            var wateringEvents = await _wateringEventService.GetWateringEventsForDeviceAsync(deviceId, pageNumber, pageSize);
             return Ok(wateringEvents);           
         }
 

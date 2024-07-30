@@ -18,7 +18,7 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId)
+        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId, int pageNumber, int pageSize)
         {
             var deviceExists = _wateringDeviceRepository.WateringDeviceExists(deviceId);
             if (!deviceExists)
@@ -26,9 +26,9 @@ namespace Application.Services
                 throw new ArgumentException($"Device with ID {deviceId} does not exist.");
             }
 
-            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId);           
+            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId, pageNumber, pageSize);           
 
-            return _mapper.Map<IEnumerable<WateringEventResponseDto>>(wateringEvents);            
+            return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);            
         }
 
         public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEvent)
