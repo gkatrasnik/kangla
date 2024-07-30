@@ -21,6 +21,10 @@ namespace kangla_backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices(int pageNumber = 1, int pageSize = 10)
         {
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                throw new ArgumentException("Page number and page size must be greater than 0.");
+            }
             var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync(pageNumber, pageSize);
             return Ok(wateringDevices);            
         }

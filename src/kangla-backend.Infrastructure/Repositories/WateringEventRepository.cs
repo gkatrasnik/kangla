@@ -15,9 +15,10 @@ public class WateringEventRepository : IWateringEventRepository
     {
         var totalRecords = await _context.WateringEvents.AsNoTracking().CountAsync();
         var wateringEvents = await _context.WateringEvents.AsNoTracking()
+                             .Where(e => e.WateringDeviceId == deviceId)
                              .OrderBy(x => x.Start)
                              .Skip((pageNumber - 1) * pageSize)
-                             .Where(e => e.WateringDeviceId == deviceId)
+                             .Take(pageSize)
                              .ToListAsync();
 
         return new PagedResponse<WateringEvent>(wateringEvents, pageNumber, pageSize, totalRecords);
