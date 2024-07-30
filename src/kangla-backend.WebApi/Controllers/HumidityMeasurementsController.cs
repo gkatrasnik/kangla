@@ -19,8 +19,12 @@ namespace kangla_backend.Controllers
         }
 
         [HttpGet("device/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId, int pageNumber, int pageSize)
+        public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
         {
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                throw new ArgumentException("Page number and page size must be greater than 0.");
+            }
             var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, pageNumber, pageSize);           
             return Ok(humidityMeasurements);
         }
