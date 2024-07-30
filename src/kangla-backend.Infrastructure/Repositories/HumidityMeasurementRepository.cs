@@ -13,7 +13,10 @@ public class HumidityMeasurementRepository : IHumidityMeasurementRepository
 
     public async Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, int pageNumber, int pageSize)
     {
-        var totalRecords = await _context.HumidityMeasurements.AsNoTracking().CountAsync();
+        var totalRecords = await _context.HumidityMeasurements.AsNoTracking()
+            .Where(h => h.WateringDeviceId == deviceId)
+            .CountAsync();
+
         var humidityMeasurements = await _context.HumidityMeasurements.AsNoTracking()
                              .Where(h => h.WateringDeviceId == deviceId)
                              .OrderBy(x => x.DateTime)
