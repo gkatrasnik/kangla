@@ -14,8 +14,8 @@ public class WateringDeviceRepository : IWateringDeviceRepository
     public async Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(int pageNumber, int pageSize)
     {
         var totalRecords = await _context.WateringDevices.AsNoTracking().CountAsync();
-
         var wateringDevices = await _context.WateringDevices.AsNoTracking()
+            .OrderBy(x => x.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

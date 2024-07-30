@@ -1,6 +1,6 @@
 ﻿using Domain.Model;
 public interface IWateringEventRepository
 {
-    Task<IEnumerable<WateringEvent>> GetWateringEventsByDeviceIdAsync(int deviceId);
+    Task<PagedResponse<WateringEvent>> GetWateringEventsByDeviceIdAsync(int deviceId, int pageNumber, int pageSize);
     Task AddWateringEventAsync(WateringEvent wateringEvent);
 }

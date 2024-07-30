@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace kangla_backend.Controllers
 {
@@ -18,9 +19,9 @@ namespace kangla_backend.Controllers
         }
 
         [HttpGet("device/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId)
+        public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId, int pageNumber, int pageSize)
         {
-            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId);           
+            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, pageNumber, pageSize);           
             return Ok(humidityMeasurements);
         }
 
