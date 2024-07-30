@@ -11,9 +11,16 @@ public class WateringDeviceRepository : IWateringDeviceRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<WateringDevice>> GetWateringDevicesAsync()
+    public async Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(int pageNumber, int pageSize)
     {
-        return await _context.WateringDevices.ToListAsync();
+        var totalRecords = await _context.WateringDevices.AsNoTracking().CountAsync();
+
+        var wateringDevices = await _context.WateringDevices.AsNoTracking()
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResponse<WateringDevice>(wateringDevices, pageNumber, pageSize, totalRecords);
     }
 
     public async Task<WateringDevice?> GetWateringDeviceByIdAsync(int id)
