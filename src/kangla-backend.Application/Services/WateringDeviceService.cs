@@ -16,10 +16,11 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<WateringDeviceResponseDto>> GetWateringDevicesAsync()
+        public async Task<PagedResponseDto<WateringDeviceResponseDto>> GetWateringDevicesAsync(int pageNumber, int pageSize)
         {            
-            var wateringDevices = await _repository.GetWateringDevicesAsync();
-            return _mapper.Map<IEnumerable<WateringDeviceResponseDto>>(wateringDevices);            
+            var wateringDevices = await _repository.GetWateringDevicesAsync(pageNumber, pageSize);
+            //return _mapper.Map<IEnumerable<WateringDeviceResponseDto>>(wateringDevices);            
+            return _mapper.Map<PagedResponseDto<WateringDeviceResponseDto>>(wateringDevices);
         }
 
         public async Task<WateringDeviceResponseDto> GetWateringDeviceAsync(int id)

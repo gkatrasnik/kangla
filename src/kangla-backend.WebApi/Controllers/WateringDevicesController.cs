@@ -19,9 +19,9 @@ namespace kangla_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices()
+        public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices(int pageNumber = 1, int pageSize = 10)
         {
-            var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync();
+            var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync(pageNumber, pageSize);
             return Ok(wateringDevices);            
         }
 
