@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace kangla_backend.Controllers
 {
