@@ -17,6 +17,16 @@ try
         .AddCustomExceptionHandlers()
         .AddCustomSwagger(env)
         .AddCustomServices(builder.Configuration)
+        .AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+        })
         .AddControllers()
             .ConfigureApiBehaviorOptions(options =>
             {
@@ -26,6 +36,7 @@ try
     var app = builder.Build();
 
     app.UseCustomMiddleware(env);
+    app.UseCors("AllowAllOrigins");
 
     // Apply migrations and seed 
     using (var scope = app.Services.CreateScope())
