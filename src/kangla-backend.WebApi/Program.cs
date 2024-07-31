@@ -13,17 +13,15 @@ try
     var builder = WebApplication.CreateBuilder(args);
     var env = builder.Environment;
 
-    builder.Services.AddCustomLogging(builder.Configuration);
-    builder.Services.AddCustomExceptionHandlers();
-    builder.Services.AddCustomSwagger(env);
-
-    builder.Services.AddControllers()
-        .ConfigureApiBehaviorOptions(options =>
-        {
-            options.ConfigureCustomInvalidModelStateResponse();
-        });
-
-    builder.Services.AddCustomServices(builder.Configuration);
+    builder.Services.AddCustomLogging(builder.Configuration)
+        .AddCustomExceptionHandlers()
+        .AddCustomSwagger(env)
+        .AddCustomServices(builder.Configuration)
+        .AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.ConfigureCustomInvalidModelStateResponse();
+            });
 
     var app = builder.Build();
 
