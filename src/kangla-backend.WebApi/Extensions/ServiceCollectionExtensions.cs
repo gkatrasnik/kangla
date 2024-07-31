@@ -48,13 +48,7 @@ public static class ServiceCollectionExtensions
     {
         options.InvalidModelStateResponseFactory = context =>
         {
-            var logger = context.HttpContext.RequestServices.GetService<ILogger<Program>>();
-
-            if (logger == null)
-            {
-                throw new InvalidOperationException("Logger not available.");
-            }
-
+            var logger = context.HttpContext.RequestServices.GetService<ILogger<Program>>() ?? throw new InvalidOperationException("Logger not available.");
             var errors = context.ModelState
                 .Where(x => x.Value.Errors.Count > 0)
                 .Select(x => new
@@ -82,20 +76,5 @@ public static class ServiceCollectionExtensions
 
             return result;
         };
-    }
-
-    public static void UseCustomMiddleware(this IApplicationBuilder app, IHostEnvironment env)
-    {
-        app.UseExceptionHandler();
-        app.UseSerilogRequestLogging();
-
-        if (env.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-    }
+    }    
 }
