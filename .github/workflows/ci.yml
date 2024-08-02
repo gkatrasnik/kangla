@@ -1,0 +1,45 @@
+name: Build and Deploy to OCI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.0'
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build the app
+      run: dotnet build --configuration Release
+
+    - name: Publish WebApi
+      run: dotnet publish src/kangla-backend.WebApi/WebApi.csproj --configuration Release --output ./publish
+
+    - name: Copy files via SSH
+      uses: easingthemes/ssh-deploy@v2.1.5
+      env:
+        ARGS: "-avz"        
+        SOURCE: "./publish/"
+        TARGET: "/var/www/kangla-backend/"
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
+        SSH_USERNAME: ${{ secrets.SSH_USER }}
+
+    - name: Restart Nginx
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.OCI_INSTANCE_IP }}
+        REMOTE_USER: ${{ secrets.OCI_USERNAME }}
+      run: |
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST 'sudo systemctl reload kangla-backend'
