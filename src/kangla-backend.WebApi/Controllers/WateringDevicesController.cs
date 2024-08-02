@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace kangla_backend.Controllers
 {
@@ -18,52 +19,46 @@ namespace kangla_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices()
+        public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices(int pageNumber = 1, int pageSize = 10)
         {
-            var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync();
-            return Ok(wateringDevices);
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                throw new ArgumentException("Page number and page size must be greater than 0.");
+            }
+            var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync(pageNumber, pageSize);
+            return Ok(wateringDevices);            
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<WateringDeviceResponseDto>> GetWateringDevice(int id)
-        {
+        {            
             var wateringDevice = await _wateringDeviceService.GetWateringDeviceAsync(id);
-            if (wateringDevice == null)
-            {
-                return NotFound();
-            }
-            return Ok(wateringDevice);
+            return Ok(wateringDevice);            
         }
 
         [HttpPost]
         public async Task<ActionResult<WateringDeviceResponseDto>> PostWateringDevice(WateringDeviceCreateRequestDto wateringDevice)
-        {
+        {            
             var createdDevice = await _wateringDeviceService.CreateWateringDeviceAsync(wateringDevice);
-            return CreatedAtAction(nameof(GetWateringDevice), new { id = createdDevice.Id }, createdDevice);
+            return CreatedAtAction(nameof(GetWateringDevice), new { id = createdDevice.Id }, createdDevice);   
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWateringDevice(int id, WateringDeviceUpdateRequestDto wateringDevice)
-        {
-            try
-            {
-                var updatedDevice = await _wateringDeviceService.UpdateWateringDeviceAsync(id, wateringDevice);
-                return Ok(updatedDevice);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+        {            
+            var updatedDevice = await _wateringDeviceService.UpdateWateringDeviceAsync(id, wateringDevice);
+            return Ok(updatedDevice);            
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWateringDevice(int id)
-        {
+        {            
             var deleted = await _wateringDeviceService.DeleteWateringDeviceAsync(id);
             if (!deleted)
             {
-                return NotFound();
+                return NotFound(new { message = $"Watering device with ID {id} not found." });
             }
+
             return NoContent();
         }
     }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240716115950_InitialCreation")]
+    [Migration("20240724145507_InitialCreation")]
     partial class InitialCreation
     {
         /// <inheritdoc />
@@ -26,11 +26,17 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SoilHumidity")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("WateringDeviceId")
                         .HasColumnType("INTEGER");
@@ -51,6 +57,9 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
@@ -61,9 +70,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("DeviceToken")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("LastWatered")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Location")
@@ -80,6 +86,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("WaterNow")
@@ -102,10 +111,16 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("End")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Start")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("WateringDeviceId")
@@ -121,7 +136,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Model.HumidityMeasurement", b =>
                 {
                     b.HasOne("Domain.Model.WateringDevice", "WateringDevice")
-                        .WithMany("HumidityMeasurement")
+                        .WithMany("HumidityMeasurements")
                         .HasForeignKey("WateringDeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -142,7 +157,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Model.WateringDevice", b =>
                 {
-                    b.Navigation("HumidityMeasurement");
+                    b.Navigation("HumidityMeasurements");
 
                     b.Navigation("WateringEvents");
                 });
