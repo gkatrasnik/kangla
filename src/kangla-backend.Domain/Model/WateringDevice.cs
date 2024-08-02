@@ -1,11 +1,10 @@
+using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Model
 {
-    public class WateringDevice
+    public class WateringDevice: IEntity
     {
-        [Required]
-        public int Id { get; set; }
         [Required]
         [StringLength(30, MinimumLength = 1, ErrorMessage = "Name must be between 1 and 30 characters long.")]
         public string Name { get; set; } = default!;
@@ -26,7 +25,6 @@ namespace Domain.Model
         [Required]
         public bool Deleted { get; set; }
         public bool WaterNow { get; set; }
-        public DateTime LastWatered { get; set; }
         /// <summary>
         /// Minimum humidity to start watering 
         /// This is actual read value from capacitive humidity sensor

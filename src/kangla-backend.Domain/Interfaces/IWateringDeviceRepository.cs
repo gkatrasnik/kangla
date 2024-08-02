@@ -2,7 +2,7 @@
 
 public interface IWateringDeviceRepository
 {
-    Task<IEnumerable<WateringDevice>> GetWateringDevicesAsync();
+    public Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(int pageNumber, int pageSize);
     Task<WateringDevice?> GetWateringDeviceByIdAsync(int id);
     Task AddWateringDeviceAsync(WateringDevice device);
     Task UpdateWateringDeviceAsync(WateringDevice device);

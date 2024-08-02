@@ -16,42 +16,37 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<WateringDeviceResponseDto>> GetWateringDevicesAsync()
-        {
-            var wateringDevices = await _repository.GetWateringDevicesAsync();
-            return _mapper.Map<IEnumerable<WateringDeviceResponseDto>>(wateringDevices);
+        public async Task<PagedResponseDto<WateringDeviceResponseDto>> GetWateringDevicesAsync(int pageNumber, int pageSize)
+        {            
+            var wateringDevices = await _repository.GetWateringDevicesAsync(pageNumber, pageSize);
+            //return _mapper.Map<IEnumerable<WateringDeviceResponseDto>>(wateringDevices);            
+            return _mapper.Map<PagedResponseDto<WateringDeviceResponseDto>>(wateringDevices);
         }
 
         public async Task<WateringDeviceResponseDto> GetWateringDeviceAsync(int id)
-        {
-            var wateringDevice = await _repository.GetWateringDeviceByIdAsync(id);
-            return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
+        {            
+            var wateringDevice = await _repository.GetWateringDeviceByIdAsync(id) ?? throw new KeyNotFoundException($"Watering device with ID {id} not found.");
+            return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);            
         }
 
         public async Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDevice)
         {
-            var entity = _mapper.Map<WateringDevice>(wateringDevice);
-            await _repository.AddWateringDeviceAsync(entity);
-            return _mapper.Map<WateringDeviceResponseDto>(entity);
+                var entity = _mapper.Map<WateringDevice>(wateringDevice);
+                await _repository.AddWateringDeviceAsync(entity);
+                return _mapper.Map<WateringDeviceResponseDto>(entity);            
         }
 
         public async Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int id, WateringDeviceUpdateRequestDto wateringDevice)
         {
-            var existingEntity = await _repository.GetWateringDeviceByIdAsync(id);
-            if (existingEntity == null)
-            {
-                throw new Exception($"Watering device with id {id} not found.");
-            }
-
+            var existingEntity = await _repository.GetWateringDeviceByIdAsync(id) ?? throw new KeyNotFoundException($"Watering device with id {id} not found.");
             _mapper.Map(wateringDevice, existingEntity);
-
             await _repository.UpdateWateringDeviceAsync(existingEntity);
 
-            return _mapper.Map<WateringDeviceResponseDto>(existingEntity);
+            return _mapper.Map<WateringDeviceResponseDto>(existingEntity);            
         }
 
         public async Task<bool> DeleteWateringDeviceAsync(int id)
-        {
+        {            
             var existingEntity = await _repository.GetWateringDeviceByIdAsync(id);
             if (existingEntity == null)
             {
@@ -59,7 +54,7 @@ namespace Application.Services
             }
 
             await _repository.DeleteWateringDeviceAsync(id);
-            return true;
+            return true;           
         }
 
         public bool WateringDeviceExists(int id)

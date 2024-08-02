@@ -1,48 +1,38 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Application.Interfaces;
+using Application.DTO;
 
 namespace kangla_backend.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class HumidityMeasurementsController : Controller
+    public class HumidityMeasurementsController : ControllerBase
     {
         private readonly ILogger<HumidityMeasurementsController> _logger;
+        private readonly IHumidityMeasurementService _humidityMeasurementService;
 
-        public HumidityMeasurementsController(ILogger<HumidityMeasurementsController> logger)
+        public HumidityMeasurementsController(ILogger<HumidityMeasurementsController> logger, IHumidityMeasurementService humidityMeasurementService)
         {
             _logger = logger;
+            _humidityMeasurementService = humidityMeasurementService;
         }
 
-        // GET: api/<ValuesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("device/{deviceId}")]
+        public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
         {
-            return new string[] { "value11", "value12" };
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                throw new ArgumentException("Page number and page size must be greater than 0.");
+            }
+            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, pageNumber, pageSize);           
+            return Ok(humidityMeasurements);
         }
 
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ValuesController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+        public async Task<ActionResult<HumidityMeasurementResponseDto>> PostHumidityMeasurement(HumidityMeasurementCreateRequestDto humidityMeasurement)
+        {            
+            var createdMeasurement = await _humidityMeasurementService.CreateHumidityMeasurementAsync(humidityMeasurement);
+            return CreatedAtAction(nameof(GetHumidityMeasurementsForDevice), new { deviceId = createdMeasurement.WateringDeviceId }, createdMeasurement);
         }
     }
 }

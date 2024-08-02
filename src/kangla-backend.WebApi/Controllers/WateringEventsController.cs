@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Application.Interfaces;
+using Application.DTO;
 
 namespace kangla_backend.Controllers
 {
@@ -7,42 +9,30 @@ namespace kangla_backend.Controllers
     public class WateringEventsController : ControllerBase
     {
         private readonly ILogger<WateringEventsController> _logger;
+        private readonly IWateringEventService _wateringEventService;
 
-        public WateringEventsController(ILogger<WateringEventsController> logger)
+        public WateringEventsController(ILogger<WateringEventsController> logger, IWateringEventService wateringEventService)
         {
             _logger = logger;
+            _wateringEventService = wateringEventService;
         }
 
-        // GET: api/<ValuesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("device/{deviceId}")]
+        public async Task<ActionResult<IEnumerable<WateringEventResponseDto>>> GetWateringEventsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
         {
-            return new string[] { "value1", "value2" };
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                throw new ArgumentException("Page number and page size must be greater than 0.");
+            }
+            var wateringEvents = await _wateringEventService.GetWateringEventsForDeviceAsync(deviceId, pageNumber, pageSize);
+            return Ok(wateringEvents);           
         }
 
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ValuesController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+        public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
+        {            
+            var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
+            return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.WateringDeviceId }, createdEvent);          
         }
     }
 }
