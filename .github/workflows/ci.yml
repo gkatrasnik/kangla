@@ -42,4 +42,4 @@ jobs:
         REMOTE_HOST: ${{ secrets.OCI_INSTANCE_IP }}
         REMOTE_USER: ${{ secrets.OCI_USERNAME }}
       run: |
-        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST 'sudo systemctl reload kangla-backend'
+        ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST 'sudo systemctl restart kangla-backend'
