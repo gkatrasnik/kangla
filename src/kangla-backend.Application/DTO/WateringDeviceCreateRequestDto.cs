@@ -11,7 +11,7 @@ namespace Application.DTO
         public string? Description { get; set; }
         [StringLength(100, MinimumLength = 1, ErrorMessage = "Location must be between 1 and 100 characters long.")]
         public string? Location { get; set; }
-        [StringLength(500, MinimumLength = 1, ErrorMessage = "Notes must be between 1 and 500 characters long.")]
+        [StringLength(500, ErrorMessage = "Notes cannot be longer than 500 characters.")]
         public string? Notes { get; set; }
         [Required]
         [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]
