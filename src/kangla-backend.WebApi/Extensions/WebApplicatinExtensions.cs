@@ -2,7 +2,7 @@
 
 public static class WebApplicatinExtensions
 {
-    public static void UseCustomMiddleware(this IApplicationBuilder app, IHostEnvironment env)
+    public static void UseCustomMiddlewares(this IApplicationBuilder app, IHostEnvironment env)
     {
         app.UseExceptionHandler();
         app.UseSerilogRequestLogging();
@@ -15,5 +15,7 @@ public static class WebApplicatinExtensions
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
+
+        app.UseCors("AllowAllOrigins");
     }
 }

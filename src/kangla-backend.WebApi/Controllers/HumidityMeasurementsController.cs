@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace kangla_backend.Controllers
 {
