@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace kangla_backend.Controllers
 {
@@ -18,6 +18,7 @@ namespace kangla_backend.Controllers
             _wateringDeviceService = wateringDeviceService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WateringDeviceResponseDto>>> GetWateringDevices(int pageNumber = 1, int pageSize = 10)
         {
@@ -29,6 +30,7 @@ namespace kangla_backend.Controllers
             return Ok(wateringDevices);            
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<WateringDeviceResponseDto>> GetWateringDevice(int id)
         {            
@@ -36,6 +38,7 @@ namespace kangla_backend.Controllers
             return Ok(wateringDevice);            
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<WateringDeviceResponseDto>> PostWateringDevice(WateringDeviceCreateRequestDto wateringDevice)
         {            
@@ -43,6 +46,7 @@ namespace kangla_backend.Controllers
             return CreatedAtAction(nameof(GetWateringDevice), new { id = createdDevice.Id }, createdDevice);   
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutWateringDevice(int id, WateringDeviceUpdateRequestDto wateringDevice)
         {            
@@ -50,6 +54,7 @@ namespace kangla_backend.Controllers
             return Ok(updatedDevice);            
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteWateringDevice(int id)
         {            

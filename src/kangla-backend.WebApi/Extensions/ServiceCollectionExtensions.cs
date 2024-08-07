@@ -4,7 +4,6 @@ using Application;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 
 public static class ServiceCollectionExtensions
 {
@@ -17,13 +16,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
-        //All endpoints are protected by Authorization by default
-        //To allow endpoint for anonymous users, add [allowAnonymous] attribute
-        services.AddAuthorizationBuilder()
-            .SetFallbackPolicy(new AuthorizationPolicyBuilder()
-            .RequireAuthenticatedUser()
-            .Build());
-
+        services.AddAuthorization();      
         services.AddIdentityApiEndpoints<IdentityUser>()
             .AddEntityFrameworkStores<WateringContext>();
 
