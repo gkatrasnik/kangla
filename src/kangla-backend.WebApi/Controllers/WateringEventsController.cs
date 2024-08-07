@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Application.Interfaces;
 using Application.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace kangla_backend.Controllers
 {
@@ -17,6 +18,7 @@ namespace kangla_backend.Controllers
             _wateringEventService = wateringEventService;
         }
 
+        [Authorize]
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<WateringEventResponseDto>>> GetWateringEventsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
         {
@@ -28,6 +30,7 @@ namespace kangla_backend.Controllers
             return Ok(wateringEvents);           
         }
 
+        [Authorize] //this will be authorized by the api key
         [HttpPost]
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
         {            

@@ -18,6 +18,7 @@ namespace kangla_backend.Controllers
             _humidityMeasurementService = humidityMeasurementService;
         }
 
+        [Authorize]
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
         {
@@ -29,6 +30,7 @@ namespace kangla_backend.Controllers
             return Ok(humidityMeasurements);
         }
 
+        [Authorize] //this will be authorized by the api key
         [HttpPost]
         public async Task<ActionResult<HumidityMeasurementResponseDto>> PostHumidityMeasurement(HumidityMeasurementCreateRequestDto humidityMeasurement)
         {            
