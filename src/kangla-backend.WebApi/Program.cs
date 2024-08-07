@@ -13,6 +13,7 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     var env = builder.Environment;
+    var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
 
     builder.Services.AddCustomLogging(builder.Configuration)
         .AddCustomExceptionHandlers()
@@ -24,9 +25,10 @@ try
             options.AddPolicy("AllowAllOrigins",
                 builder =>
                 {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
+                    builder.WithOrigins(allowedOrigins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials();
                 });
         })
         .AddControllers()
