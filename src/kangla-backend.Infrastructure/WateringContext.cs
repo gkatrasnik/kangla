@@ -1,11 +1,13 @@
 ﻿using Domain.Interfaces;
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Infrastructure
 {
 
-    public class WateringContext : DbContext
+    public class WateringContext : IdentityDbContext<IdentityUser>
     {
         public WateringContext(DbContextOptions<WateringContext> options)
         : base(options)

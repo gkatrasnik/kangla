@@ -1,6 +1,7 @@
 using Serilog;
 using Infrastructure.Services;
 using Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -17,6 +18,7 @@ try
         .AddCustomExceptionHandlers()
         .AddCustomSwagger(env)
         .AddCustomServices(builder.Configuration)
+        .AddIdentityServices()
         .AddCors(options =>
         {
             options.AddPolicy("AllowAllOrigins",
@@ -35,8 +37,8 @@ try
 
     var app = builder.Build();
 
-    app.UseCustomMiddleware(env);
-    app.UseCors("AllowAllOrigins");
+    app.UseCustomMiddlewares(env);
+    app.MapIdentityApi<IdentityUser>();
 
     // Apply migrations and seed 
     using (var scope = app.Services.CreateScope())
