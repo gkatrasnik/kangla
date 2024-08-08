@@ -18,22 +18,22 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId, int pageNumber, int pageSize)
+        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId,string userId, int pageNumber, int pageSize)
         {
-            var deviceExists = _wateringDeviceRepository.WateringDeviceExists(deviceId);
+            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsForUserAsync(deviceId, userId);
             if (!deviceExists)
             {
-                throw new ArgumentException($"Device with ID {deviceId} does not exist.");
+                throw new ArgumentException($"Device with ID {deviceId} does not exist, or does not belong to current user.");
             }
 
-            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId, pageNumber, pageSize);           
+            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId, userId, pageNumber, pageSize);           
 
             return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);            
         }
 
         public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEvent)
         {
-            var deviceExists = _wateringDeviceRepository.WateringDeviceExists(wateringEvent.WateringDeviceId);
+            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(wateringEvent.WateringDeviceId);
             if (!deviceExists)
             {
                 throw new ArgumentException($"Device with ID {wateringEvent.WateringDeviceId} does not exist.");

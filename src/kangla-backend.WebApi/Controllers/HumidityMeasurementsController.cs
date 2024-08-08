@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace kangla_backend.Controllers
 {
@@ -22,11 +23,13 @@ namespace kangla_backend.Controllers
         [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<IEnumerable<HumidityMeasurementResponseDto>>> GetHumidityMeasurementsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+
             if (pageNumber < 1 || pageSize < 1)
             {
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
-            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, pageNumber, pageSize);           
+            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, userId, pageNumber, pageSize);           
             return Ok(humidityMeasurements);
         }
 
