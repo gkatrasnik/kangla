@@ -33,7 +33,6 @@ namespace Infrastructure
             await _userManager.CreateAsync(demoUser1, "Password1.");
             await _userManager.CreateAsync(demoUser2, "Password2.");
 
-            // Retrieve user ids
             var demoUser1Id = demoUser1.Id;
             var demoUser2Id = demoUser2.Id;
 
