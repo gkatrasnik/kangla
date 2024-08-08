@@ -53,5 +53,10 @@ namespace Domain.Model
         [Required]
         [StringLength(10, MinimumLength = 10, ErrorMessage = "DeviceToken must be 10 characters long.")]
         public string DeviceToken { get; set; } = default!;
+        /// <summary>
+        /// User id from Microsoft.AspNetCore.Identity that is owner of the device.
+        /// </summary>
+        [Required]
+        public string UserId { get; set; } = default!;
     }
 }

@@ -35,6 +35,11 @@ namespace Infrastructure
                 .HasMany(w => w.HumidityMeasurements)
                 .WithOne(h => h.WateringDevice)
                 .HasForeignKey(h => h.WateringDeviceId);
+
+            modelBuilder.Entity<WateringDevice>()
+                .HasIndex(d => d.DeviceToken)
+                .IsUnique();
+
         }
 
         public Task<int> SaveChangesAsync()

@@ -11,14 +11,14 @@ public class HumidityMeasurementRepository : IHumidityMeasurementRepository
         _context = context;
     }
 
-    public async Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, int pageNumber, int pageSize)
+    public async Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, string userId, int pageNumber, int pageSize)
     {
         var totalRecords = await _context.HumidityMeasurements.AsNoTracking()
-            .Where(h => h.WateringDeviceId == deviceId)
+            .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
             .CountAsync();
 
         var humidityMeasurements = await _context.HumidityMeasurements.AsNoTracking()
-                             .Where(h => h.WateringDeviceId == deviceId)
+                             .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
                              .OrderBy(x => x.DateTime)
                              .Skip((pageNumber - 1) * pageSize)
                              .Take(pageSize)

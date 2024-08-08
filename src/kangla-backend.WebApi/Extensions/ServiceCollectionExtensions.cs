@@ -31,6 +31,7 @@ public static class ServiceCollectionExtensions
         services.AddExceptionHandler<ArgumentExceptionHandler>();
         services.AddExceptionHandler<KeyNotFoundExceptionHandler>();
         services.AddExceptionHandler<TimeOutExceptionHandler>();
+        services.AddExceptionHandler<UnauthorizedAccessExceptionHandler>();
         services.AddExceptionHandler<DefaultExceptionHandler>();
         services.AddProblemDetails();
         return services;

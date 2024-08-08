@@ -2,10 +2,12 @@
 
 public interface IWateringDeviceRepository
 {
-    public Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(int pageNumber, int pageSize);
-    Task<WateringDevice?> GetWateringDeviceByIdAsync(int id);
+    Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(string userId, int pageNumber, int pageSize);
+    Task<WateringDevice?> GetWateringDeviceByIdAsync(int deviceId, string userId);
     Task AddWateringDeviceAsync(WateringDevice device);
-    Task UpdateWateringDeviceAsync(WateringDevice device);
+    Task UpdateWateringDeviceAsync(WateringDevice device, string userId);
     Task DeleteWateringDeviceAsync(int id);
-    bool WateringDeviceExists(int id);
+    Task<bool> WateringDeviceExistsAsync(int deviceId);
+    Task<bool> WateringDeviceExistsForUserAsync(int deviceId, string userId);
+    Task<bool> WateringDeviceTokenExistsAsync(string deviceToken);
 }

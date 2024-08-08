@@ -88,6 +88,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("WaterNow")
                         .HasColumnType("INTEGER");
 
