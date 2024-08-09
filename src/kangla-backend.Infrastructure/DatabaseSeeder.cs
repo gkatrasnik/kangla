@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Extensions.Logging;
-using Domain.Model;
 using Microsoft.AspNetCore.Identity;
+using Domain.Entities;
 
 namespace Infrastructure
 {

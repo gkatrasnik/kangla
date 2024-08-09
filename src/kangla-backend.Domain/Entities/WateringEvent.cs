@@ -1,10 +1,10 @@
 ﻿using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Model
+namespace Domain.Entities
 {
-    public class WateringEvent: IEntity
-    {    
+    public class WateringEvent : IEntity
+    {
         [Required]
         public DateTime Start { get; set; }
         [Required]

@@ -1,9 +1,9 @@
 using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Model
+namespace Domain.Entities
 {
-    public class WateringDevice: IEntity
+    public class WateringDevice : IEntity
     {
         [Required]
         [StringLength(30, MinimumLength = 1, ErrorMessage = "Name must be between 1 and 30 characters long.")]

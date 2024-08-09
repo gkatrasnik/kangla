@@ -1,7 +1,7 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
 using AutoMapper;
-using Domain.Model;
+using Domain.Entities;
 
 namespace Application.Services
 {
