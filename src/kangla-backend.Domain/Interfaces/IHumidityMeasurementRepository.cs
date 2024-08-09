@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Domain.Entities;
+using Domain.Model;
 
 public interface IHumidityMeasurementRepository
 {

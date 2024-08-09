@@ -1,9 +1,9 @@
 ﻿using Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Model
+namespace Domain.Entities
 {
-    public class HumidityMeasurement: IEntity
+    public class HumidityMeasurement : IEntity
     {
         [Required]
         public required DateTime DateTime { get; set; }
@@ -11,7 +11,7 @@ namespace Domain.Model
         /// Soil humidity reading from capacitive sensor
         /// </summary>
         [Required]
-        [Range(0,1000, ErrorMessage = "Value must be between 0 and 1000")]
+        [Range(0, 1000, ErrorMessage = "Value must be between 0 and 1000")]
         public int SoilHumidity { get; set; }
         [Required]
         public int WateringDeviceId { get; set; }

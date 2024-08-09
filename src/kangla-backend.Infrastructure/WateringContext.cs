@@ -1,8 +1,8 @@
 ﻿using Domain.Interfaces;
-using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Domain.Entities;
 
 namespace Infrastructure
 {

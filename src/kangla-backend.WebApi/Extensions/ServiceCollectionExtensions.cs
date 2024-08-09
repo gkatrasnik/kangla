@@ -19,7 +19,15 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services)
     {
         services.AddAuthorization();      
-        services.AddIdentityApiEndpoints<IdentityUser>()
+        services.AddIdentityApiEndpoints<IdentityUser>(options => {
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequiredUniqueChars = 0;
+            options.SignIn.RequireConfirmedEmail = true;
+        })
             .AddEntityFrameworkStores<WateringContext>();
 
         return services;
