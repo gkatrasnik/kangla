@@ -77,5 +77,33 @@ namespace kangla_backend.Controllers
 
             return NoContent();
         }
+
+        //todo remove
+        [HttpGet("test")]
+        public IActionResult TestEndpoint()
+        {
+            // Retrieve the values from environment variables
+            var defaultFromEmail = Environment.GetEnvironmentVariable("EMAIL_SETTINGS_DEFAULT_FROM_EMAIL");
+            var host = Environment.GetEnvironmentVariable("EMAIL_SETTINGS_HOST");
+            var portString = Environment.GetEnvironmentVariable("EMAIL_SETTINGS_PORT");
+            var username = Environment.GetEnvironmentVariable("EMAIL_SETTINGS_USERNAME");
+            var password = Environment.GetEnvironmentVariable("EMAIL_SETTINGS_PASSWORD");
+
+            // Convert the port string to an integer, handle potential format issues
+            if (!int.TryParse(portString, out var port))
+            {
+                port = 0; // Or handle the error appropriately
+            }
+
+            // Return the settings as a JSON object
+            return Ok(new
+            {
+                DefaultFromEmail = defaultFromEmail,
+                Host = host,
+                Port = port,
+                Username = username,
+                Password = password
+            });
+        }
     }
 }
