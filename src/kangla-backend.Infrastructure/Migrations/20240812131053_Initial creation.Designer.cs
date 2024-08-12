@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240808124538_Initial creation")]
+    [Migration("20240812131053_Initial creation")]
     partial class Initialcreation
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
 
-            modelBuilder.Entity("Domain.Model.HumidityMeasurement", b =>
+            modelBuilder.Entity("Domain.Entities.HumidityMeasurement", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,7 +48,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("HumidityMeasurements");
                 });
 
-            modelBuilder.Entity("Domain.Model.WateringDevice", b =>
+            modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -106,10 +106,13 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DeviceToken")
+                        .IsUnique();
+
                     b.ToTable("WateringDevices");
                 });
 
-            modelBuilder.Entity("Domain.Model.WateringEvent", b =>
+            modelBuilder.Entity("Domain.Entities.WateringEvent", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -329,9 +332,9 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Model.HumidityMeasurement", b =>
+            modelBuilder.Entity("Domain.Entities.HumidityMeasurement", b =>
                 {
-                    b.HasOne("Domain.Model.WateringDevice", "WateringDevice")
+                    b.HasOne("Domain.Entities.WateringDevice", "WateringDevice")
                         .WithMany("HumidityMeasurements")
                         .HasForeignKey("WateringDeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -340,9 +343,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("WateringDevice");
                 });
 
-            modelBuilder.Entity("Domain.Model.WateringEvent", b =>
+            modelBuilder.Entity("Domain.Entities.WateringEvent", b =>
                 {
-                    b.HasOne("Domain.Model.WateringDevice", "WateringDevice")
+                    b.HasOne("Domain.Entities.WateringDevice", "WateringDevice")
                         .WithMany("WateringEvents")
                         .HasForeignKey("WateringDeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -402,7 +405,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Model.WateringDevice", b =>
+            modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
                 {
                     b.Navigation("HumidityMeasurements");
 

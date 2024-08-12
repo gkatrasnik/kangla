@@ -271,6 +271,12 @@ namespace Infrastructure.Migrations
                 column: "WateringDeviceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_WateringDevices_DeviceToken",
+                table: "WateringDevices",
+                column: "DeviceToken",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WateringEvents_WateringDeviceId",
                 table: "WateringEvents",
                 column: "WateringDeviceId");

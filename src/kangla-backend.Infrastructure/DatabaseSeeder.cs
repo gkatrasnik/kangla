@@ -26,15 +26,27 @@ namespace Infrastructure
                 return;
             }
 
-            // Add demo users
-            var demoUser1 = new IdentityUser { UserName = "user1@example.com", Email = "user1@example.com" };
-            var demoUser2 = new IdentityUser { UserName = "user2@example.com", Email = "user2@example.com" };
+            var demoUser1 = new IdentityUser { UserName = "gkatrasnik@gmail.com", Email = "gkatrasnik@gmail.com" };
+            var demoUser2 = new IdentityUser { UserName = "gkatrasnik+1@gmail.com", Email = "gkatrasnik+1@gmail.com" };
 
-            await _userManager.CreateAsync(demoUser1, "Password1.");
-            await _userManager.CreateAsync(demoUser2, "Password2.");
+            var result1 = await _userManager.CreateAsync(demoUser1, "geslo123");
+            var result2 = await _userManager.CreateAsync(demoUser2, "geslo123");
 
             var demoUser1Id = demoUser1.Id;
             var demoUser2Id = demoUser2.Id;
+
+            if (result1.Succeeded && result2.Succeeded)
+            {
+                var confirmationToken1 = await _userManager.GenerateEmailConfirmationTokenAsync(demoUser1);
+                var confirmationToken2 = await _userManager.GenerateEmailConfirmationTokenAsync(demoUser2);
+
+                var confirmResult1 = await _userManager.ConfirmEmailAsync(demoUser1, confirmationToken1);
+                var confirmResult2 = await _userManager.ConfirmEmailAsync(demoUser2, confirmationToken2);                
+            }
+            else
+            {
+                _logger.LogError("Error creating demo users");
+            }
 
             var wateringDevices = new List<WateringDevice>
             {
