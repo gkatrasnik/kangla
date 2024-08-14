@@ -27,6 +27,7 @@ namespace Infrastructure
             services.AddFluentEmail(configuration);
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<IImageService, ImageService>();
             return services;
         }
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240812131053_Initial creation")]
+    [Migration("20240814122626_Initial creation")]
     partial class Initialcreation
     {
         /// <inheritdoc />
@@ -71,6 +71,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Location")
                         .HasMaxLength(100)

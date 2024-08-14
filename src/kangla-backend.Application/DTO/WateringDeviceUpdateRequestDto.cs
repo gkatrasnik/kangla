@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTO
 {
@@ -23,5 +24,6 @@ namespace Application.DTO
         [Required]
         [Range(1, 60, ErrorMessage = "Duration must be between 1 and 60 seconds.")]
         public int WateringDurationSetting { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

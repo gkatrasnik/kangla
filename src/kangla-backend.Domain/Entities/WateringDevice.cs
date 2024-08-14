@@ -58,5 +58,6 @@ namespace Domain.Entities
         /// </summary>
         [Required]
         public string UserId { get; set; } = default!;
+        public byte[]? ImageData { get; set; }
     }
 }

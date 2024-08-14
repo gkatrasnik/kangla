@@ -68,6 +68,7 @@ namespace Infrastructure.Migrations
                     WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),
                     DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ImageData = table.Column<byte[]>(type: "BLOB", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
