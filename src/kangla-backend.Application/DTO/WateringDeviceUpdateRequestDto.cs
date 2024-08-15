@@ -25,5 +25,6 @@ namespace Application.DTO
         [Range(1, 60, ErrorMessage = "Duration must be between 1 and 60 seconds.")]
         public int WateringDurationSetting { get; set; }
         public IFormFile? Image { get; set; }
+        public bool removeImage { get; set; }
     }
 }

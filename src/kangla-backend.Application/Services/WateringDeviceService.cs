@@ -90,7 +90,11 @@ namespace Application.Services
             var existingEntity = await _repository.GetWateringDeviceByIdAsync(deviceId, userId) ?? throw new KeyNotFoundException($"Watering device with id {deviceId} not found for current user.");
             _mapper.Map(wateringDevice, existingEntity);
 
-            if (wateringDevice.Image != null && wateringDevice.Image.Length > 0)
+            if (wateringDevice.removeImage == true)
+            {
+                existingEntity.ImageData = null;
+            }
+            else if (wateringDevice.Image != null && wateringDevice.Image.Length > 0)
             {
                 existingEntity.ImageData = await _imageService.ProcessImageAsync(wateringDevice.Image, 300, 200, 50);
             }
