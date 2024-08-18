@@ -24,10 +24,11 @@ namespace Infrastructure
             services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();
             services.AddScoped<IWateringEventRepository, WateringEventRepository>();
             services.AddScoped<IHumidityMeasurementRepository, HumidityMeasurementRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
             services.AddFluentEmail(configuration);
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IImageProcessingService, ImageProcessingService>();
             return services;
         }
 

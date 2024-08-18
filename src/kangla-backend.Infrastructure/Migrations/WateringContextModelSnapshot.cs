@@ -45,6 +45,27 @@ namespace Infrastructure.Migrations
                     b.ToTable("HumidityMeasurements");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Data")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
                 {
                     b.Property<int>("Id")
@@ -69,8 +90,8 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ImageData")
-                        .HasColumnType("BLOB");
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Location")
                         .HasMaxLength(100)

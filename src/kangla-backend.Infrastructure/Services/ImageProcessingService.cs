@@ -3,7 +3,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
 
-public class ImageService : IImageService
+public class ImageProcessingService : IImageProcessingService
 {
     /// <summary>
     /// Resizes and compresses an image using ImageSharp and returns it as a byte array

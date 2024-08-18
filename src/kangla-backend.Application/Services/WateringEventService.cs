@@ -31,15 +31,15 @@ namespace Application.Services
             return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);            
         }
 
-        public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEvent)
+        public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEventDto)
         {
-            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(wateringEvent.WateringDeviceId);
+            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(wateringEventDto.WateringDeviceId);
             if (!deviceExists)
             {
-                throw new ArgumentException($"Device with ID {wateringEvent.WateringDeviceId} does not exist.");
+                throw new ArgumentException($"Device with ID {wateringEventDto.WateringDeviceId} does not exist.");
             }
 
-            var entity = _mapper.Map<WateringEvent>(wateringEvent);
+            var entity = _mapper.Map<WateringEvent>(wateringEventDto);
             await _wateringEventRepository.AddWateringEventAsync(entity);
 
             return _mapper.Map<WateringEventResponseDto>(entity);

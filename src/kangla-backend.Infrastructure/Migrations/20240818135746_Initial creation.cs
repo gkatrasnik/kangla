@@ -51,6 +51,21 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Data = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "WateringDevices",
                 columns: table => new
                 {
@@ -68,7 +83,7 @@ namespace Infrastructure.Migrations
                     WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),
                     DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    ImageData = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -303,6 +318,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "HumidityMeasurements");
+
+            migrationBuilder.DropTable(
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "WateringEvents");
