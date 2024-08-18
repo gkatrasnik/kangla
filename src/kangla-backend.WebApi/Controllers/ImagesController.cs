@@ -9,12 +9,10 @@ namespace kangla_backend.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly ILogger<WateringDevicesController> _logger;
         private readonly IImageService _imageService;
 
-        public ImagesController(ILogger<WateringDevicesController> logger, IImageService imageService)
+        public ImagesController(IImageService imageService)
         {
-            _logger = logger;
             _imageService = imageService;
         }
 
