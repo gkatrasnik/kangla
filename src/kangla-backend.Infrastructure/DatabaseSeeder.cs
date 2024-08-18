@@ -64,6 +64,7 @@ namespace Infrastructure
                     WateringDurationSetting = 5,
                     DeviceToken = "abcdefghi0",
                     UserId = demoUser1Id,
+                    ImageId = null,
                     HumidityMeasurements = new List<HumidityMeasurement>
                     {
                         new HumidityMeasurement { Id = 1, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 657, WateringDeviceId = 1 },
@@ -92,6 +93,7 @@ namespace Infrastructure
                     WateringDurationSetting = 4,
                     DeviceToken = "abcdefghi1",
                     UserId = demoUser1Id,
+                    ImageId = null,
                     HumidityMeasurements = new List<HumidityMeasurement>
                     {
                         new HumidityMeasurement { Id = 6, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 362, WateringDeviceId = 2 },
@@ -120,6 +122,7 @@ namespace Infrastructure
                     WateringDurationSetting = 3,
                     DeviceToken = "abcdefghi2",
                     UserId = demoUser2Id,
+                    ImageId = null,
                     HumidityMeasurements = new List<HumidityMeasurement>
                     {
                         new HumidityMeasurement { Id = 11, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 731, WateringDeviceId = 3 },
@@ -148,6 +151,7 @@ namespace Infrastructure
                     WateringDurationSetting = 3,
                     DeviceToken = "abcdefghi4",
                     UserId = demoUser2Id,
+                    ImageId = null,
                     HumidityMeasurements = new List<HumidityMeasurement>
                     {
                         new HumidityMeasurement { Id = 16, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 734, WateringDeviceId = 4 },

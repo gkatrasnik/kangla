@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Application.DTO
+﻿namespace Application.DTO
 {
     public class WateringDeviceResponseDto
     {
@@ -17,6 +15,6 @@ namespace Application.DTO
         public int WateringDurationSetting { get; set; } = 3;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string? ImageBase64 { get; set; }
+        public int? ImageId { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace Infrastructure
         public DbSet<WateringDevice> WateringDevices { get; set; }
         public DbSet<WateringEvent> WateringEvents { get; set; }
         public DbSet<HumidityMeasurement> HumidityMeasurements { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +25,7 @@ namespace Infrastructure
             ConfigureRelationships(modelBuilder);                       
         }
 
+        // todo change relations
         private void ConfigureRelationships(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<WateringDevice>()

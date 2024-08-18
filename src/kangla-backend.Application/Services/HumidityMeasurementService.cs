@@ -31,15 +31,15 @@ namespace Application.Services
             return _mapper.Map<PagedResponseDto<HumidityMeasurementResponseDto>>(humidityMeasurements);            
         }
 
-        public async Task<HumidityMeasurementResponseDto> CreateHumidityMeasurementAsync(HumidityMeasurementCreateRequestDto humidityMeasurement)
+        public async Task<HumidityMeasurementResponseDto> CreateHumidityMeasurementAsync(HumidityMeasurementCreateRequestDto humidityMeasurementDto)
         {           
-            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(humidityMeasurement.WateringDeviceId);
+            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(humidityMeasurementDto.WateringDeviceId);
             if (!deviceExists)
             {
-                throw new ArgumentException($"Device with ID {humidityMeasurement.WateringDeviceId} does not exist.");
+                throw new ArgumentException($"Device with ID {humidityMeasurementDto.WateringDeviceId} does not exist.");
             }
 
-            var entity = _mapper.Map<HumidityMeasurement>(humidityMeasurement);
+            var entity = _mapper.Map<HumidityMeasurement>(humidityMeasurementDto);
             await _humidityMeasurementRepository.AddHumidityMeasurementAsync(entity);
 
             return _mapper.Map<HumidityMeasurementResponseDto>(entity);            
