@@ -10,12 +10,10 @@ namespace kangla_backend.Controllers
     [ApiController]
     public class WateringEventsController : ControllerBase
     {
-        private readonly ILogger<WateringEventsController> _logger;
         private readonly IWateringEventService _wateringEventService;
 
-        public WateringEventsController(ILogger<WateringEventsController> logger, IWateringEventService wateringEventService)
+        public WateringEventsController(IWateringEventService wateringEventService)
         {
-            _logger = logger;
             _wateringEventService = wateringEventService;
         }
 

@@ -10,12 +10,10 @@ namespace kangla_backend.Controllers
     [ApiController]
     public class HumidityMeasurementsController : ControllerBase
     {
-        private readonly ILogger<HumidityMeasurementsController> _logger;
         private readonly IHumidityMeasurementService _humidityMeasurementService;
 
-        public HumidityMeasurementsController(ILogger<HumidityMeasurementsController> logger, IHumidityMeasurementService humidityMeasurementService)
+        public HumidityMeasurementsController(IHumidityMeasurementService humidityMeasurementService)
         {
-            _logger = logger;
             _humidityMeasurementService = humidityMeasurementService;
         }
 

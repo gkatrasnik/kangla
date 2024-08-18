@@ -10,12 +10,10 @@ namespace kangla_backend.Controllers
     [ApiController]
     public class WateringDevicesController : ControllerBase
     {
-        private readonly ILogger<WateringDevicesController> _logger;
         private readonly IWateringDeviceService _wateringDeviceService;
 
-        public WateringDevicesController(ILogger<WateringDevicesController> logger, IWateringDeviceService wateringDeviceService)
+        public WateringDevicesController(IWateringDeviceService wateringDeviceService)
         {
-            _logger = logger;
             _wateringDeviceService = wateringDeviceService;
         }
 
