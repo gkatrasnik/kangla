@@ -33,6 +33,12 @@ namespace Application.Services
             return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
         }
 
+        public async Task<WateringDeviceResponseDto> GetWateringDeviceByPlantIdAsync(int plantId, string userId)
+        {
+            var wateringDevice = await _repository.GetWateringDeviceByPlantIdAsync(plantId, userId) ?? throw new KeyNotFoundException($"Watering device for plant with ID {plantId} not found for current user.");
+            return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
+        }
+
         public async Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDeviceDto, string userId)
         {
             if (await _repository.WateringDeviceTokenExistsAsync(wateringDeviceDto.DeviceToken))
