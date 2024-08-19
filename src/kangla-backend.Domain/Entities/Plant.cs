@@ -22,14 +22,13 @@ namespace Domain.Entities
         [Range(1, 365, ErrorMessage = "Watering interval must be between 1 and 365 days.")]
         public int WateringInterval { get; set; } = 0;
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
-        public string WateringInstructions { get; set; } = default!;
+        public string? WateringInstructions { get; set; } = default!;
         public List<WateringEvent>? WateringEvents { get; set; }       
         /// <summary>
         /// User id from Microsoft.AspNetCore.Identity that is owner of the plant.
         /// </summary>
-        public int WateringDeviceId { get; set; }
+        public int? WateringDeviceId { get; set; }
         public WateringDevice? WateringDevice { get; set; }        
         public int? ImageId { get; set; } = default!;
-        public Image? Image { get; set; } = default!;
     }
 }

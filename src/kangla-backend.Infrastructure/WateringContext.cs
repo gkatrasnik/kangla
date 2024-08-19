@@ -38,9 +38,6 @@ namespace Infrastructure
                 .WithOne(w => w.Plant)
                 .HasForeignKey<WateringDevice>(w => w.PlantId);
 
-            modelBuilder.Entity<Plant>()
-                .HasOne(w => w.Image);
-
             modelBuilder.Entity<WateringDevice>()
                 .HasMany(w => w.HumidityMeasurements)
                 .WithOne(h => h.WateringDevice)

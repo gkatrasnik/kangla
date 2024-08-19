@@ -66,6 +66,30 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Plants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    ScientificName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Location = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    WateringInterval = table.Column<int>(type: "INTEGER", nullable: false),
+                    WateringInstructions = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plants", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -169,35 +193,6 @@ namespace Infrastructure.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Plants",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
-                    ScientificName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    Location = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    WateringInterval = table.Column<int>(type: "INTEGER", nullable: false),
-                    WateringInstructions = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
-                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Plants", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Plants_Images_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Images",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -316,11 +311,6 @@ namespace Infrastructure.Migrations
                 column: "WateringDeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Plants_ImageId",
-                table: "Plants",
-                column: "ImageId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WateringDevices_DeviceToken",
                 table: "WateringDevices",
                 column: "DeviceToken",
@@ -360,6 +350,9 @@ namespace Infrastructure.Migrations
                 name: "HumidityMeasurements");
 
             migrationBuilder.DropTable(
+                name: "Images");
+
+            migrationBuilder.DropTable(
                 name: "WateringEvents");
 
             migrationBuilder.DropTable(
@@ -373,9 +366,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Plants");
-
-            migrationBuilder.DropTable(
-                name: "Images");
         }
     }
 }
