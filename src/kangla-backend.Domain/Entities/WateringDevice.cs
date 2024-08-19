@@ -6,24 +6,11 @@ namespace Domain.Entities
     public class WateringDevice : IEntity
     {
         [Required]
-        [StringLength(30, MinimumLength = 1, ErrorMessage = "Name must be between 1 and 30 characters long.")]
-        public string Name { get; set; } = default!;
-        [StringLength(100, MinimumLength = 1, ErrorMessage = "Description must be between 1 and 100 characters long.")]
-        public string? Description { get; set; }
-        [StringLength(100, MinimumLength = 1, ErrorMessage = "Location must be between 1 and 100 characters long.")]
-        public string? Location { get; set; }
-        [StringLength(500, MinimumLength = 1, ErrorMessage = "Notes must be between 1 and 100 characters long.")]
-        public string? Notes { get; set; }
+        public string UserId { get; set; } = default!;
         /// <summary>
         /// Whether the device is active - can be turned off
         /// </summary>
         [Required]
-        public bool Active { get; set; }
-        /// <summary>
-        /// Whether the device has been deleted - is not displayed in UI
-        /// </summary>
-        [Required]
-        public bool Deleted { get; set; }
         public bool WaterNow { get; set; }
         /// <summary>
         /// Minimum humidity to start watering 
@@ -36,15 +23,14 @@ namespace Domain.Entities
         /// Interval in hours between watering events
         /// </summary>
         [Required]
-        [Range(1, 1000, ErrorMessage = "Interval must be between 1 and 1000 hours.")]
-        public int WateringIntervalSetting { get; set; } = 420;
+        [Range(1, 365, ErrorMessage = "Interval must be between 1 and 1000 days.")]
+        public int WateringIntervalSetting { get; set; } = 7;
         /// <summary>
         /// Duration in seconds for watering duration
         /// </summary>
         [Required]
         [Range(1, 60, ErrorMessage = "Duration must be between 1 and 1000 seconds.")]
         public int WateringDurationSetting { get; set; } = 3;
-        public List<WateringEvent>? WateringEvents { get; set; }
         public List<HumidityMeasurement>? HumidityMeasurements { get; set; }
         /// <summary>
         /// Device token by which user adds watering device to his account
@@ -57,7 +43,7 @@ namespace Domain.Entities
         /// User id from Microsoft.AspNetCore.Identity that is owner of the device.
         /// </summary>
         [Required]
-        public string UserId { get; set; } = default!;
-        public int? ImageId { get; set; } = default!;
+        public int PlantId { get; set; } = default!;
+        public Plant Plant { get; set; } = default!;
     }
 }

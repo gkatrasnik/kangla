@@ -17,6 +17,7 @@ namespace Infrastructure
         public DbSet<WateringDevice> WateringDevices { get; set; }
         public DbSet<WateringEvent> WateringEvents { get; set; }
         public DbSet<HumidityMeasurement> HumidityMeasurements { get; set; }
+        public DbSet<Plant> Plants { get; set; }
         public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,13 +26,20 @@ namespace Infrastructure
             ConfigureRelationships(modelBuilder);                       
         }
 
-        // todo change relations
         private void ConfigureRelationships(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WateringDevice>()
+            modelBuilder.Entity<Plant>()
                 .HasMany(w => w.WateringEvents)
-                .WithOne(w => w.WateringDevice)
-                .HasForeignKey(w => w.WateringDeviceId);
+                .WithOne(w => w.Plant)
+                .HasForeignKey(w => w.PlantId);
+
+            modelBuilder.Entity<Plant>()
+                .HasOne(w => w.WateringDevice)
+                .WithOne(w => w.Plant)
+                .HasForeignKey<WateringDevice>(w => w.PlantId);
+
+            modelBuilder.Entity<Plant>()
+                .HasOne(w => w.Image);
 
             modelBuilder.Entity<WateringDevice>()
                 .HasMany(w => w.HumidityMeasurements)
@@ -41,7 +49,6 @@ namespace Infrastructure
             modelBuilder.Entity<WateringDevice>()
                 .HasIndex(d => d.DeviceToken)
                 .IsUnique();
-
         }
 
         public Task<int> SaveChangesAsync()

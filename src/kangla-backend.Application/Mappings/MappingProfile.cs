@@ -13,6 +13,10 @@ namespace Application.Mappings
             CreateMap<WateringDeviceCreateRequestDto, WateringDevice>();
             CreateMap<WateringDeviceUpdateRequestDto, WateringDevice>();
 
+            CreateMap<Plant, PlantResponseDto>();
+            CreateMap<PlantCreateRequestDto, Plant>();
+            CreateMap<PlantUpdateRequestDto, Plant>();
+
             CreateMap<WateringEvent, WateringEventResponseDto>();
             CreateMap<WateringEventCreateRequestDto, WateringEvent>();
 

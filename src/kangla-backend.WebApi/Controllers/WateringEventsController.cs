@@ -27,7 +27,7 @@ namespace kangla_backend.Controllers
             {
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
-            var wateringEvents = await _wateringEventService.GetWateringEventsForDeviceAsync(deviceId, userId, pageNumber, pageSize);
+            var wateringEvents = await _wateringEventService.GetWateringEventsForPlantAsync(deviceId, userId, pageNumber, pageSize);
             return Ok(wateringEvents);           
         }
 
@@ -36,7 +36,7 @@ namespace kangla_backend.Controllers
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
         {            
             var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
-            return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.WateringDeviceId }, createdEvent);          
+            return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.PlantId }, createdEvent);          
         }
     }
 }

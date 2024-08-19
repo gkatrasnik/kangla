@@ -14,6 +14,7 @@ namespace Application
             services.AddScoped<IWateringDeviceService, WateringDeviceService>();
             services.AddScoped<IWateringEventService, WateringEventService>();
             services.AddScoped<IHumidityMeasurementService, HumidityMeasurementService>();
+            services.AddScoped<IPlantsService, PlantsService>();
             services.AddScoped<IImageService, ImageService>();
             return services;
         }

@@ -8,35 +8,35 @@ namespace Application.Services
     public class WateringEventService : IWateringEventService
     {
         private readonly IWateringEventRepository _wateringEventRepository;
-        private readonly IWateringDeviceRepository _wateringDeviceRepository;
+        private readonly IPlantsRepository _plantsRepository;
         private readonly IMapper _mapper;
 
-        public WateringEventService(IWateringEventRepository wateringEventRepository, IWateringDeviceRepository wateringDeviceRepository, IMapper mapper)
+        public WateringEventService(IWateringEventRepository wateringEventRepository, IPlantsRepository plantsRepository, IMapper mapper)
         {
             _wateringEventRepository = wateringEventRepository;
-            _wateringDeviceRepository = wateringDeviceRepository;
+            _plantsRepository= plantsRepository;
             _mapper = mapper;
         }
 
-        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForDeviceAsync(int deviceId,string userId, int pageNumber, int pageSize)
+        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForPlantAsync(int plantId,string userId, int pageNumber, int pageSize)
         {
-            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsForUserAsync(deviceId, userId);
-            if (!deviceExists)
+            var plantExists = await _plantsRepository.PlantExistsForUserAsync(plantId, userId);
+            if (!plantExists)
             {
-                throw new ArgumentException($"Device with ID {deviceId} does not exist, or does not belong to current user.");
+                throw new ArgumentException($"Plant with ID {plantId} does not exist, or does not belong to current user.");
             }
 
-            var wateringEvents = await _wateringEventRepository.GetWateringEventsByDeviceIdAsync(deviceId, userId, pageNumber, pageSize);           
+            var wateringEvents = await _wateringEventRepository.GetWateringEventsByPlantIdAsync(plantId, userId, pageNumber, pageSize);           
 
             return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);            
         }
 
         public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEventDto)
         {
-            var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(wateringEventDto.WateringDeviceId);
-            if (!deviceExists)
+            var plantExists = await _plantsRepository.PlantExistsAsync(wateringEventDto.PlantId);
+            if (!plantExists)
             {
-                throw new ArgumentException($"Device with ID {wateringEventDto.WateringDeviceId} does not exist.");
+                throw new ArgumentException($"Plant with ID {wateringEventDto.PlantId} does not exist.");
             }
 
             var entity = _mapper.Map<WateringEvent>(wateringEventDto);

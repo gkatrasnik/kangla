@@ -33,73 +33,25 @@ namespace Application.Services
             return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
         }
 
-        public async Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDevice, string userId)
+        public async Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDeviceDto, string userId)
         {
-            if (await _repository.WateringDeviceTokenExistsAsync(wateringDevice.DeviceToken))
+            if (await _repository.WateringDeviceTokenExistsAsync(wateringDeviceDto.DeviceToken))
             {
-                throw new ArgumentException($"A device with device token {wateringDevice.DeviceToken} already exists.");
+                throw new ArgumentException($"A device with device token {wateringDeviceDto.DeviceToken} already exists.");
             }
 
-            var entity = _mapper.Map<WateringDevice>(wateringDevice);
+            var entity = _mapper.Map<WateringDevice>(wateringDeviceDto);
             entity.UserId = userId;
-
-
-            // Todo this should be processed in transaction with adding watering device
-            if (wateringDevice.Image != null && wateringDevice.Image.Length > 0)
-            {
-               var resizedImage = await _imageProcessingService.ProcessImageAsync(wateringDevice.Image, 512, 512, 80);
-                var newImage = new Image
-                {
-                    Data = resizedImage
-                };
-                newImage = await _imageService.CreateImageAsync(newImage);
-                if (newImage?.Id != null) 
-                { 
-                    entity.ImageId = newImage.Id;
-                }
-            }
 
             await _repository.AddWateringDeviceAsync(entity);
 
             return _mapper.Map<WateringDeviceResponseDto>(entity);
         }
 
-        public async Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int deviceId, string userId, WateringDeviceUpdateRequestDto wateringDevice)
+        public async Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int deviceId, string userId, WateringDeviceUpdateRequestDto wateringDeviceDto)
         {
             var existingEntity = await _repository.GetWateringDeviceByIdAsync(deviceId, userId) ?? throw new KeyNotFoundException($"Watering device with id {deviceId} not found for current user.");
-            _mapper.Map(wateringDevice, existingEntity);
-
-            //delete image if 
-            if (wateringDevice.removeImage == true)
-            {
-                if (existingEntity.ImageId.HasValue) 
-                {
-                    await _imageService.DeleteImageAsync(existingEntity.ImageId.Value);
-                }
-                existingEntity.ImageId = null;
-            }
-            else if (wateringDevice.Image != null && wateringDevice.Image.Length > 0)
-            {
-                // if image was sent with request, create new image 
-                var resizedImage = await _imageProcessingService.ProcessImageAsync(wateringDevice.Image, 512, 512, 80);
-                var newImage = new Image
-                {
-                    Data = resizedImage
-                };
-                newImage = await _imageService.CreateImageAsync(newImage);
-
-                //delete old image 
-                if (existingEntity.ImageId.HasValue)
-                {
-                    await _imageService.DeleteImageAsync(existingEntity.ImageId.Value);
-                }
-
-                // assing new images id to wateringDevice
-                if (newImage?.Id != null)
-                {
-                    existingEntity.ImageId = newImage.Id;
-                }
-            }
+            _mapper.Map(wateringDeviceDto, existingEntity);
 
             await _repository.UpdateWateringDeviceAsync(existingEntity, userId);
 
