@@ -9,6 +9,6 @@ namespace Application.DTO
         [Required]
         public DateTime End { get; set; }
         [Required]
-        public int WateringDeviceId { get; set; }
+        public int PlantId { get; set; }
     }
 }

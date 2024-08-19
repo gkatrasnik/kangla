@@ -20,7 +20,7 @@ namespace Infrastructure
 
         public async Task SeedAsync()
         {
-            if (_context.WateringDevices.Any())
+            if (_context.Plants.Any())
             {
                 _logger.LogInformation("Database already seeded");
                 return;
@@ -32,144 +32,145 @@ namespace Infrastructure
             var result1 = await _userManager.CreateAsync(demoUser1, "geslo123");
             var result2 = await _userManager.CreateAsync(demoUser2, "geslo123");
 
-            var demoUser1Id = demoUser1.Id;
-            var demoUser2Id = demoUser2.Id;
-
             if (result1.Succeeded && result2.Succeeded)
             {
                 var confirmationToken1 = await _userManager.GenerateEmailConfirmationTokenAsync(demoUser1);
                 var confirmationToken2 = await _userManager.GenerateEmailConfirmationTokenAsync(demoUser2);
 
                 var confirmResult1 = await _userManager.ConfirmEmailAsync(demoUser1, confirmationToken1);
-                var confirmResult2 = await _userManager.ConfirmEmailAsync(demoUser2, confirmationToken2);                
+                var confirmResult2 = await _userManager.ConfirmEmailAsync(demoUser2, confirmationToken2);
             }
             else
             {
                 _logger.LogError("Error creating demo users");
             }
 
-            var wateringDevices = new List<WateringDevice>
+            var demoUser1Id = demoUser1.Id;
+            var demoUser2Id = demoUser2.Id;
+
+            var plants = new List<Plant>
             {
-                new WateringDevice
+                new Plant
                 {
-                    Id = 1,
-                    Name = "Device 1",
-                    Description = "First watering device",
+                    Name = "Rose",
+                    ScientificName = "Rosa",
+                    Description = "A red rose plant",
                     Location = "Garden",
-                    Notes = "Needs regular maintenance",
-                    Active = true,
-                    Deleted = false,
-                    WaterNow = false,
-                    WateringIntervalSetting = 30,
-                    WateringDurationSetting = 5,
-                    DeviceToken = "abcdefghi0",
+                    Notes = "Needs regular pruning",
+                    WateringInterval = 7,
+                    WateringInstructions = "Water weekly during the growing season.",
                     UserId = demoUser1Id,
-                    ImageId = null,
-                    HumidityMeasurements = new List<HumidityMeasurement>
+                    WateringDevice = new WateringDevice
                     {
-                        new HumidityMeasurement { Id = 1, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 657, WateringDeviceId = 1 },
-                        new HumidityMeasurement { Id = 2, DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 349, WateringDeviceId = 1 },
-                        new HumidityMeasurement { Id = 3, DateTime = DateTime.Parse("2024-07-06T08:00:00Z"), SoilHumidity = 472, WateringDeviceId = 1 },
-                        new HumidityMeasurement { Id = 4, DateTime = DateTime.Parse("2024-07-06T09:00:00Z"), SoilHumidity = 512, WateringDeviceId = 1 },
-                        new HumidityMeasurement { Id = 5, DateTime = DateTime.Parse("2024-07-06T10:00:00Z"), SoilHumidity = 276, WateringDeviceId = 1 }
+                        WaterNow = false,
+                        MinimumSoilHumidity = 400,
+                        WateringIntervalSetting = 7,
+                        WateringDurationSetting = 5,
+                        DeviceToken = "device12345",
+                        UserId = demoUser1Id,
+                        HumidityMeasurements = new List<HumidityMeasurement>
+                        {
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 657 },
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 349 }
+                        }
                     },
                     WateringEvents = new List<WateringEvent>
                     {
-                        new WateringEvent { Id = 1, Start = DateTime.Parse("2024-07-06T08:00:00Z"), End = DateTime.Parse("2024-07-06T08:05:00Z"), WateringDeviceId = 1 },
-                        new WateringEvent { Id = 2, Start = DateTime.Parse("2024-07-07T08:00:00Z"), End = DateTime.Parse("2024-07-07T08:05:00Z"), WateringDeviceId = 1 }
+                        new WateringEvent { Start = DateTime.Parse("2024-07-06T08:00:00Z"), End = DateTime.Parse("2024-07-06T08:05:00Z") }
                     }
                 },
-                new WateringDevice
+                new Plant
                 {
-                    Id = 2,
-                    Name = "Device 2",
-                    Description = "Second watering device",
+                    Name = "Tomato",
+                    ScientificName = "Solanum lycopersicum",
+                    Description = "A tomato plant in the greenhouse",
                     Location = "Greenhouse",
-                    Notes = "Check humidity levels",
-                    Active = true,
-                    Deleted = false,
-                    WaterNow = true,
-                    WateringIntervalSetting = 20,
-                    WateringDurationSetting = 4,
-                    DeviceToken = "abcdefghi1",
+                    Notes = "Check soil moisture frequently",
+                    WateringInterval = 3,
+                    WateringInstructions = "Water every 3 days during fruiting.",
                     UserId = demoUser1Id,
-                    ImageId = null,
-                    HumidityMeasurements = new List<HumidityMeasurement>
+                    WateringDevice = new WateringDevice
                     {
-                        new HumidityMeasurement { Id = 6, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 362, WateringDeviceId = 2 },
-                        new HumidityMeasurement { Id = 7, DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 693, WateringDeviceId = 2 },
-                        new HumidityMeasurement { Id = 8, DateTime = DateTime.Parse("2024-07-06T08:00:00Z"), SoilHumidity = 448, WateringDeviceId = 2 },
-                        new HumidityMeasurement { Id = 9, DateTime = DateTime.Parse("2024-07-06T09:00:00Z"), SoilHumidity = 275, WateringDeviceId = 2 },
-                        new HumidityMeasurement { Id = 10, DateTime = DateTime.Parse("2024-07-06T10:00:00Z"), SoilHumidity = 508, WateringDeviceId = 2 }
+                        WaterNow = true,
+                        MinimumSoilHumidity = 450,
+                        WateringIntervalSetting = 3,
+                        WateringDurationSetting = 4,
+                        DeviceToken = "device1236",
+                        UserId = demoUser1Id,
+                        HumidityMeasurements = new List<HumidityMeasurement>
+                        {
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 362 },
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 693 }
+                        }
                     },
                     WateringEvents = new List<WateringEvent>
                     {
-                        new WateringEvent { Id = 3, Start = DateTime.Parse("2024-07-06T09:00:00Z"), End = DateTime.Parse("2024-07-06T09:04:00Z"), WateringDeviceId = 2 },
-                        new WateringEvent { Id = 4, Start = DateTime.Parse("2024-07-07T09:00:00Z"), End = DateTime.Parse("2024-07-07T09:04:00Z"), WateringDeviceId = 2 }
+                        new WateringEvent { Start = DateTime.Parse("2024-07-06T09:00:00Z"), End = DateTime.Parse("2024-07-06T09:04:00Z") }
                     }
                 },
-                new WateringDevice
+                new Plant
                 {
-                    Id = 3,
-                    Name = "Device 3",
-                    Description = "Third watering device",
+                    Name = "Lavender",
+                    ScientificName = "Lavandula",
+                    Description = "Lavender in the front yard",
                     Location = "Front Yard",
-                    Notes = "Monitor water usage",
-                    Active = true,
-                    Deleted = false,
-                    WaterNow = false,
-                    WateringIntervalSetting = 25,
-                    WateringDurationSetting = 3,
-                    DeviceToken = "abcdefghi2",
+                    Notes = "Attracts bees",
+                    WateringInterval = 14,
+                    WateringInstructions = "Water biweekly, less in winter.",
                     UserId = demoUser2Id,
-                    ImageId = null,
-                    HumidityMeasurements = new List<HumidityMeasurement>
+                    WateringDevice = new WateringDevice
                     {
-                        new HumidityMeasurement { Id = 11, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 731, WateringDeviceId = 3 },
-                        new HumidityMeasurement { Id = 12, DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 371, WateringDeviceId = 3 },
-                        new HumidityMeasurement { Id = 13, DateTime = DateTime.Parse("2024-07-06T08:00:00Z"), SoilHumidity = 689, WateringDeviceId = 3 },
-                        new HumidityMeasurement { Id = 14, DateTime = DateTime.Parse("2024-07-06T09:00:00Z"), SoilHumidity = 381, WateringDeviceId = 3 },
-                        new HumidityMeasurement { Id = 15, DateTime = DateTime.Parse("2024-07-06T10:00:00Z"), SoilHumidity = 585, WateringDeviceId = 3 }
+                        WaterNow = false,
+                        MinimumSoilHumidity = 350,
+                        WateringIntervalSetting = 14,
+                        WateringDurationSetting = 3,
+                        DeviceToken = "device1237",
+                        UserId = demoUser2Id,
+                        HumidityMeasurements = new List<HumidityMeasurement>
+                        {
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 731 },
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 371 }
+                        }
                     },
                     WateringEvents = new List<WateringEvent>
                     {
-                        new WateringEvent { Id = 5, Start = DateTime.Parse("2024-07-06T10:00:00Z"), End = DateTime.Parse("2024-07-06T10:03:00Z"), WateringDeviceId = 3 },
-                        new WateringEvent { Id = 6, Start = DateTime.Parse("2024-07-07T10:00:00Z"), End = DateTime.Parse("2024-07-07T10:03:00Z"), WateringDeviceId = 3 }
+                        new WateringEvent { Start = DateTime.Parse("2024-07-06T10:00:00Z"), End = DateTime.Parse("2024-07-06T10:03:00Z") }
                     }
                 },
-                new WateringDevice
+                new Plant
                 {
-                    Id = 4,
-                    Name = "Device 4",
-                    Description = "Fourth watering device",
+                    Name = "Mint",
+                    ScientificName = "Mentha",
+                    Description = "Mint plant in the front yard",
                     Location = "Front Yard 2",
-                    Notes = "Monitor water usage 2",
-                    Active = true,
-                    Deleted = false,
-                    WaterNow = false,
-                    WateringIntervalSetting = 25,
-                    WateringDurationSetting = 3,
-                    DeviceToken = "abcdefghi4",
+                    Notes = "Spreads quickly",
+                    WateringInterval = 5,
+                    WateringInstructions = "Water every 5 days.",
                     UserId = demoUser2Id,
-                    ImageId = null,
-                    HumidityMeasurements = new List<HumidityMeasurement>
+                    WateringDevice = new WateringDevice
                     {
-                        new HumidityMeasurement { Id = 16, DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 734, WateringDeviceId = 4 },
-                        new HumidityMeasurement { Id = 17, DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 374, WateringDeviceId = 4 },
-                        new HumidityMeasurement { Id = 18, DateTime = DateTime.Parse("2024-07-06T08:00:00Z"), SoilHumidity = 684, WateringDeviceId = 4 },
-                        new HumidityMeasurement { Id = 19, DateTime = DateTime.Parse("2024-07-06T09:00:00Z"), SoilHumidity = 384, WateringDeviceId = 4 },
-                        new HumidityMeasurement { Id = 20, DateTime = DateTime.Parse("2024-07-06T10:00:00Z"), SoilHumidity = 584, WateringDeviceId = 4 }
+                        WaterNow = false,
+                        MinimumSoilHumidity = 375,
+                        WateringIntervalSetting = 5,
+                        WateringDurationSetting = 3,
+                        DeviceToken = "device1238",
+                        UserId = demoUser2Id,
+                        HumidityMeasurements = new List<HumidityMeasurement>
+                        {
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 734 },
+                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 374 }
+                        }
                     },
                     WateringEvents = new List<WateringEvent>
                     {
-                        new WateringEvent { Id = 7, Start = DateTime.Parse("2024-07-06T10:00:00Z"), End = DateTime.Parse("2024-07-06T10:03:00Z"), WateringDeviceId = 4 },
-                        new WateringEvent { Id = 8, Start = DateTime.Parse("2024-07-07T10:00:00Z"), End = DateTime.Parse("2024-07-07T10:03:00Z"), WateringDeviceId = 4 }
+                        new WateringEvent { Start = DateTime.Parse("2024-07-07T10:00:00Z"), End = DateTime.Parse("2024-07-07T10:03:00Z") }
                     }
                 }
             };
 
-            _context.WateringDevices.AddRange(wateringDevices);
+            _context.Plants.AddRange(plants);
             await _context.SaveChangesAsync();
         }
+
     }
 }

@@ -66,33 +66,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WateringDevices",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    Location = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    Active = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Deleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    WaterNow = table.Column<bool>(type: "INTEGER", nullable: false),
-                    MinimumSoilHumidity = table.Column<int>(type: "INTEGER", nullable: false),
-                    WateringIntervalSetting = table.Column<int>(type: "INTEGER", nullable: false),
-                    WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),
-                    DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WateringDevices", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -199,6 +172,85 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Plants",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    ScientificName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Location = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    WateringInterval = table.Column<int>(type: "INTEGER", nullable: false),
+                    WateringInstructions = table.Column<string>(type: "TEXT", maxLength: 500, nullable: false),
+                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Plants_Images_ImageId",
+                        column: x => x.ImageId,
+                        principalTable: "Images",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WateringDevices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    WaterNow = table.Column<bool>(type: "INTEGER", nullable: false),
+                    MinimumSoilHumidity = table.Column<int>(type: "INTEGER", nullable: false),
+                    WateringIntervalSetting = table.Column<int>(type: "INTEGER", nullable: false),
+                    WateringDurationSetting = table.Column<int>(type: "INTEGER", nullable: false),
+                    DeviceToken = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    PlantId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WateringDevices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WateringDevices_Plants_PlantId",
+                        column: x => x.PlantId,
+                        principalTable: "Plants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WateringEvents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Start = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    End = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    PlantId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WateringEvents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WateringEvents_Plants_PlantId",
+                        column: x => x.PlantId,
+                        principalTable: "Plants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HumidityMeasurements",
                 columns: table => new
                 {
@@ -215,29 +267,6 @@ namespace Infrastructure.Migrations
                     table.PrimaryKey("PK_HumidityMeasurements", x => x.Id);
                     table.ForeignKey(
                         name: "FK_HumidityMeasurements_WateringDevices_WateringDeviceId",
-                        column: x => x.WateringDeviceId,
-                        principalTable: "WateringDevices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WateringEvents",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Start = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    End = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WateringEvents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_WateringEvents_WateringDevices_WateringDeviceId",
                         column: x => x.WateringDeviceId,
                         principalTable: "WateringDevices",
                         principalColumn: "Id",
@@ -287,15 +316,26 @@ namespace Infrastructure.Migrations
                 column: "WateringDeviceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Plants_ImageId",
+                table: "Plants",
+                column: "ImageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WateringDevices_DeviceToken",
                 table: "WateringDevices",
                 column: "DeviceToken",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_WateringEvents_WateringDeviceId",
+                name: "IX_WateringDevices_PlantId",
+                table: "WateringDevices",
+                column: "PlantId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WateringEvents_PlantId",
                 table: "WateringEvents",
-                column: "WateringDeviceId");
+                column: "PlantId");
         }
 
         /// <inheritdoc />
@@ -320,9 +360,6 @@ namespace Infrastructure.Migrations
                 name: "HumidityMeasurements");
 
             migrationBuilder.DropTable(
-                name: "Images");
-
-            migrationBuilder.DropTable(
                 name: "WateringEvents");
 
             migrationBuilder.DropTable(
@@ -333,6 +370,12 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "WateringDevices");
+
+            migrationBuilder.DropTable(
+                name: "Plants");
+
+            migrationBuilder.DropTable(
+                name: "Images");
         }
     }
 }

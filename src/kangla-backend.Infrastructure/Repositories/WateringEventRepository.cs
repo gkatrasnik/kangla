@@ -12,14 +12,14 @@ public class WateringEventRepository : IWateringEventRepository
         _context = context;
     }
 
-    public async Task<PagedResponse<WateringEvent>> GetWateringEventsByDeviceIdAsync(int deviceId, string userId, int pageNumber, int pageSize)
+    public async Task<PagedResponse<WateringEvent>> GetWateringEventsByPlantIdAsync(int plantId, string userId, int pageNumber, int pageSize)
     {
         var totalRecords = await _context.WateringEvents.AsNoTracking()
-            .Where(e => e.WateringDeviceId == deviceId && e.WateringDevice.UserId == userId)
+            .Where(e => e.PlantId == plantId && e.Plant.UserId == userId)
             .CountAsync();
 
         var wateringEvents = await _context.WateringEvents.AsNoTracking()
-                             .Where(e => e.WateringDeviceId == deviceId && e.WateringDevice.UserId == userId)
+                             .Where(e => e.PlantId == plantId && e.Plant.UserId == userId)
                              .OrderBy(x => x.Start)
                              .Skip((pageNumber - 1) * pageSize)
                              .Take(pageSize)

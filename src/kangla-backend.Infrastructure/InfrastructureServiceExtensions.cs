@@ -24,6 +24,7 @@ namespace Infrastructure
             services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();
             services.AddScoped<IWateringEventRepository, WateringEventRepository>();
             services.AddScoped<IHumidityMeasurementRepository, HumidityMeasurementRepository>();
+            services.AddScoped<IPlantsRepository, PlantsRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
             services.AddFluentEmail(configuration);
             services.AddTransient<IEmailService, EmailService>();

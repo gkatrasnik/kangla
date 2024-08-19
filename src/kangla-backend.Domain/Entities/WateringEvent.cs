@@ -10,7 +10,7 @@ namespace Domain.Entities
         [Required]
         public DateTime End { get; set; }
         [Required]
-        public int WateringDeviceId { get; set; }
-        public WateringDevice WateringDevice { get; set; } = default!;
+        public int PlantId { get; set; }
+        public Plant Plant { get; set; } = default!;
     }
 }

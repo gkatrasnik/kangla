@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240818135746_Initial creation")]
+    [Migration("20240819125718_Initial creation")]
     partial class Initialcreation
     {
         /// <inheritdoc />
@@ -69,28 +69,17 @@ namespace Infrastructure.Migrations
                     b.ToTable("Images");
                 });
 
-            modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
+            modelBuilder.Entity("Domain.Entities.Plant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Description")
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DeviceToken")
-                        .IsRequired()
-                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ImageId")
@@ -100,9 +89,6 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("MinimumSoilHumidity")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -111,6 +97,55 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("ScientificName")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WateringDeviceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("WateringInstructions")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WateringInterval")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Plants");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceToken")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MinimumSoilHumidity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlantId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
@@ -133,6 +168,9 @@ namespace Infrastructure.Migrations
                     b.HasIndex("DeviceToken")
                         .IsUnique();
 
+                    b.HasIndex("PlantId")
+                        .IsUnique();
+
                     b.ToTable("WateringDevices");
                 });
 
@@ -148,18 +186,18 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("End")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PlantId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Start")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WateringDeviceId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("WateringDeviceId");
+                    b.HasIndex("PlantId");
 
                     b.ToTable("WateringEvents");
                 });
@@ -367,15 +405,35 @@ namespace Infrastructure.Migrations
                     b.Navigation("WateringDevice");
                 });
 
-            modelBuilder.Entity("Domain.Entities.WateringEvent", b =>
+            modelBuilder.Entity("Domain.Entities.Plant", b =>
                 {
-                    b.HasOne("Domain.Entities.WateringDevice", "WateringDevice")
-                        .WithMany("WateringEvents")
-                        .HasForeignKey("WateringDeviceId")
+                    b.HasOne("Domain.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
+                {
+                    b.HasOne("Domain.Entities.Plant", "Plant")
+                        .WithOne("WateringDevice")
+                        .HasForeignKey("Domain.Entities.WateringDevice", "PlantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("WateringDevice");
+                    b.Navigation("Plant");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WateringEvent", b =>
+                {
+                    b.HasOne("Domain.Entities.Plant", "Plant")
+                        .WithMany("WateringEvents")
+                        .HasForeignKey("PlantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plant");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -429,11 +487,16 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.Plant", b =>
+                {
+                    b.Navigation("WateringDevice");
+
+                    b.Navigation("WateringEvents");
+                });
+
             modelBuilder.Entity("Domain.Entities.WateringDevice", b =>
                 {
                     b.Navigation("HumidityMeasurements");
-
-                    b.Navigation("WateringEvents");
                 });
 #pragma warning restore 612, 618
         }
