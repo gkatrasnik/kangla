@@ -32,13 +32,23 @@ namespace kangla_backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("{deviceId}")]
+        [HttpGet("device/{deviceId}")]
         public async Task<ActionResult<WateringDeviceResponseDto>> GetWateringDevice(int deviceId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var wateringDevice = await _wateringDeviceService.GetWateringDeviceAsync(deviceId, userId);
             return Ok(wateringDevice);            
+        }
+
+        [Authorize]
+        [HttpGet("plant/{plantId}")]
+        public async Task<ActionResult<WateringDeviceResponseDto>> GetWateringDeviceByPlantId(int plantId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+
+            var wateringDevice = await _wateringDeviceService.GetWateringDeviceByPlantIdAsync(plantId, userId);
+            return Ok(wateringDevice);
         }
 
         [Authorize]

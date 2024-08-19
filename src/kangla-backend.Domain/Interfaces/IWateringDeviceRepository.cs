@@ -5,6 +5,7 @@ public interface IWateringDeviceRepository
 {
     Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(string userId, int pageNumber, int pageSize);
     Task<WateringDevice?> GetWateringDeviceByIdAsync(int deviceId, string userId);
+    Task<WateringDevice?> GetWateringDeviceByPlantIdAsync(int plantId, string userId);
     Task AddWateringDeviceAsync(WateringDevice device);
     Task UpdateWateringDeviceAsync(WateringDevice device, string userId);
     Task DeleteWateringDeviceAsync(int id);

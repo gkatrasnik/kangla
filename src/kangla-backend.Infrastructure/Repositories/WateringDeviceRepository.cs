@@ -32,6 +32,13 @@ public class WateringDeviceRepository : IWateringDeviceRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<WateringDevice?> GetWateringDeviceByPlantIdAsync(int plantId, string userId)
+    {
+        return await _context.WateringDevices.AsNoTracking()
+            .Where(d => d.PlantId == plantId && d.UserId == userId)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task AddWateringDeviceAsync(WateringDevice device)
     {
         _context.WateringDevices.Add(device);
