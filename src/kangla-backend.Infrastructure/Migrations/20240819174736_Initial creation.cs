@@ -79,7 +79,6 @@ namespace Infrastructure.Migrations
                     Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     WateringInterval = table.Column<int>(type: "INTEGER", nullable: false),
                     WateringInstructions = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    WateringDeviceId = table.Column<int>(type: "INTEGER", nullable: true),
                     ImageId = table.Column<int>(type: "INTEGER", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
