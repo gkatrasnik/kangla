@@ -106,9 +106,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("WateringDeviceId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("WateringInstructions")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");

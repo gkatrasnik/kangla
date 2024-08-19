@@ -10,7 +10,6 @@
         public string? Notes { get; set; }
         public int WateringInterval { get; set; }
         public string? WateringInstructions { get; set; }
-        public int WateringDeviceId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? ImageId { get; set; }

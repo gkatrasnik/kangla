@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240819165638_Initial creation")]
+    [Migration("20240819174736_Initial creation")]
     partial class Initialcreation
     {
         /// <inheritdoc />
@@ -108,9 +108,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("WateringDeviceId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("WateringInstructions")
                         .HasMaxLength(500)

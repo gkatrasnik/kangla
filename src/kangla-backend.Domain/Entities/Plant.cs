@@ -27,7 +27,6 @@ namespace Domain.Entities
         /// <summary>
         /// User id from Microsoft.AspNetCore.Identity that is owner of the plant.
         /// </summary>
-        public int? WateringDeviceId { get; set; }
         public WateringDevice? WateringDevice { get; set; }        
         public int? ImageId { get; set; } = default!;
     }

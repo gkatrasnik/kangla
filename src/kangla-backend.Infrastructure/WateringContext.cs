@@ -33,9 +33,9 @@ namespace Infrastructure
                 .WithOne(w => w.Plant)
                 .HasForeignKey(w => w.PlantId);
 
-            modelBuilder.Entity<Plant>()
-                .HasOne(w => w.WateringDevice)
-                .WithOne(w => w.Plant)
+            modelBuilder.Entity<WateringDevice>()
+                .HasOne(w => w.Plant)
+                .WithOne(p => p.WateringDevice) 
                 .HasForeignKey<WateringDevice>(w => w.PlantId);
 
             modelBuilder.Entity<WateringDevice>()
