@@ -37,7 +37,6 @@ namespace Application.Services
             var plantEntity = _mapper.Map<Plant>(plantDto);
             plantEntity.UserId = userId;
 
-
             // Todo this should be processed in transaction with adding plant to db
             if (plantDto.Image != null && plantDto.Image.Length > 0)
             {

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(WateringContext))]
-    [Migration("20240819125718_Initial creation")]
+    [Migration("20240819165638_Initial creation")]
     partial class Initialcreation
     {
         /// <inheritdoc />
@@ -109,11 +109,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WateringDeviceId")
+                    b.Property<int?>("WateringDeviceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("WateringInstructions")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
@@ -121,8 +120,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ImageId");
 
                     b.ToTable("Plants");
                 });
@@ -403,15 +400,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("WateringDevice");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Plant", b =>
-                {
-                    b.HasOne("Domain.Entities.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId");
-
-                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("Domain.Entities.WateringDevice", b =>

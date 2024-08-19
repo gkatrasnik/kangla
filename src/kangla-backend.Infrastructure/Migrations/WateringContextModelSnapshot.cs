@@ -106,11 +106,10 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WateringDeviceId")
+                    b.Property<int?>("WateringDeviceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("WateringInstructions")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
@@ -118,8 +117,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ImageId");
 
                     b.ToTable("Plants");
                 });
@@ -400,15 +397,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("WateringDevice");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Plant", b =>
-                {
-                    b.HasOne("Domain.Entities.Image", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId");
-
-                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("Domain.Entities.WateringDevice", b =>

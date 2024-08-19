@@ -48,7 +48,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var createdPlant = await _plantsService.CreatePlantAsync(plantDto, userId);
-            return CreatedAtAction(nameof(GetPlant), new { deviceId = createdPlant.Id }, createdPlant);   
+            return CreatedAtAction(nameof(GetPlant), new { plantId = createdPlant.Id }, createdPlant);   
         }
 
         [Authorize]

@@ -20,8 +20,8 @@ namespace Application.DTO
         [Range(1, 365, ErrorMessage = "Watering interval must be between 1 and 365 days.")]
         public int WateringInterval { get; set; } = 0;
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
-        public string WateringInstructions { get; set; } = default!;        
-        public int WateringDeviceId { get; set; }
+        public string? WateringInstructions { get; set; } = default!;        
+        public int? WateringDeviceId { get; set; }
         public IFormFile? Image { get; set; }
     }
 }
