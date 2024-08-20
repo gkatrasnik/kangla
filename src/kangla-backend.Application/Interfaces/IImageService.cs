@@ -7,6 +7,6 @@ namespace Application.Interfaces
     {
         Task<ImageResponseDto> GetImageAsync(int ImageId);
         Task<Image> CreateImageAsync(Image image);
-        Task DeleteImageAsync(int imageId);
+        Task<bool> DeleteImageAsync(int imageId);
     }
 }

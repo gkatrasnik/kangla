@@ -39,9 +39,16 @@ namespace Application.Services
             return newImage;
         }
 
-        public async Task DeleteImageAsync(int imageId)
+        public async Task<bool> DeleteImageAsync(int imageId)
         {
-             await _imageRepository.DeleteImageAsync(imageId);
+            var imageExists = await _imageRepository.ImageExistsAsync(imageId);
+            if (!imageExists)
+            {
+                return false;
+            }
+
+            await _imageRepository.DeleteImageAsync(imageId);
+            return true;
         }
     }
 }

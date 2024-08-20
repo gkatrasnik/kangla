@@ -3,6 +3,8 @@ using Application.Interfaces;
 using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Application.Services;
+using Domain.Entities;
 
 namespace kangla_backend.Controllers
 {
@@ -74,6 +76,14 @@ namespace kangla_backend.Controllers
             }
 
             return NoContent();
+        }
+
+        [Authorize]
+        [HttpPost("recognize")]
+        public async Task<ActionResult<PlantRecognizeResponseDto>> RecognizePlant(PlantRecognizeRequestDto plantRecognizeDto)
+        {
+            var recognizedPlant = await _plantsService.RecognizePlantAsync(plantRecognizeDto);
+            return Ok(recognizedPlant);
         }
     }
 }

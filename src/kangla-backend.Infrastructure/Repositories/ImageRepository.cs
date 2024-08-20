@@ -30,6 +30,7 @@ public class ImageRepository : IImageRepository
         if (image != null)
         {
             _context.Images.Remove(image);
+            await _context.SaveChangesAsync();
         }
     }
 
