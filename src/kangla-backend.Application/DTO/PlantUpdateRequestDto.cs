@@ -22,6 +22,6 @@ namespace Application.DTO
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
         public string? WateringInstructions { get; set; } = default!;
         public IFormFile? Image { get; set; }
-        public bool removeImage { get; set; }
+        public bool RemoveImage { get; set; }
     }
 }
