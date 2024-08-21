@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Mail;
 using System.Net;
+using Domain.Interfaces;
 
 namespace Infrastructure
 {
@@ -30,8 +31,10 @@ namespace Infrastructure
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IImageProcessingService, ImageProcessingService>();
+            services.AddHttpClient<IPlantRecognitionService, PlantRecognitionService>();
             return services;
         }
+
 
         public static void AddFluentEmail(this IServiceCollection services,
             IConfiguration configuration)
