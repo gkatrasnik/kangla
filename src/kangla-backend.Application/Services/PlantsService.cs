@@ -122,7 +122,7 @@ namespace Application.Services
             var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(resizedImage);
 
             Image? newImageEntity = null;
-            if (recognizedPlant.Error == null || recognizedPlant.Error == "")
+            if (string.IsNullOrEmpty(recognizedPlant.Error))
             {
                 newImageEntity = await _imageService.CreateImageAsync(new Image { Data = resizedImage });
 
@@ -137,12 +137,13 @@ namespace Application.Services
             // Return the recognized plant details or a default response for now
             return new PlantRecognizeResponseDto
             {
-                Name = recognizedPlant.CommonName,
-                ScientificName = recognizedPlant.LatinName,
+                CommonName = recognizedPlant.CommonName,
+                LatinName = recognizedPlant.LatinName,
+                Description = recognizedPlant.Description,
                 WateringInstructions = recognizedPlant.WateringInstructions,
                 WateringInterval = recognizedPlant.WateringInterval,
                 ImageId = newImageEntity?.Id,
-                Notes = recognizedPlant.AdditionalTips,
+                AdditionalTips = recognizedPlant.AdditionalTips,
                 Error = recognizedPlant.Error
             };
         }

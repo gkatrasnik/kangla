@@ -25,7 +25,7 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task<PlantRecognitionResult> RecognizePlantAsync(byte[] imageData)
+        public async Task<PlantRecognitionResponse> RecognizePlantAsync(byte[] imageData)
         {
             ChatClient client = new("gpt-4o-mini", _apiKey);
 
@@ -34,28 +34,33 @@ namespace Infrastructure.Services
 
             //TODO use structured response
             List<ChatMessage> messages = [
-                new SystemChatMessage("You are a plant recognition model. You are provided with a base64-encoded image of a plant. Recognize the plant and return a structured response with the following properties: CommonName, LatinName, WateringInstructions, WateringInterval (in days), AdditionalTips, Error. Each property should be a maximum of 5 sentences long. If recognition is successful, the error property should be empty. If there is no plant on the image or it cannot be recognized, return the structured response with empty values, but fill the error property explaining what went wrong."
+                new SystemChatMessage("You are a plant recognition model. You are provided with an image of a plant. Recognize the plant and return a structured response in JSON format with the following properties: CommonName, LatinName, Description, WateringInstructions, WateringInterval (recommended watering interval for this plant in days), AdditionalTips, Error. Each property should be a maximum of 5 sentences long. If you recognize the plant, the error property should be empty. If there is no plant on the image or you can not recognize the plant, the error property should contain an error message and all other properties should have null values."
 ),
                 new UserChatMessage(
                 ChatMessageContentPart.CreateImageMessageContentPart(imageBytes, "image/png") // image detail here - low?
                 )
             ];
 
-            ChatCompletion chatCompletion = client.CompleteChat(messages);
+            ChatCompletionOptions options = new() {
+                ResponseFormat = ChatResponseFormat.JsonObject
+
+            };
+
+            ChatCompletion chatCompletion = await client.CompleteChatAsync(messages, options);
 
 
             var jsonResponse = chatCompletion.Content[0].Text;
-            PlantRecognitionResult plantRecognitionResult;
+            PlantRecognitionResponse plantRecognitionResult;
 
             try
             {
-                plantRecognitionResult = JsonSerializer.Deserialize<PlantRecognitionResult>(jsonResponse) ?? new PlantRecognitionResult();
+                plantRecognitionResult = JsonSerializer.Deserialize<PlantRecognitionResponse>(jsonResponse) ?? new PlantRecognitionResponse();
             }
             catch (JsonException ex)
             {
                 // Handle JSON parsing errors
                 Console.WriteLine($"Error parsing JSON response: {ex.Message}");
-                plantRecognitionResult = new PlantRecognitionResult
+                plantRecognitionResult = new PlantRecognitionResponse
                 {
                     Error = "Failed to parse the response."
                 };
