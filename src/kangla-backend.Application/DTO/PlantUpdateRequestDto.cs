@@ -6,11 +6,11 @@ namespace Application.DTO
     public class PlantUpdateRequestDto
     {
         [Required]
-        [StringLength(30, ErrorMessage = "Name must be less than 30 characters long.")]
+        [StringLength(50, ErrorMessage = "Name must be less than 50 characters long.")]
         public string Name { get; set; } = default!;
-        [StringLength(50, ErrorMessage = "Scientific name must be less than 50 characters long.")]
+        [StringLength(100, ErrorMessage = "Scientific name must be less than 100 characters long.")]
         public string? ScientificName { get; set; } = default!;
-        [StringLength(100, ErrorMessage = "Description must be less than 100 characters long.")]
+        [StringLength(500, ErrorMessage = "Description must be less than 500 characters long.")]
         public string? Description { get; set; }
         [StringLength(100, ErrorMessage = "Location must be less than 100 characters long.")]
         public string? Location { get; set; }

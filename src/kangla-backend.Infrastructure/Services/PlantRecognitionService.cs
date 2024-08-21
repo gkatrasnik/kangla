@@ -34,7 +34,7 @@ namespace Infrastructure.Services
 
             //TODO use structured response
             List<ChatMessage> messages = [
-                new SystemChatMessage("You are a plant recognition model. You are provided with an image of a plant. Recognize the plant and return a structured response in JSON format with the following properties: CommonName, LatinName, Description, WateringInstructions, WateringInterval (recommended watering interval for this plant in days), AdditionalTips, Error. Each property should be a maximum of 5 sentences long. If you recognize the plant, the error property should be empty. If there is no plant on the image or you can not recognize the plant, the error property should contain an error message and all other properties should have null values."
+                new SystemChatMessage("You are a plant recognition model. You are provided with an image of a plant. Recognize the plant and return a structured response in JSON format with the following properties: CommonName, LatinName, Description, WateringInstructions, WateringInterval (recommended watering interval for this plant in days), AdditionalTips, Error. Each property should be a maximum of 300 characters long. If you recognize the plant, the error property should be empty. If there is no plant on the image or you can not recognize the plant, the error property should contain an error message and all other properties should have null values."
 ),
                 new UserChatMessage(
                 ChatMessageContentPart.CreateImageMessageContentPart(imageBytes, "image/png") // image detail here - low?
