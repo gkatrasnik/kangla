@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces;
 
 namespace Application.Services
 {
@@ -11,13 +12,20 @@ namespace Application.Services
         private readonly IMapper _mapper;
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IImageService _imageService;
+        private readonly IPlantRecognitionService _plantRecognitionService;
 
-        public PlantsService(IPlantsRepository plantsRepository, IMapper mapper, IImageProcessingService imageProcessingService, IImageService imageService)
+        public PlantsService(
+            IPlantsRepository plantsRepository, 
+            IMapper mapper, 
+            IImageProcessingService imageProcessingService, 
+            IImageService imageService,
+            IPlantRecognitionService plantRecognitionService)
         {
             _plantsRepository = plantsRepository;
             _mapper = mapper;
             _imageProcessingService = imageProcessingService;
             _imageService = imageService;
+            _plantRecognitionService = plantRecognitionService;
         }
 
         public async Task<PagedResponseDto<PlantResponseDto>> GetPlantsAsync(string userId, int pageNumber, int pageSize)
@@ -37,8 +45,6 @@ namespace Application.Services
             var plantEntity = _mapper.Map<Plant>(plantDto);
             plantEntity.UserId = userId;            
 
-
-            //todo do we have imageId here?
             await _plantsRepository.AddPlantAsync(plantEntity);
 
             return _mapper.Map<PlantResponseDto>(plantEntity);
@@ -48,6 +54,8 @@ namespace Application.Services
         {
             var existingEntity = await _plantsRepository.GetPlantByIdAsync(plantId, userId) ?? throw new KeyNotFoundException($"Plant with id {plantId} not found for current user.");
             _mapper.Map(plantDto, existingEntity);
+
+            //TODO manipulating image and updating plan should be done in one transaction
 
             //delete image if 
             if (plantDto.RemoveImage == true)
@@ -74,7 +82,7 @@ namespace Application.Services
                     await _imageService.DeleteImageAsync(existingEntity.ImageId.Value);
                 }
 
-                // assing new images id to wateringDevice
+                // adding new images id to wateringDevice
                 if (newImage?.Id != null)
                 {
                     existingEntity.ImageId = newImage.Id;
@@ -109,27 +117,33 @@ namespace Application.Services
             }
 
             var resizedImage = await _imageProcessingService.ProcessImageAsync(plantRecognizeDto.Image, 512, 512, 80);
-            var newImageEntity = await _imageService.CreateImageAsync(new Image { Data = resizedImage });
+            
 
-            if (newImageEntity == null)
+            var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(resizedImage);
+
+            Image? newImageEntity = null;
+            if (recognizedPlant.Error == null || recognizedPlant.Error == "")
             {
-                throw new InvalidOperationException("Could not save image");
+                newImageEntity = await _imageService.CreateImageAsync(new Image { Data = resizedImage });
+
+                if (newImageEntity == null)
+                {
+                    throw new InvalidOperationException("Could not save image");
+
+                }
             }
 
-
-            // Convert image to Base64 (needed for AI recognition)
-            var imageBase64 = Convert.ToBase64String(newImageEntity.Data);
-
-            // TODO: Implement AI plant recognition logic using imageBase64
-            // Example: var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(imageBase64);
-
+            //Todo make better PlantRecognizeResponseDto properties
             // Return the recognized plant details or a default response for now
             return new PlantRecognizeResponseDto
             {
-                Name = "Tomato Test",
-                ScientificName = "Lycopersicon esculentum",
-                WateringInterval = 7,
-                ImageId = newImageEntity.Id,
+                Name = recognizedPlant.CommonName,
+                ScientificName = recognizedPlant.LatinName,
+                WateringInstructions = recognizedPlant.WateringInstructions,
+                WateringInterval = recognizedPlant.WateringInterval,
+                ImageId = newImageEntity?.Id,
+                Notes = recognizedPlant.AdditionalTips,
+                Error = recognizedPlant.Error
             };
         }
     }
