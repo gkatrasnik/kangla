@@ -4,6 +4,6 @@ namespace Domain.Interfaces
 {
     public interface IPlantRecognitionService
     {
-        Task<PlantRecognitionResult> RecognizePlantAsync(byte[] imageData);
+        Task<PlantRecognitionResponse> RecognizePlantAsync(byte[] imageData);
     }
 }
