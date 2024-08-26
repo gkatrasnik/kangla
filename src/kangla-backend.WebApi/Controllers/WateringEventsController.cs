@@ -18,8 +18,8 @@ namespace kangla_backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("device/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<WateringEventResponseDto>>> GetWateringEventsForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
+        [HttpGet("plant/{plantId}")]
+        public async Task<ActionResult<PagedResponseDto<WateringEventResponseDto>>> GetWateringEventsForPlant(int plantId, int pageNumber = 1, int pageSize = 10)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
@@ -27,16 +27,16 @@ namespace kangla_backend.Controllers
             {
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
-            var wateringEvents = await _wateringEventService.GetWateringEventsForPlantAsync(deviceId, userId, pageNumber, pageSize);
+            var wateringEvents = await _wateringEventService.GetWateringEventsForPlantAsync(plantId, userId, pageNumber, pageSize);
             return Ok(wateringEvents);           
         }
 
-        [Authorize] //this will be authorized by the api key
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
         {            
             var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
-            return CreatedAtAction(nameof(GetWateringEventsForDevice), new { deviceId = createdEvent.PlantId }, createdEvent);          
+            return CreatedAtAction(nameof(GetWateringEventsForPlant), new { plantId = createdEvent.PlantId }, createdEvent);          
         }
     }
 }

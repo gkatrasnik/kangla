@@ -20,7 +20,7 @@ public class WateringEventRepository : IWateringEventRepository
 
         var wateringEvents = await _context.WateringEvents.AsNoTracking()
                              .Where(e => e.PlantId == plantId && e.Plant.UserId == userId)
-                             .OrderBy(x => x.Start)
+                             .OrderBy(x => x.CreatedAt)
                              .Skip((pageNumber - 1) * pageSize)
                              .Take(pageSize)
                              .ToListAsync();

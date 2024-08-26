@@ -21,7 +21,7 @@ namespace kangla_backend.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PlantResponseDto>>> GetPlants(int pageNumber = 1, int pageSize = 10)
+        public async Task<ActionResult<PagedResponseDto<PlantResponseDto>>> GetPlants(int pageNumber = 1, int pageSize = 10)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 

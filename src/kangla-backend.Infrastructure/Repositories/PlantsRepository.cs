@@ -14,7 +14,10 @@ public class PlantsRepository : IPlantsRepository
 
     public async Task<PagedResponse<Plant>> GetPlantsAsync(string userId, int pageNumber, int pageSize)
     {
-        var totalRecords = await _context.Plants.AsNoTracking().CountAsync();
+        var totalRecords = await _context.Plants.AsNoTracking()
+            .Where(w => w.UserId == userId)
+            .CountAsync();
+
         var plants = await _context.Plants.AsNoTracking()
             .Where(w => w.UserId == userId)
             .OrderBy(x => x.CreatedAt)
