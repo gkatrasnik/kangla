@@ -116,15 +116,15 @@ namespace Application.Services
                 throw new ArgumentException("No image provided");
             }
 
-            var resizedImage = await _imageProcessingService.ProcessImageAsync(plantRecognizeDto.Image, 512, 512, 80);
+            var image = plantRecognizeDto.Image;
+            var resizedImage = await _imageProcessingService.ProcessImageAsync(image, 512, 512, 80);
             
-
             var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(resizedImage);
 
             Image? newImageEntity = null;
             if (string.IsNullOrEmpty(recognizedPlant.Error))
             {
-                newImageEntity = await _imageService.CreateImageAsync(new Image { Data = resizedImage });
+                newImageEntity = await _imageService.CreateImageAsync(new Image { Data = resizedImage, ContentType = image.ContentType });
 
                 if (newImageEntity == null)
                 {
