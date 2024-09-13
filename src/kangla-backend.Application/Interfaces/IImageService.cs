@@ -5,8 +5,9 @@ namespace Application.Interfaces
 {   
     public interface IImageService
     {
-        Task<ImageResponseDto> GetImageAsync(int ImageId);
+        Task<Image> GetImageAsync(int ImageId);
         Task<Image> CreateImageAsync(Image image);
         Task<bool> DeleteImageAsync(int imageId);
+        string GenerateETag(byte[] imageData);
     }
 }

@@ -18,10 +18,21 @@ namespace kangla_backend.Controllers
 
         [Authorize]
         [HttpGet("{imageId}")]
-        public async Task<ActionResult<ImageResponseDto>> GetImage(int imageId)
+        public async Task<ActionResult> GetImage(int imageId)
         {
             var image = await _imageService.GetImageAsync(imageId);
-            return Ok(image);
+
+            var eTag = _imageService.GenerateETag(image.Data);
+
+            if (Request.Headers["If-None-Match"] == eTag)
+            {
+                return StatusCode(StatusCodes.Status304NotModified);
+            }
+
+            Response.Headers.Append("Cache-Control", "private,max-age=300");
+            Response.Headers.Append("ETag", eTag);                
+
+            return File(image.Data, image.ContentType);            
         }
 
         [Authorize]

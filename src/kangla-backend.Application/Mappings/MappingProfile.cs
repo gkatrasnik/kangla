@@ -23,9 +23,6 @@ namespace Application.Mappings
             CreateMap<HumidityMeasurement, HumidityMeasurementResponseDto>();
             CreateMap<HumidityMeasurementCreateRequestDto, HumidityMeasurement>();
             
-            CreateMap<Image, ImageResponseDto>();
-            CreateMap<ImageResponseDto, Image>();
-
             CreateMap(typeof(PagedResponse<>), typeof(PagedResponseDto<>));
         }
     }

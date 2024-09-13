@@ -1,4 +1,4 @@
-﻿using Application.DTO;
+﻿using System.Security.Cryptography;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -16,21 +16,15 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ImageResponseDto> GetImageAsync(int imageId)
+        public async Task<Image> GetImageAsync(int imageId)
         {
             var image = await _imageRepository.GetImageAsync(imageId);
             if (image is null)
             {
                 throw new KeyNotFoundException($"Image with ID {imageId} can not be found.");
-            }
-            var imageResponseDto = _mapper.Map<ImageResponseDto>(image);
+            }            
 
-            if (image.Data!= null && image.Data.Length > 0)
-            {
-                imageResponseDto.ImageBase64 = Convert.ToBase64String(image.Data);
-            }
-
-            return imageResponseDto;
+            return image;
         }
 
         public async Task<Image> CreateImageAsync(Image image)
@@ -49,6 +43,15 @@ namespace Application.Services
 
             await _imageRepository.DeleteImageAsync(imageId);
             return true;
+        }
+
+        public string GenerateETag(byte[] imageData)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashBytes = sha256.ComputeHash(imageData);
+                return Convert.ToBase64String(hashBytes);
+            }
         }
     }
 }
