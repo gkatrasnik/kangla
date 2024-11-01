@@ -9,6 +9,7 @@ namespace Application.Services
     public class PlantsService : IPlantsService
     {
         private readonly IPlantsRepository _plantsRepository;
+        private readonly IWateringEventRepository _wateringEventRepository;
         private readonly IMapper _mapper;
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IImageService _imageService;
@@ -16,12 +17,14 @@ namespace Application.Services
 
         public PlantsService(
             IPlantsRepository plantsRepository, 
+            IWateringEventRepository wateringEventRepository,
             IMapper mapper, 
             IImageProcessingService imageProcessingService, 
             IImageService imageService,
             IPlantRecognitionService plantRecognitionService)
         {
             _plantsRepository = plantsRepository;
+            _wateringEventRepository = wateringEventRepository;
             _mapper = mapper;
             _imageProcessingService = imageProcessingService;
             _imageService = imageService;
@@ -31,13 +34,22 @@ namespace Application.Services
         public async Task<PagedResponseDto<PlantResponseDto>> GetPlantsAsync(string userId, int pageNumber, int pageSize)
         {            
             var plants = await _plantsRepository.GetPlantsAsync(userId, pageNumber, pageSize);
-            return _mapper.Map<PagedResponseDto<PlantResponseDto>>(plants);           
+            var plantResponses = _mapper.Map<PagedResponseDto<PlantResponseDto>>(plants);
+
+            foreach (var plant in plantResponses.Data)
+            {
+                plant.LastWateringDateTime = await _wateringEventRepository.GetLastWateringEventDateAsync(plant.Id);
+            }
+            
+            return plantResponses;           
         }
 
         public async Task<PlantResponseDto> GetPlantAsync(int plantId, string userId)
         {            
             var plant = await _plantsRepository.GetPlantByIdAsync(plantId, userId) ?? throw new KeyNotFoundException($"Plant with ID {plantId} not found for current user.");
-            return _mapper.Map<PlantResponseDto>(plant);
+            var plantResponse = _mapper.Map<PlantResponseDto>(plant);
+            plantResponse.LastWateringDateTime = await _wateringEventRepository.GetLastWateringEventDateAsync(plant.Id);
+            return plantResponse;
         }
 
         public async Task<PlantResponseDto> CreatePlantAsync(PlantCreateRequestDto plantDto, string userId)
