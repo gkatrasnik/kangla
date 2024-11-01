@@ -6,4 +6,5 @@ public interface IWateringEventRepository
     Task AddWateringEventAsync(WateringEvent wateringEvent);
     Task DeleteWateringEventAsync(int wateringEventId);
     Task<bool> WateringEventExistsAsync(int wateringEventId);
+    Task<DateTime?> GetLastWateringEventDateAsync(int plantId);
 }

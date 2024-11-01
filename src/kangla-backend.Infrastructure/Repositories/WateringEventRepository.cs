@@ -48,4 +48,13 @@ public class WateringEventRepository : IWateringEventRepository
     {
         return await _context.WateringEvents.AnyAsync(e => e.Id == wateringEventId);
     }
+
+    public async Task<DateTime?> GetLastWateringEventDateAsync(int plantId)
+    {   
+        return await _context.WateringEvents
+        .Where(w => w.PlantId == plantId)
+        .OrderByDescending(w => w.Start)
+        .Select(w => (DateTime?)w.Start) // Cast to nullable DateTime
+        .FirstOrDefaultAsync();
+    }
 }
