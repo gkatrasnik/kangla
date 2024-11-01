@@ -20,7 +20,7 @@ public class WateringEventRepository : IWateringEventRepository
 
         var wateringEvents = await _context.WateringEvents.AsNoTracking()
                              .Where(e => e.PlantId == plantId && e.Plant.UserId == userId)
-                             .OrderBy(x => x.CreatedAt)
+                             .OrderByDescending(x => x.CreatedAt)
                              .Skip((pageNumber - 1) * pageSize)
                              .Take(pageSize)
                              .ToListAsync();
@@ -32,5 +32,20 @@ public class WateringEventRepository : IWateringEventRepository
     {
         _context.WateringEvents.Add(wateringEvent);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteWateringEventAsync(int wateringEventId)
+    {
+        var wateringEvent = await _context.WateringEvents.FindAsync(wateringEventId);
+        if (wateringEvent != null)
+        {
+            _context.WateringEvents.Remove(wateringEvent);
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<bool> WateringEventExistsAsync(int wateringEventId)
+    {
+        return await _context.WateringEvents.AnyAsync(e => e.Id == wateringEventId);
     }
 }

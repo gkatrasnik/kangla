@@ -44,5 +44,17 @@ namespace Application.Services
 
             return _mapper.Map<WateringEventResponseDto>(entity);
         }
+
+        public async Task<bool> DeleteWateringEventAsync(int wateringEventId)
+        {
+            var existingEntity = await _wateringEventRepository.WateringEventExistsAsync(wateringEventId);
+            if (existingEntity == false)
+            {
+                return false;
+            }
+
+            await _wateringEventRepository.DeleteWateringEventAsync(wateringEventId);
+            return true;
+        }
     }
 }

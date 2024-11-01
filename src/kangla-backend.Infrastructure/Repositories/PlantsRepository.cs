@@ -20,7 +20,7 @@ public class PlantsRepository : IPlantsRepository
 
         var plants = await _context.Plants.AsNoTracking()
             .Where(w => w.UserId == userId)
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
