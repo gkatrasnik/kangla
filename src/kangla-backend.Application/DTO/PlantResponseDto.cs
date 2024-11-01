@@ -8,7 +8,7 @@
         public string? Description { get; set; }
         public string? Location { get; set; }
         public string? Notes { get; set; }
-        public int WateringInterval { get; set; }
+        public int WateringInterval { get; set; } //days
         public string? WateringInstructions { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
