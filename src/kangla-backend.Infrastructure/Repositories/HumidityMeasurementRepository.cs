@@ -20,7 +20,7 @@ public class HumidityMeasurementRepository : IHumidityMeasurementRepository
 
         var humidityMeasurements = await _context.HumidityMeasurements.AsNoTracking()
                              .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
-                             .OrderBy(x => x.DateTime)
+                             .OrderByDescending(x => x.DateTime)
                              .Skip((pageNumber - 1) * pageSize)
                              .Take(pageSize)
                              .ToListAsync();

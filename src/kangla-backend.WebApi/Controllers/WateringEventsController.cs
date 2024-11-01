@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Application.Services;
 
 namespace kangla_backend.Controllers
 {
@@ -37,6 +38,21 @@ namespace kangla_backend.Controllers
         {            
             var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
             return CreatedAtAction(nameof(GetWateringEventsForPlant), new { plantId = createdEvent.PlantId }, createdEvent);          
+        }
+
+        [Authorize]
+        [HttpDelete("{wateringEventId}")]
+        public async Task<IActionResult> DeletePlant(int wateringEventId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+
+            var deleted = await _wateringEventService.DeleteWateringEventAsync(wateringEventId);
+            if (!deleted)
+            {
+                return NotFound(new { message = $"Watering event with ID {wateringEventId} not found." });
+            }
+
+            return NoContent();
         }
     }
 }

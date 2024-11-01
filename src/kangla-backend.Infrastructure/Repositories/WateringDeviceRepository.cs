@@ -17,7 +17,7 @@ public class WateringDeviceRepository : IWateringDeviceRepository
         var totalRecords = await _context.WateringDevices.AsNoTracking().CountAsync();
         var wateringDevices = await _context.WateringDevices.AsNoTracking()
             .Where(w => w.UserId == userId)
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

@@ -100,8 +100,8 @@ namespace Application.Services
 
         public async Task<bool> DeleteWateringDeviceAsync(int deviceId, string userId)
         {            
-            var existingEntity = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId);
-            if (existingEntity == null)
+            var entityExists= await _wateringDeviceRepository.WateringDeviceExistsForUserAsync(deviceId, userId);
+            if (entityExists == false)
             {
                 return false;
             }
