@@ -104,7 +104,10 @@ namespace Application.Services
 
             await _plantsRepository.UpdatePlantAsync(existingEntity, userId);
 
-            return _mapper.Map<PlantResponseDto>(existingEntity);
+            var plantResponse = _mapper.Map<PlantResponseDto>(existingEntity);
+            plantResponse.LastWateringDateTime = await _wateringEventRepository.GetLastWateringEventDateAsync(existingEntity.Id);
+
+            return plantResponse;
         }
 
         public async Task<bool> DeletePlantAsync(int plantId, string userId)
