@@ -84,7 +84,8 @@ namespace Application.Services
                 var resizedImage = await _imageProcessingService.ProcessImageAsync(plantDto.Image, 512, 512, 80);
                 var newImage = new Image
                 {
-                    Data = resizedImage
+                    Data = resizedImage,
+                    ContentType = plantDto.Image.ContentType
                 };
                 newImage = await _imageService.CreateImageAsync(newImage);
 
