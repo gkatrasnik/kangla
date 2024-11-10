@@ -27,6 +27,7 @@ public static class ServiceCollectionExtensions
             options.Password.RequiredLength = 6;
             options.Password.RequiredUniqueChars = 0;
             options.SignIn.RequireConfirmedEmail = true;
+            options.User.RequireUniqueEmail = true;
         })
             .AddEntityFrameworkStores<WateringContext>();
 
