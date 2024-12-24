@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" >
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.application\kangla-backend.application.csproj" />
+    <ProjectReference Include="..\kangla-backend.Application\kangla-backend.Application.csproj" />
   </ItemGroup>
 
 </Project>
