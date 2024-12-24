@@ -1,9 +1,9 @@
-﻿using Application.Interfaces;
-using Application.Mappings;
-using Application.Services;
+﻿using kangla.Application.Interfaces;
+using kangla.Application.Mappings;
+using kangla.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application
+namespace kangla.Application
 {
     public static class ApplicationServiceExtensions
     {

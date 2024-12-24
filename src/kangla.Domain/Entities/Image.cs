@@ -1,6 +1,6 @@
-﻿using Domain.Interfaces;
+﻿using kangla.Domain.Interfaces;
 
-namespace Domain.Entities
+namespace kangla.Domain.Entities
 {
     public class Image : IEntity
     {

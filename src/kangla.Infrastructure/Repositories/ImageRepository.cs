@@ -1,42 +1,45 @@
-﻿using Domain.Entities;
-using Infrastructure;
+﻿using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-public class ImageRepository : IImageRepository
+namespace kangla.Infrastructure.Repositories
 {
-    private readonly WateringContext _context;
-
-    public ImageRepository(WateringContext context)
+    public class ImageRepository : IImageRepository
     {
-        _context = context;
-    }
+        private readonly WateringContext _context;
 
-    public async Task<Image?> GetImageAsync(int imageId)
-    {        
-        var image = await _context.Images.AsNoTracking().FirstOrDefaultAsync(x => x.Id == imageId);
-        return image;
-    }
-
-    public async Task<Image> AddImageAsync(Image image)
-    {
-        _context.Images.Add(image);
-        await _context.SaveChangesAsync();
-        return image;
-    }
-
-    public async Task DeleteImageAsync(int imageId)
-    {
-        var image = await _context.Images.FindAsync(imageId);
-        if (image != null)
+        public ImageRepository(WateringContext context)
         {
-            _context.Images.Remove(image);
-            await _context.SaveChangesAsync();
+            _context = context;
         }
-    }
 
-    public async Task<bool> ImageExistsAsync(int imageId)
-    {
-        return await _context.Images
-            .AnyAsync(x => x.Id == imageId);
+        public async Task<Image?> GetImageAsync(int imageId)
+        {
+            var image = await _context.Images.AsNoTracking().FirstOrDefaultAsync(x => x.Id == imageId);
+            return image;
+        }
+
+        public async Task<Image> AddImageAsync(Image image)
+        {
+            _context.Images.Add(image);
+            await _context.SaveChangesAsync();
+            return image;
+        }
+
+        public async Task DeleteImageAsync(int imageId)
+        {
+            var image = await _context.Images.FindAsync(imageId);
+            if (image != null)
+            {
+                _context.Images.Remove(image);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> ImageExistsAsync(int imageId)
+        {
+            return await _context.Images
+                .AnyAsync(x => x.Id == imageId);
+        }
     }
 }

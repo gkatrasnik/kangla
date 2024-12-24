@@ -1,15 +1,17 @@
 ﻿using FluentEmail.Core.Interfaces;
 using FluentEmail.Smtp;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Mail;
 using System.Net;
-using Domain.Interfaces;
+using kangla.Domain.Interfaces;
+using kangla.Infrastructure.Repositories;
+using kangla.Infrastructure.Services;
+using kangla.Infrastructure;
 
-namespace Infrastructure
+namespace kangla.Infrastructure
 {
     public static class InfrastructureServiceExtensions
     {
@@ -20,7 +22,7 @@ namespace Infrastructure
             services.AddDbContext<WateringContext>(options =>
                 options.UseSqlite(configuration.GetConnectionString("WateringContextSQLite")));
 
-            services.AddTransient<DatabaseSeeder>();                
+            services.AddTransient<DatabaseSeeder>();
             services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();
             services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();
             services.AddScoped<IWateringEventRepository, WateringEventRepository>();
@@ -61,5 +63,5 @@ namespace Infrastructure
             services.AddFluentEmail(defaultFromEmail);
             services.AddSingleton<ISender>(x => new SmtpSender(smtpClient));
         }
-    }    
+    }
 }

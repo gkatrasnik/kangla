@@ -1,6 +1,6 @@
-﻿using Application.DTO;
+﻿using kangla.Application.DTO;
 
-namespace Application.Interfaces
+namespace kangla.Application.Interfaces
 {
     public interface IWateringDeviceService
     {

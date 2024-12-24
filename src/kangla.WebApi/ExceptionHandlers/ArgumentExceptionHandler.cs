@@ -2,42 +2,45 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-public class ArgumentExceptionHandler : IExceptionHandler
+namespace kangla.WebApi.ExceptionHandlers
 {
-    private readonly ILogger<ArgumentExceptionHandler> _logger;
-    public ArgumentExceptionHandler(ILogger<ArgumentExceptionHandler> logger)
+    public class ArgumentExceptionHandler : IExceptionHandler
     {
-        _logger = logger;
-    }
-
-    public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext,
-        Exception exception,
-        CancellationToken cancellationToken)
-    {
-
-        if (exception is not ArgumentException argumentException)
+        private readonly ILogger<ArgumentExceptionHandler> _logger;
+        public ArgumentExceptionHandler(ILogger<ArgumentExceptionHandler> logger)
         {
-            return false;
+            _logger = logger;
         }
 
-        _logger.LogError(argumentException, "Argument exception occurred");
-
-        var problemDetails = new ProblemDetails
+        public async ValueTask<bool> TryHandleAsync(
+            HttpContext httpContext,
+            Exception exception,
+            CancellationToken cancellationToken)
         {
-            Status = (int)HttpStatusCode.BadRequest,
-            Type = argumentException.GetType().Name,
-            Title = "Argument exception occurred",
-            Detail = argumentException.Message,
-            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-        };
 
-        httpContext.Response.StatusCode = problemDetails.Status.Value;
+            if (exception is not ArgumentException argumentException)
+            {
+                return false;
+            }
 
-        await httpContext.Response
-            .WriteAsJsonAsync(problemDetails, cancellationToken);
+            _logger.LogError(argumentException, "Argument exception occurred");
 
-        return true;
-        
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Type = argumentException.GetType().Name,
+                Title = "Argument exception occurred",
+                Detail = argumentException.Message,
+                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+            };
+
+            httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+            await httpContext.Response
+                .WriteAsJsonAsync(problemDetails, cancellationToken);
+
+            return true;
+
+        }
     }
 }

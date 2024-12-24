@@ -1,12 +1,15 @@
-﻿public class EmailMessage
+﻿namespace kangla.Domain.Model
 {
-    public string ToAddress { get; set; }
-    public string Subject { get; set; }
-    public string? Body { get; set; }
-    public EmailMessage(string toAddress, string subject, string? body = "")
+    public class EmailMessage
     {
-        ToAddress = toAddress;
-        Subject = subject;
-        Body = body;
+        public string ToAddress { get; set; }
+        public string Subject { get; set; }
+        public string? Body { get; set; }
+        public EmailMessage(string toAddress, string subject, string? body = "")
+        {
+            ToAddress = toAddress;
+            Subject = subject;
+            Body = body;
+        }
     }
 }

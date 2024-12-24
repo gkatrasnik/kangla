@@ -1,10 +1,10 @@
-﻿using Application.DTO;
-using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
-using Domain.Interfaces;
+﻿using AutoMapper;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
+using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 
-namespace Application.Services
+namespace kangla.Application.Services
 {
     public class PlantsService : IPlantsService
     {
@@ -16,10 +16,10 @@ namespace Application.Services
         private readonly IPlantRecognitionService _plantRecognitionService;
 
         public PlantsService(
-            IPlantsRepository plantsRepository, 
+            IPlantsRepository plantsRepository,
             IWateringEventRepository wateringEventRepository,
-            IMapper mapper, 
-            IImageProcessingService imageProcessingService, 
+            IMapper mapper,
+            IImageProcessingService imageProcessingService,
             IImageService imageService,
             IPlantRecognitionService plantRecognitionService)
         {
@@ -32,7 +32,7 @@ namespace Application.Services
         }
 
         public async Task<PagedResponseDto<PlantResponseDto>> GetPlantsAsync(string userId, int pageNumber, int pageSize)
-        {            
+        {
             var plants = await _plantsRepository.GetPlantsAsync(userId, pageNumber, pageSize);
             var plantResponses = _mapper.Map<PagedResponseDto<PlantResponseDto>>(plants);
 
@@ -40,12 +40,12 @@ namespace Application.Services
             {
                 plant.LastWateringDateTime = await _wateringEventRepository.GetLastWateringEventDateAsync(plant.Id);
             }
-            
-            return plantResponses;           
+
+            return plantResponses;
         }
 
         public async Task<PlantResponseDto> GetPlantAsync(int plantId, string userId)
-        {            
+        {
             var plant = await _plantsRepository.GetPlantByIdAsync(plantId, userId) ?? throw new KeyNotFoundException($"Plant with ID {plantId} not found for current user.");
             var plantResponse = _mapper.Map<PlantResponseDto>(plant);
             plantResponse.LastWateringDateTime = await _wateringEventRepository.GetLastWateringEventDateAsync(plant.Id);
@@ -55,7 +55,7 @@ namespace Application.Services
         public async Task<PlantResponseDto> CreatePlantAsync(PlantCreateRequestDto plantDto, string userId)
         {
             var plantEntity = _mapper.Map<Plant>(plantDto);
-            plantEntity.UserId = userId;            
+            plantEntity.UserId = userId;
 
             await _plantsRepository.AddPlantAsync(plantEntity);
 
@@ -72,7 +72,7 @@ namespace Application.Services
             //delete image if 
             if (plantDto.RemoveImage == true)
             {
-                if (existingEntity.ImageId.HasValue) 
+                if (existingEntity.ImageId.HasValue)
                 {
                     await _imageService.DeleteImageAsync(existingEntity.ImageId.Value);
                 }
@@ -111,21 +111,21 @@ namespace Application.Services
         }
 
         public async Task<bool> DeletePlantAsync(int plantId, string userId)
-        {            
+        {
             var plantEntity = await _plantsRepository.GetPlantByIdAsync(plantId, userId);
             if (plantEntity == null)
             {
                 return false;
             }
             if (plantEntity.ImageId.HasValue)
-            { 
+            {
                 await _imageService.DeleteImageAsync(plantEntity.ImageId.Value);
             }
             await _plantsRepository.DeletePlantAsync(plantId);
-            return true;           
+            return true;
         }
 
-        public async Task<PlantRecognizeResponseDto> RecognizePlantAsync(PlantRecognizeRequestDto plantRecognizeDto) 
+        public async Task<PlantRecognizeResponseDto> RecognizePlantAsync(PlantRecognizeRequestDto plantRecognizeDto)
         {
             if (plantRecognizeDto.Image == null || plantRecognizeDto.Image.Length == 0)
             {
@@ -134,7 +134,7 @@ namespace Application.Services
 
             var image = plantRecognizeDto.Image;
             var resizedImage = await _imageProcessingService.ProcessImageAsync(image, 512, 512, 80);
-            
+
             var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(resizedImage);
 
             Image? newImageEntity = null;

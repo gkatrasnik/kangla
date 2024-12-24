@@ -1,7 +1,8 @@
 using Serilog;
-using Infrastructure.Services;
-using Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using kangla.Infrastructure.Services;
+using kangla.Infrastructure;
+using kangla.WebApi.Extensions;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

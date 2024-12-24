@@ -1,9 +1,10 @@
-﻿using Application.DTO;
-using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
+﻿using AutoMapper;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
+using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 
-namespace Application.Services
+namespace kangla.Application.Services
 {
     public class WateringEventService : IWateringEventService
     {
@@ -14,11 +15,11 @@ namespace Application.Services
         public WateringEventService(IWateringEventRepository wateringEventRepository, IPlantsRepository plantsRepository, IMapper mapper)
         {
             _wateringEventRepository = wateringEventRepository;
-            _plantsRepository= plantsRepository;
+            _plantsRepository = plantsRepository;
             _mapper = mapper;
         }
 
-        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForPlantAsync(int plantId,string userId, int pageNumber, int pageSize)
+        public async Task<PagedResponseDto<WateringEventResponseDto>> GetWateringEventsForPlantAsync(int plantId, string userId, int pageNumber, int pageSize)
         {
             var plantExists = await _plantsRepository.PlantExistsForUserAsync(plantId, userId);
             if (!plantExists)
@@ -26,9 +27,9 @@ namespace Application.Services
                 throw new ArgumentException($"Plant with ID {plantId} does not exist, or does not belong to current user.");
             }
 
-            var wateringEvents = await _wateringEventRepository.GetWateringEventsByPlantIdAsync(plantId, userId, pageNumber, pageSize);           
+            var wateringEvents = await _wateringEventRepository.GetWateringEventsByPlantIdAsync(plantId, userId, pageNumber, pageSize);
 
-            return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);            
+            return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);
         }
 
         public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEventDto)

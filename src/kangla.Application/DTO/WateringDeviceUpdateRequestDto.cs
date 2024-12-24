@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.DTO
+namespace kangla.Application.DTO
 {
     public class WateringDeviceUpdateRequestDto
-    {        
+    {
         public bool WaterNow { get; set; }
         [Required]
         [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]

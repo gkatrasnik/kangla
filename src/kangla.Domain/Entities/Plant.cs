@@ -1,7 +1,8 @@
-﻿using Domain.Interfaces;
+﻿using kangla.Domain.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entities
+namespace kangla.Domain.Entities
+
 {
     public class Plant : IEntity
     {

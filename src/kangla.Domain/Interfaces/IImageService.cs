@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-public interface IImageProcessingService
+namespace kangla.Domain.Interfaces
 {
-    Task<byte[]> ProcessImageAsync(IFormFile image, int width, int height, int quality);
+    public interface IImageProcessingService
+    {
+        Task<byte[]> ProcessImageAsync(IFormFile image, int width, int height, int quality);
+    }
 }

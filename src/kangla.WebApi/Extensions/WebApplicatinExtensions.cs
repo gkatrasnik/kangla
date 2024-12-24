@@ -1,19 +1,22 @@
 ﻿using Serilog;
 
-public static class WebApplicatinExtensions
+namespace kangla.WebApi.Extensions
 {
-    public static void UseCustomMiddlewares(this IApplicationBuilder app, IHostEnvironment env)
+    public static class WebApplicatinExtensions
     {
-        app.UseExceptionHandler();
-        app.UseSerilogRequestLogging();
-
-        if (env.IsDevelopment())
+        public static void UseCustomMiddlewares(this IApplicationBuilder app, IHostEnvironment env)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseExceptionHandler();
+            app.UseSerilogRequestLogging();
+
+            if (env.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            app.UseCors("AllowAllOrigins");
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
         }
-        app.UseCors("AllowAllOrigins");
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
     }
 }

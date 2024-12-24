@@ -1,4 +1,4 @@
-﻿namespace Application.DTO
+﻿namespace kangla.Application.DTO
 {
     public record PagedResponseDto<T>
     {

@@ -1,9 +1,10 @@
-﻿using Application.DTO;
-using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
+﻿using AutoMapper;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
+using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 
-namespace Application.Services
+namespace kangla.Application.Services
 {
     public class HumidityMeasurementService : IHumidityMeasurementService
     {
@@ -28,11 +29,11 @@ namespace Application.Services
 
             var humidityMeasurements = await _humidityMeasurementRepository.GetHumidityMeasurementsByDeviceIdAsync(deviceId, userId, pageNumber, pageSize);
 
-            return _mapper.Map<PagedResponseDto<HumidityMeasurementResponseDto>>(humidityMeasurements);            
+            return _mapper.Map<PagedResponseDto<HumidityMeasurementResponseDto>>(humidityMeasurements);
         }
 
         public async Task<HumidityMeasurementResponseDto> CreateHumidityMeasurementAsync(HumidityMeasurementCreateRequestDto humidityMeasurementDto)
-        {           
+        {
             var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsAsync(humidityMeasurementDto.WateringDeviceId);
             if (!deviceExists)
             {
@@ -42,7 +43,7 @@ namespace Application.Services
             var entity = _mapper.Map<HumidityMeasurement>(humidityMeasurementDto);
             await _humidityMeasurementRepository.AddHumidityMeasurementAsync(entity);
 
-            return _mapper.Map<HumidityMeasurementResponseDto>(entity);            
+            return _mapper.Map<HumidityMeasurementResponseDto>(entity);
         }
     }
 }

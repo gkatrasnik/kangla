@@ -1,10 +1,10 @@
-﻿using Application.DTO;
-using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
-using Domain.Interfaces;
+﻿using AutoMapper;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
+using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 
-namespace Application.Services
+namespace kangla.Application.Services
 {
     public class WateringDeviceService : IWateringDeviceService
     {
@@ -14,7 +14,7 @@ namespace Application.Services
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IImageService _imageService;
 
-        public WateringDeviceService(IWateringDeviceRepository wateringDeviceRepository, IPlantsRepository plantsRepository,IMapper mapper, IImageProcessingService imageProcessingService, IImageService imageService)
+        public WateringDeviceService(IWateringDeviceRepository wateringDeviceRepository, IPlantsRepository plantsRepository, IMapper mapper, IImageProcessingService imageProcessingService, IImageService imageService)
         {
             _wateringDeviceRepository = wateringDeviceRepository;
             _plantsRepository = plantsRepository;
@@ -24,13 +24,13 @@ namespace Application.Services
         }
 
         public async Task<PagedResponseDto<WateringDeviceResponseDto>> GetWateringDevicesAsync(string userId, int pageNumber, int pageSize)
-        {            
+        {
             var wateringDevices = await _wateringDeviceRepository.GetWateringDevicesAsync(userId, pageNumber, pageSize);
-            return _mapper.Map<PagedResponseDto<WateringDeviceResponseDto>>(wateringDevices);           
+            return _mapper.Map<PagedResponseDto<WateringDeviceResponseDto>>(wateringDevices);
         }
 
         public async Task<WateringDeviceResponseDto> GetWateringDeviceAsync(int deviceId, string userId)
-        {            
+        {
             var wateringDevice = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId) ?? throw new KeyNotFoundException($"Watering device with ID {deviceId} not found for current user.");
             return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
         }
@@ -52,7 +52,7 @@ namespace Application.Services
             if (plant == null)
             {
                 throw new ArgumentException($"No plant found with id {wateringDeviceDto.PlantId} for current user.");
-            }           
+            }
 
             var existingDeviceForPlant = await _wateringDeviceRepository.GetWateringDeviceByPlantIdAsync(wateringDeviceDto.PlantId, userId);
             if (existingDeviceForPlant != null)
@@ -88,7 +88,7 @@ namespace Application.Services
             if (existingDeviceForPlant != null)
             {
                 throw new InvalidOperationException($"The plant with ID {wateringDeviceDto.PlantId} already has a different watering device.");
-            }            
+            }
 
             _mapper.Map(wateringDeviceDto, existingEntity);
 
@@ -99,15 +99,15 @@ namespace Application.Services
 
 
         public async Task<bool> DeleteWateringDeviceAsync(int deviceId, string userId)
-        {            
-            var entityExists= await _wateringDeviceRepository.WateringDeviceExistsForUserAsync(deviceId, userId);
+        {
+            var entityExists = await _wateringDeviceRepository.WateringDeviceExistsForUserAsync(deviceId, userId);
             if (entityExists == false)
             {
                 return false;
             }
 
             await _wateringDeviceRepository.DeleteWateringDeviceAsync(deviceId);
-            return true;           
+            return true;
         }
     }
 }
