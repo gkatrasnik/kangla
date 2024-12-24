@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Interfaces
+namespace kangla.Domain.Interfaces
 {
     public class IEntity
     {

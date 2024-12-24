@@ -1,8 +1,13 @@
-﻿public interface IEmailService
+﻿using kangla.Domain.Model;
+
+namespace kangla.Domain.Interfaces
 {
-    /// <summary>
-    /// Send an email.
-    /// </summary>
-    /// <param name="emailMessage">Message object to be sent</param>
-    Task Send(EmailMessage emailMessage);
+    public interface IEmailService
+    {
+        /// <summary>
+        /// Send an email.
+        /// </summary>
+        /// <param name="emailMessage">Message object to be sent</param>
+        Task Send(EmailMessage emailMessage);
+    }
 }

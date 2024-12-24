@@ -1,7 +1,7 @@
-﻿namespace Application.DTO
+﻿namespace kangla.Application.DTO
 {
     public class WateringDeviceResponseDto
-    {     
+    {
         public int Id { get; set; }
         public bool Active { get; set; }
         public bool Deleted { get; set; }

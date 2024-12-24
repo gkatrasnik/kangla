@@ -2,40 +2,43 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-public class UnauthorizedAccessExceptionHandler : IExceptionHandler
+namespace kangla.WebApi.ExceptionHandlers
 {
-    private readonly ILogger<UnauthorizedAccessExceptionHandler> _logger;
-    public UnauthorizedAccessExceptionHandler(ILogger<UnauthorizedAccessExceptionHandler> logger)
+    public class UnauthorizedAccessExceptionHandler : IExceptionHandler
     {
-        _logger = logger;
-    }
-
-    public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext,
-        Exception exception,
-        CancellationToken cancellationToken)
-    {
-        if (exception is not UnauthorizedAccessException unauthorizedException)
+        private readonly ILogger<UnauthorizedAccessExceptionHandler> _logger;
+        public UnauthorizedAccessExceptionHandler(ILogger<UnauthorizedAccessExceptionHandler> logger)
         {
-            return false;
+            _logger = logger;
         }
 
-        _logger.LogError(unauthorizedException, "Unauthorized access attempt");
-
-        var problemDetails = new ProblemDetails
+        public async ValueTask<bool> TryHandleAsync(
+            HttpContext httpContext,
+            Exception exception,
+            CancellationToken cancellationToken)
         {
-            Status = (int)HttpStatusCode.Unauthorized,
-            Type = unauthorizedException.GetType().Name,
-            Title = "Unauthorized Access",
-            Detail = unauthorizedException.Message,
-            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-        };
+            if (exception is not UnauthorizedAccessException unauthorizedException)
+            {
+                return false;
+            }
 
-        httpContext.Response.StatusCode = problemDetails.Status.Value;
+            _logger.LogError(unauthorizedException, "Unauthorized access attempt");
 
-        await httpContext.Response
-            .WriteAsJsonAsync(problemDetails, cancellationToken);
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.Unauthorized,
+                Type = unauthorizedException.GetType().Name,
+                Title = "Unauthorized Access",
+                Detail = unauthorizedException.Message,
+                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+            };
 
-        return true;
+            httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+            await httpContext.Response
+                .WriteAsJsonAsync(problemDetails, cancellationToken);
+
+            return true;
+        }
     }
 }

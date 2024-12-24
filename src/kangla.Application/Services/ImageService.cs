@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
-using Application.Interfaces;
 using AutoMapper;
-using Domain.Entities;
+using kangla.Application.Interfaces;
+using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 
-namespace Application.Services
+namespace kangla.Application.Services
 {
     public class ImageService : IImageService
     {
@@ -22,13 +23,13 @@ namespace Application.Services
             if (image is null)
             {
                 throw new KeyNotFoundException($"Image with ID {imageId} can not be found.");
-            }            
+            }
 
             return image;
         }
 
         public async Task<Image> CreateImageAsync(Image image)
-        {        
+        {
             var newImage = await _imageRepository.AddImageAsync(image);
             return newImage;
         }

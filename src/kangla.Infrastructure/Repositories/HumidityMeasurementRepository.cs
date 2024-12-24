@@ -1,36 +1,39 @@
-﻿using Domain.Entities;
-using Domain.Model;
-using Infrastructure;
+﻿using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
+using kangla.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
-public class HumidityMeasurementRepository : IHumidityMeasurementRepository
+namespace kangla.Infrastructure.Repositories
 {
-    private readonly WateringContext _context;
-
-    public HumidityMeasurementRepository(WateringContext context)
+    public class HumidityMeasurementRepository : IHumidityMeasurementRepository
     {
-        _context = context;
-    }
+        private readonly WateringContext _context;
 
-    public async Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, string userId, int pageNumber, int pageSize)
-    {
-        var totalRecords = await _context.HumidityMeasurements.AsNoTracking()
-            .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
-            .CountAsync();
+        public HumidityMeasurementRepository(WateringContext context)
+        {
+            _context = context;
+        }
 
-        var humidityMeasurements = await _context.HumidityMeasurements.AsNoTracking()
-                             .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
-                             .OrderByDescending(x => x.DateTime)
-                             .Skip((pageNumber - 1) * pageSize)
-                             .Take(pageSize)
-                             .ToListAsync();
+        public async Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, string userId, int pageNumber, int pageSize)
+        {
+            var totalRecords = await _context.HumidityMeasurements.AsNoTracking()
+                .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
+                .CountAsync();
 
-        return new PagedResponse<HumidityMeasurement>(humidityMeasurements, pageNumber, pageSize, totalRecords);
-    }
+            var humidityMeasurements = await _context.HumidityMeasurements.AsNoTracking()
+                                 .Where(h => h.WateringDeviceId == deviceId && h.WateringDevice.UserId == userId)
+                                 .OrderByDescending(x => x.DateTime)
+                                 .Skip((pageNumber - 1) * pageSize)
+                                 .Take(pageSize)
+                                 .ToListAsync();
 
-    public async Task AddHumidityMeasurementAsync(HumidityMeasurement humidityMeasurement)
-    {
-        _context.HumidityMeasurements.Add(humidityMeasurement);
-        await _context.SaveChangesAsync();
+            return new PagedResponse<HumidityMeasurement>(humidityMeasurements, pageNumber, pageSize, totalRecords);
+        }
+
+        public async Task AddHumidityMeasurementAsync(HumidityMeasurement humidityMeasurement)
+        {
+            _context.HumidityMeasurements.Add(humidityMeasurement);
+            await _context.SaveChangesAsync();
+        }
     }
 }

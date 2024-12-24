@@ -1,9 +1,8 @@
-﻿using Application.DTO;
-using Application.Interfaces;
+﻿using kangla.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace kangla_backend.Controllers
+namespace kangla.WebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -30,9 +29,9 @@ namespace kangla_backend.Controllers
             }
 
             Response.Headers.Append("Cache-Control", "private,max-age=300");
-            Response.Headers.Append("ETag", eTag);                
+            Response.Headers.Append("ETag", eTag);
 
-            return File(image.Data, image.ContentType);            
+            return File(image.Data, image.ContentType);
         }
 
         [Authorize]

@@ -1,5 +1,4 @@
-﻿
-namespace Domain.Model
+﻿namespace kangla.Domain.Model
 {
     public class PlantRecognitionResponse
     {

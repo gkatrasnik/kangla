@@ -1,12 +1,11 @@
-﻿using Domain.Interfaces;
-
-using Microsoft.Extensions.Configuration;
-using Domain.Model;
+﻿using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
 using System.Text.Json;
+using kangla.Domain.Interfaces;
+using kangla.Domain.Model;
 
 
-namespace Infrastructure.Services
+namespace kangla.Infrastructure.Services
 {
     public class PlantRecognitionService : IPlantRecognitionService
     {
@@ -41,7 +40,8 @@ namespace Infrastructure.Services
                 )
             ];
 
-            ChatCompletionOptions options = new() {
+            ChatCompletionOptions options = new()
+            {
                 ResponseFormat = ChatResponseFormat.JsonObject
 
             };

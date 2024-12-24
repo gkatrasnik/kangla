@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.DTO
+namespace kangla.Application.DTO
 {
     public class PlantUpdateRequestDto
     {

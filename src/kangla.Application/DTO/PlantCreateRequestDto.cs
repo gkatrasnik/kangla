@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.DTO
+namespace kangla.Application.DTO
 {
     public class PlantCreateRequestDto
     {
@@ -20,7 +19,7 @@ namespace Application.DTO
         [Range(1, 365, ErrorMessage = "Watering interval must be between 1 and 365 days.")]
         public int WateringInterval { get; set; } = 0;
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
-        public string? WateringInstructions { get; set; } = default!;        
+        public string? WateringInstructions { get; set; } = default!;
         public int? ImageId { get; set; }
     }
 }

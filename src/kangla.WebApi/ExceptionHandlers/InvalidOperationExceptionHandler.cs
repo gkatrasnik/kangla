@@ -2,41 +2,44 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-public class InvalidOperationExceptionHandler : IExceptionHandler
+namespace kangla.WebApi.ExceptionHandlers
 {
-    private readonly ILogger<InvalidOperationExceptionHandler> _logger;
-
-    public InvalidOperationExceptionHandler(ILogger<InvalidOperationExceptionHandler> logger)
+    public class InvalidOperationExceptionHandler : IExceptionHandler
     {
-        _logger = logger;
-    }
+        private readonly ILogger<InvalidOperationExceptionHandler> _logger;
 
-    public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext,
-        Exception exception,
-        CancellationToken cancellationToken)
-    {
-
-        if (exception is not InvalidOperationException invalidOperationException)
-        { 
-            return false;
+        public InvalidOperationExceptionHandler(ILogger<InvalidOperationExceptionHandler> logger)
+        {
+            _logger = logger;
         }
 
-        _logger.LogError(invalidOperationException, "An invalid operation was attempted");
-
-        var problemDetails = new ProblemDetails
+        public async ValueTask<bool> TryHandleAsync(
+            HttpContext httpContext,
+            Exception exception,
+            CancellationToken cancellationToken)
         {
-            Status = (int)HttpStatusCode.BadRequest,
-            Type = invalidOperationException.GetType().Name,
-            Title = "Invalid Operation",
-            Detail = invalidOperationException.Message,
-            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-        };
 
-        httpContext.Response.StatusCode = problemDetails.Status.Value;
+            if (exception is not InvalidOperationException invalidOperationException)
+            {
+                return false;
+            }
 
-        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+            _logger.LogError(invalidOperationException, "An invalid operation was attempted");
 
-        return true;        
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Type = invalidOperationException.GetType().Name,
+                Title = "Invalid Operation",
+                Detail = invalidOperationException.Message,
+                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+            };
+
+            httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+
+            return true;
+        }
     }
 }

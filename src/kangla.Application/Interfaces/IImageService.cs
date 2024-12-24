@@ -1,8 +1,7 @@
-﻿using Application.DTO;
-using Domain.Entities;
+﻿using kangla.Domain.Entities;
 
-namespace Application.Interfaces
-{   
+namespace kangla.Application.Interfaces
+{
     public interface IImageService
     {
         Task<Image> GetImageAsync(int ImageId);

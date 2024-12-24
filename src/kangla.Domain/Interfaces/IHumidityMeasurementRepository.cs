@@ -1,8 +1,11 @@
-﻿using Domain.Entities;
-using Domain.Model;
+﻿using kangla.Domain.Entities;
+using kangla.Domain.Model;
 
-public interface IHumidityMeasurementRepository
+namespace kangla.Domain.Interfaces
 {
-    Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, string userId, int pageNumber, int pageSize);
-    Task AddHumidityMeasurementAsync(HumidityMeasurement humidityMeasurement);
+    public interface IHumidityMeasurementRepository
+    {
+        Task<PagedResponse<HumidityMeasurement>> GetHumidityMeasurementsByDeviceIdAsync(int deviceId, string userId, int pageNumber, int pageSize);
+        Task AddHumidityMeasurementAsync(HumidityMeasurement humidityMeasurement);
+    }
 }

@@ -2,40 +2,43 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-public class TimeOutExceptionHandler : IExceptionHandler
+namespace kangla.WebApi.ExceptionHandlers
 {
-    private readonly ILogger<TimeOutExceptionHandler> _logger;
-    public TimeOutExceptionHandler(ILogger<TimeOutExceptionHandler> logger)
+    public class TimeOutExceptionHandler : IExceptionHandler
     {
-        _logger = logger;
-    }
-    
-    public async ValueTask<bool> TryHandleAsync(
-        HttpContext httpContext,
-        Exception exception,
-        CancellationToken cancellationToken)
-    {
-        if (exception is not TimeoutException timeoutException)
+        private readonly ILogger<TimeOutExceptionHandler> _logger;
+        public TimeOutExceptionHandler(ILogger<TimeOutExceptionHandler> logger)
         {
-            return false;
+            _logger = logger;
         }
 
-        _logger.LogError(timeoutException, "A timeout occurred");
-
-        var problemDetails = new ProblemDetails
+        public async ValueTask<bool> TryHandleAsync(
+            HttpContext httpContext,
+            Exception exception,
+            CancellationToken cancellationToken)
         {
-            Status = (int)HttpStatusCode.RequestTimeout,
-            Type = timeoutException.GetType().Name,
-            Title = "A timeout occurred",
-            Detail = timeoutException.Message,
-            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-        };
+            if (exception is not TimeoutException timeoutException)
+            {
+                return false;
+            }
 
-        httpContext.Response.StatusCode = problemDetails.Status.Value;
+            _logger.LogError(timeoutException, "A timeout occurred");
 
-        await httpContext.Response
-            .WriteAsJsonAsync(problemDetails, cancellationToken);
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.RequestTimeout,
+                Type = timeoutException.GetType().Name,
+                Title = "A timeout occurred",
+                Detail = timeoutException.Message,
+                Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+            };
 
-        return true;
+            httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+            await httpContext.Response
+                .WriteAsJsonAsync(problemDetails, cancellationToken);
+
+            return true;
+        }
     }
 }

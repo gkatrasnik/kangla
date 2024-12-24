@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces;
-using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
 
-namespace kangla_backend.Controllers
+namespace kangla.WebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -27,14 +27,14 @@ namespace kangla_backend.Controllers
             {
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
-            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, userId, pageNumber, pageSize);           
+            var humidityMeasurements = await _humidityMeasurementService.GetHumidityMeasurementsForDeviceAsync(deviceId, userId, pageNumber, pageSize);
             return Ok(humidityMeasurements);
         }
 
         [Authorize] //this will be authorized by the api key
         [HttpPost]
         public async Task<ActionResult<HumidityMeasurementResponseDto>> PostHumidityMeasurement(HumidityMeasurementCreateRequestDto humidityMeasurement)
-        {            
+        {
             var createdMeasurement = await _humidityMeasurementService.CreateHumidityMeasurementAsync(humidityMeasurement);
             return CreatedAtAction(nameof(GetHumidityMeasurementsForDevice), new { deviceId = createdMeasurement.WateringDeviceId }, createdMeasurement);
         }

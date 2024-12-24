@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces;
-using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Application.Services;
-using Domain.Entities;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
 
-namespace kangla_backend.Controllers
+namespace kangla.WebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -30,7 +28,7 @@ namespace kangla_backend.Controllers
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
             var plants = await _plantsService.GetPlantsAsync(userId, pageNumber, pageSize);
-            return Ok(plants);            
+            return Ok(plants);
         }
 
         [Authorize]
@@ -40,7 +38,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var plant = await _plantsService.GetPlantAsync(plantId, userId);
-            return Ok(plant);            
+            return Ok(plant);
         }
 
         [Authorize]
@@ -50,7 +48,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var createdPlant = await _plantsService.CreatePlantAsync(plantDto, userId);
-            return CreatedAtAction(nameof(GetPlant), new { plantId = createdPlant.Id }, createdPlant);   
+            return CreatedAtAction(nameof(GetPlant), new { plantId = createdPlant.Id }, createdPlant);
         }
 
         [Authorize]
@@ -60,7 +58,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var updatedPlant = await _plantsService.UpdatePlantAsync(plantId, userId, plantDto);
-            return Ok(updatedPlant);            
+            return Ok(updatedPlant);
         }
 
         [Authorize]

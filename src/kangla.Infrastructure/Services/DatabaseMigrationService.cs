@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Services
+namespace kangla.Infrastructure.Services
 {
     public class DatabaseMigrationService : IDatabaseMigrationService
     {

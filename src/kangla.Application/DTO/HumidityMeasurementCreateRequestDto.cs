@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.DTO
+namespace kangla.Application.DTO
 {
     public class HumidityMeasurementCreateRequestDto
     {

@@ -1,11 +1,11 @@
 ﻿
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
-using Domain.Entities;
+using kangla.Domain.Entities;
 
-namespace Infrastructure
+namespace kangla.Infrastructure
 {
-    public  class DatabaseSeeder
+    public class DatabaseSeeder
     {
         private readonly WateringContext _context;
         private readonly ILogger<DatabaseSeeder> _logger;

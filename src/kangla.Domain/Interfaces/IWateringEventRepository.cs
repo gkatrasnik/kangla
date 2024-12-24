@@ -1,10 +1,14 @@
-﻿using Domain.Entities;
-using Domain.Model;
-public interface IWateringEventRepository
+﻿using kangla.Domain.Entities;
+using kangla.Domain.Model;
+
+namespace kangla.Domain.Interfaces
 {
-    Task<PagedResponse<WateringEvent>> GetWateringEventsByPlantIdAsync(int plantId, string userId, int pageNumber, int pageSize);
-    Task AddWateringEventAsync(WateringEvent wateringEvent);
-    Task DeleteWateringEventAsync(int wateringEventId);
-    Task<bool> WateringEventExistsAsync(int wateringEventId);
-    Task<DateTime?> GetLastWateringEventDateAsync(int plantId);
+    public interface IWateringEventRepository
+    {
+        Task<PagedResponse<WateringEvent>> GetWateringEventsByPlantIdAsync(int plantId, string userId, int pageNumber, int pageSize);
+        Task AddWateringEventAsync(WateringEvent wateringEvent);
+        Task DeleteWateringEventAsync(int wateringEventId);
+        Task<bool> WateringEventExistsAsync(int wateringEventId);
+        Task<DateTime?> GetLastWateringEventDateAsync(int plantId);
+    }
 }

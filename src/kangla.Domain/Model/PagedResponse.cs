@@ -1,5 +1,4 @@
-﻿
-namespace Domain.Model
+﻿namespace kangla.Domain.Model
 {
     public record PagedResponse<T>
     {
@@ -15,7 +14,7 @@ namespace Domain.Model
             PageNumber = pageNumber;
             PageSize = pageSize;
             TotalRecords = totalRecords;
-            TotalPages = (int)Math.Ceiling((decimal)totalRecords / (decimal)pageSize);
+            TotalPages = (int)Math.Ceiling(totalRecords / (decimal)pageSize);
         }
     }
 }

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces;
-using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
 
-namespace kangla_backend.Controllers
+namespace kangla.WebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -28,7 +28,7 @@ namespace kangla_backend.Controllers
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
             var wateringDevices = await _wateringDeviceService.GetWateringDevicesAsync(userId, pageNumber, pageSize);
-            return Ok(wateringDevices);            
+            return Ok(wateringDevices);
         }
 
         [Authorize]
@@ -38,7 +38,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var wateringDevice = await _wateringDeviceService.GetWateringDeviceAsync(deviceId, userId);
-            return Ok(wateringDevice);            
+            return Ok(wateringDevice);
         }
 
         [Authorize]
@@ -58,7 +58,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var createdDevice = await _wateringDeviceService.CreateWateringDeviceAsync(wateringDevice, userId);
-            return CreatedAtAction(nameof(GetWateringDevice), new { deviceId = createdDevice.Id }, createdDevice);   
+            return CreatedAtAction(nameof(GetWateringDevice), new { deviceId = createdDevice.Id }, createdDevice);
         }
 
         [Authorize]
@@ -68,7 +68,7 @@ namespace kangla_backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var updatedDevice = await _wateringDeviceService.UpdateWateringDeviceAsync(deviceId, userId, wateringDevice);
-            return Ok(updatedDevice);            
+            return Ok(updatedDevice);
         }
 
         [Authorize]

@@ -1,10 +1,10 @@
-﻿using Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Domain.Entities;
+using kangla.Domain.Entities;
+using kangla.Domain.Interfaces;
 
-namespace Infrastructure
+namespace kangla.Infrastructure
 {
 
     public class WateringContext : IdentityDbContext<IdentityUser>
@@ -23,7 +23,7 @@ namespace Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            ConfigureRelationships(modelBuilder);                       
+            ConfigureRelationships(modelBuilder);
         }
 
         private void ConfigureRelationships(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace Infrastructure
 
             modelBuilder.Entity<WateringDevice>()
                 .HasOne(w => w.Plant)
-                .WithOne(p => p.WateringDevice) 
+                .WithOne(p => p.WateringDevice)
                 .HasForeignKey<WateringDevice>(w => w.PlantId);
 
             modelBuilder.Entity<WateringDevice>()
@@ -59,7 +59,7 @@ namespace Infrastructure
             foreach (var entry in ChangeTracker.Entries<IEntity>())
             {
                 if (entry.State == EntityState.Added)
-                { 
+                {
                     entry.Entity.CreatedAt = DateTime.Now;
                     entry.Entity.UpdatedAt = DateTime.Now;
                 }

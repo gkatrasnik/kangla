@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces;
-using Application.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Application.Services;
+using kangla.Application.DTO;
+using kangla.Application.Interfaces;
 
-namespace kangla_backend.Controllers
+namespace kangla.WebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
@@ -29,15 +28,15 @@ namespace kangla_backend.Controllers
                 throw new ArgumentException("Page number and page size must be greater than 0.");
             }
             var wateringEvents = await _wateringEventService.GetWateringEventsForPlantAsync(plantId, userId, pageNumber, pageSize);
-            return Ok(wateringEvents);           
+            return Ok(wateringEvents);
         }
 
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
-        {            
+        {
             var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
-            return CreatedAtAction(nameof(GetWateringEventsForPlant), new { plantId = createdEvent.PlantId }, createdEvent);          
+            return CreatedAtAction(nameof(GetWateringEventsForPlant), new { plantId = createdEvent.PlantId }, createdEvent);
         }
 
         [Authorize]

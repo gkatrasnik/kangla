@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Application.DTO;
-using Domain.Model;
-using Domain.Entities;
+using kangla.Domain.Entities;
+using kangla.Domain.Model;
+using kangla.Application.DTO;
 
-namespace Application.Mappings
+namespace kangla.Application.Mappings
 {
     public class MappingProfile : Profile
     {
@@ -22,7 +22,7 @@ namespace Application.Mappings
 
             CreateMap<HumidityMeasurement, HumidityMeasurementResponseDto>();
             CreateMap<HumidityMeasurementCreateRequestDto, HumidityMeasurement>();
-            
+
             CreateMap(typeof(PagedResponse<>), typeof(PagedResponseDto<>));
         }
     }

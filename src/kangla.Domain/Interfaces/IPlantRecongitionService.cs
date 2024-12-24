@@ -1,6 +1,6 @@
-﻿using Domain.Model;
+﻿using kangla.Domain.Model;
 
-namespace Domain.Interfaces
+namespace kangla.Domain.Interfaces
 {
     public interface IPlantRecognitionService
     {
