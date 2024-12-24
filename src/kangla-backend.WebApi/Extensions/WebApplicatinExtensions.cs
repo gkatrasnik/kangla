@@ -13,7 +13,7 @@ public static class WebApplicatinExtensions
             app.UseSwaggerUI();
         }
         app.UseCors("AllowAllOrigins");
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
         app.UseAuthorization();
     }
 }
