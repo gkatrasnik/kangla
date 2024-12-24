@@ -22,12 +22,6 @@
 	<PackageReference Include="Swashbuckle.AspNetCore.Filters" />
 </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.client\kangla-backend.client.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\kangla-backend.Infrastructure\kangla-backend.Infrastructure.csproj" />
 	</ItemGroup>
