@@ -11,15 +11,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "kangla-backend.Client", "src\kangla-backend.Client\kangla-backend.Client.esproj", "{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "kangla-backend.client", "src\kangla-backend.Client\kangla-backend.client.esproj", "{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.Application", "src\kangla-backend.Application\kangla-backend.Application.csproj", "{BC31F823-1ABB-4A40-B021-C743EDA04278}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.application", "src\kangla-backend.Application\kangla-backend.application.csproj", "{BC31F823-1ABB-4A40-B021-C743EDA04278}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.Domain", "src\kangla-backend.Domain\kangla-backend.Domain.csproj", "{A6087DB5-49D3-4154-83CA-0DC5A5F24EE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.domain", "src\kangla-backend.Domain\kangla-backend.domain.csproj", "{A6087DB5-49D3-4154-83CA-0DC5A5F24EE9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.Infrastructure", "src\kangla-backend.Infrastructure\kangla-backend.Infrastructure.csproj", "{47EE3ACD-8663-40BE-9E97-7D0805FC9782}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.infrastructure", "src\kangla-backend.Infrastructure\kangla-backend.infrastructure.csproj", "{47EE3ACD-8663-40BE-9E97-7D0805FC9782}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.WebApi", "src\kangla-backend.WebApi\kangla-backend.WebApi.csproj", "{B32B6C33-0C8C-4923-A7AF-9924096C55AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.webApi", "src\kangla-backend.WebApi\kangla-backend.webApi.csproj", "{B32B6C33-0C8C-4923-A7AF-9924096C55AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
