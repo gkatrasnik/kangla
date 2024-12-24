@@ -1,0 +1,46 @@
+
+
+<button mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+</button>
+<div class="page-container">
+    
+    <h2 class="page-title">{{plant?.name}}</h2>
+    @if (this.plant && this.plantService.isWateringOverdue(this.plant)) {
+        <div class="watering-overdue-indicator-container">
+            <app-watering-overdue-indicator></app-watering-overdue-indicator> 
+        </div> 
+    } 
+    
+    <div class="main-buttons-container">
+        <button mat-stroked-button (click)="removePlant()">Remove Plant</button>
+        <button mat-stroked-button (click)="editPlant()">Edit Plant</button>
+        <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">Water Now</button>
+    </div>
+    <div class="plant-image">
+        @if (plant?.imageId) {            
+            <img mat-card-image [imageSrc]="this.imagesService.getImageUrl(plant!.imageId)">            
+        } @else {
+            <img mat-card-image src="./images/plant-placeholder.jpg"> 
+        }
+    </div>
+    <mat-card class="detail-section" >
+        <mat-card-header class="plant-card-header">
+            <mat-card-title-group>                    
+                <mat-card-title>Details</mat-card-title>
+            </mat-card-title-group >
+        </mat-card-header>
+        <mat-card-content>
+            <div class="plant-info">
+                <p><b>Scientific Name:</b> {{plant?.scientificName}}</p>
+                <p><b>Location:</b> {{plant?.location}}</p>
+                <p><b>Description:</b> {{plant?.description}}</p>
+                <p><b>Notes:</b> {{plant?.notes}}</p>
+                <p><b>Watering Interval:</b> {{plant?.wateringInterval}}</p>
+                <p><b>Watering Instructions:</b> {{plant?.wateringInstructions}}</p>
+            </div>    
+        </mat-card-content>        
+    </mat-card>
+
+    <app-watering-events-table [plantId]="this.plantId" [reloadTrigger]="reloadTrigger"/>
+</div>

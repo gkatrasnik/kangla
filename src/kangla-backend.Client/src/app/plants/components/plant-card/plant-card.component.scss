@@ -1,0 +1,27 @@
+.plant-card {
+    margin: 1rem;
+    width: 20rem;
+    min-height: 20rem;
+}
+
+.plant-card-header {
+    margin-bottom: 0.5rem;
+}
+
+.plant-card-content {
+    margin-top: 0.5rem;
+    display:flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.plant-card img {
+    margin-block: 0.5rem;
+}
+
+.plant-card-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+}      

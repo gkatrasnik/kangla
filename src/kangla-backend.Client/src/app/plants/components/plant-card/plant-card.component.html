@@ -1,0 +1,33 @@
+<mat-card class="plant-card">
+    <mat-card-header class="plant-card-header">
+      <mat-card-title-group>
+        <mat-card-title>{{ plant.name }}</mat-card-title>
+        <mat-card-subtitle>{{ plant.location }}</mat-card-subtitle>
+
+        @if (this.plantService.isWateringOverdue(this.plant)) {
+          <app-watering-overdue-indicator></app-watering-overdue-indicator> 
+        } 
+      </mat-card-title-group>
+    </mat-card-header>
+  
+    @if (imageUrl) {
+        <img mat-card-image [imageSrc]="imageUrl">
+    } @else {
+      <img mat-card-image src="./images/plant-placeholder.jpg">
+    }  
+    <mat-card-content class="plant-card-content">
+      <div>
+        {{ plant.description }}
+      </div>   
+    </mat-card-content>
+    <mat-card-actions align="end" class="plant-card-actions">      
+        <a [routerLink]="['/details', plant.id]">
+          <button mat-stroked-button >Details</button>
+        </a>
+        @if (this.plantService.isWateringOverdue(this.plant)) {
+          <button mat-flat-button (click)="triggerWatering()">Water Now</button>  
+        } 
+    </mat-card-actions>
+
+    
+  </mat-card>

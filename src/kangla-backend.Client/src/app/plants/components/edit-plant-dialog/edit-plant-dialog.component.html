@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Edit Plant</h2>
+<mat-dialog-content>
+  <form [formGroup]="plantForm" (ngSubmit)="onSubmit()">    
+    <mat-form-field>
+      <mat-label>Plant Name</mat-label>
+      <input matInput formControlName="name" required maxlength="50">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Scientific Name</mat-label>
+      <input matInput formControlName="scientificName" maxlength="100">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" maxlength="500"></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" maxlength="100">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Notes</mat-label>
+      <textarea matInput formControlName="notes" maxlength="500"></textarea>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Watering Interval (days)</mat-label>
+      <input matInput type="number" formControlName="wateringInterval" required min="1" max="365">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Watering Instructions</mat-label>
+      <textarea matInput formControlName="wateringInstructions" maxlength="500"></textarea>
+    </mat-form-field>
+
+    @if (imageUrl){
+      <div>
+        <img [imageSrc]="imageUrl" alt="Plant Image" style="max-width: 100%; height: auto;">
+        <button type="button" mat-button (click)="onRemoveImage()">Remove Image</button>
+      </div>
+    } @else {
+      <button type="button" mat-button (click)="fileInput.click()">Add Image</button>
+      <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/png, image/gif, image/jpeg">
+      <span class="file-name">{{selectedFile?.name}}</span>
+    }   
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button [disabled]="plantForm.invalid || !formChanged" (click)="onSubmit()">Update</button>
+</mat-dialog-actions>
