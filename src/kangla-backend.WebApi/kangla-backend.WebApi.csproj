@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SpaRoot>..\physioapp2.client</SpaRoot>
+    <SpaRoot>..\kangla-backend.Client</SpaRoot>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
     <UserSecretsId>7f45939a-af33-4cf5-8946-099d572c1491</UserSecretsId>
@@ -23,7 +23,7 @@
 </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.client\kangla-backend.Client.esproj">
+    <ProjectReference Include="..\kangla-backend.Client\kangla-backend.Client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

@@ -1,5 +1,5 @@
 {
-  "name": "physioapp2.client",
+  "name": "kangla-backend.client",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
