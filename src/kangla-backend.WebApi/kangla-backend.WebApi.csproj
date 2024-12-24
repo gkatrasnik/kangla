@@ -23,7 +23,7 @@
 </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\kangla-backend.client\kangla-backend.client.esproj">
+		<ProjectReference Include="..\kangla-backend.client\kangla-backend.client.csproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 		</ProjectReference>
 	</ItemGroup>
