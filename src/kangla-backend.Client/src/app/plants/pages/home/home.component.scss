@@ -1,0 +1,9 @@
+.plant-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); //plant card width is 20rem
+}
+
+.plant-card-container {
+    width: auto;
+    margin-inline: auto;
+}

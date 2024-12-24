@@ -39,6 +39,9 @@ try
 
     var app = builder.Build();
 
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+
     app.UseCustomMiddlewares(env);
     app.MapIdentityApi<IdentityUser>();
 
@@ -63,6 +66,9 @@ try
     }
 
     app.MapControllers();
+
+    app.MapFallbackToFile("/index.html");
+
     app.Run();
     Log.Information("Stopped cleanly");
     return 0;

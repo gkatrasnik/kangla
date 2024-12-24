@@ -1,0 +1,52 @@
+<div class="page-container">
+    <h2 class="page-title">My Plants</h2>
+    <div class="main-buttons-container">      
+        <button mat-raised-button [matMenuTriggerFor]="belowMenu">
+            <mat-icon>add</mat-icon>
+            Add Plant
+        </button>
+        <mat-menu #belowMenu="matMenu" yPosition="below">
+            <button mat-menu-item (click)="fileInput.click()">
+                <mat-icon>add_a_photo</mat-icon>
+                Recognize Plant
+            </button>           
+            <button mat-menu-item (click)="this.openAddPlantDialog()">
+                <mat-icon>edit</mat-icon>
+                Add Manually
+            </button>
+        </mat-menu>
+        <input type="file" #fileInput style="display: none;" (change)="onImageSelected($event)">
+    </div>
+
+    
+    <div class="plant-cards-container">
+            @for (plant of plantsList; track plant.id) {
+                <div class="plant-card-container">
+                    <app-plant-card 
+                        [plant]="plant"
+                        [imageUrl]="imagesService.getImageUrl(plant.imageId)"
+                    ></app-plant-card>
+                </div>        
+
+                } @empty {
+                    <h2>No Plants</h2>
+                }
+    </div>
+
+    <div class="paginator-container">
+        <mat-paginator        
+            (page)="handlePageEvent($event)"
+            [length]="plantsListLength"
+            [pageSize]="pageSize"
+            [disabled]="disabled"
+            [showFirstLastButtons]="showFirstLastButtons"
+            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+            [hidePageSize]="hidePageSize"
+            [pageIndex]="pageIndex"
+            aria-label="Select page"
+        />
+    </div>
+</div>
+
+
+
