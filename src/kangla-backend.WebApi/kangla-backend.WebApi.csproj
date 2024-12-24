@@ -12,7 +12,7 @@
 	
 <ItemGroup>
 	<PackageReference Include="Microsoft.AspNetCore.SpaProxy" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" >
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
@@ -23,13 +23,13 @@
 </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.client\kangla-backend.client.esproj">
+    <ProjectReference Include="..\kangla-backend.Client\kangla-backend.Client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\kangla-backend.infrastructure\kangla-backend.infrastructure.csproj" />
+		<ProjectReference Include="..\kangla-backend.Infrastructure\kangla-backend.Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
