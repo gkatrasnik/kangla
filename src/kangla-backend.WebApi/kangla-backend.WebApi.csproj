@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <SpaRoot>..\kangla-backend.Client</SpaRoot>
+    <SpaRoot>..\kangla-backend.client</SpaRoot>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:4200</SpaProxyServerUrl>
     <UserSecretsId>7f45939a-af33-4cf5-8946-099d572c1491</UserSecretsId>
@@ -12,7 +12,7 @@
 	
 <ItemGroup>
 	<PackageReference Include="Microsoft.AspNetCore.SpaProxy" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" >
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
@@ -23,7 +23,7 @@
 </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.Client\kangla-backend.Client.esproj">
+    <ProjectReference Include="..\kangla-backend.client\kangla-backend.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

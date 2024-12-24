@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "kangla-backend.Client", "src\kangla-backend.Client\kangla-backend.Client.esproj", "{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.Application", "src\kangla-backend.Application\kangla-backend.Application.csproj", "{BC31F823-1ABB-4A40-B021-C743EDA04278}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.Domain", "src\kangla-backend.Domain\kangla-backend.Domain.csproj", "{A6087DB5-49D3-4154-83CA-0DC5A5F24EE9}"
@@ -21,18 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla-backend.WebApi", "src\kangla-backend.WebApi\kangla-backend.WebApi.csproj", "{B32B6C33-0C8C-4923-A7AF-9924096C55AA}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "kangla-backend.client", "src\kangla-backend.client\kangla-backend.client.esproj", "{0B827972-27AA-438B-95F0-8E3EA85E3454}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{BC31F823-1ABB-4A40-B021-C743EDA04278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC31F823-1ABB-4A40-B021-C743EDA04278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC31F823-1ABB-4A40-B021-C743EDA04278}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,16 +43,22 @@ Global
 		{B32B6C33-0C8C-4923-A7AF-9924096C55AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B32B6C33-0C8C-4923-A7AF-9924096C55AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B32B6C33-0C8C-4923-A7AF-9924096C55AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B827972-27AA-438B-95F0-8E3EA85E3454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B827972-27AA-438B-95F0-8E3EA85E3454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B827972-27AA-438B-95F0-8E3EA85E3454}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0B827972-27AA-438B-95F0-8E3EA85E3454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B827972-27AA-438B-95F0-8E3EA85E3454}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B827972-27AA-438B-95F0-8E3EA85E3454}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{9ACC35E8-ECE5-42AD-A6FF-5477B8948FC6} = {B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}
 		{BC31F823-1ABB-4A40-B021-C743EDA04278} = {B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}
 		{A6087DB5-49D3-4154-83CA-0DC5A5F24EE9} = {B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}
 		{47EE3ACD-8663-40BE-9E97-7D0805FC9782} = {B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}
 		{B32B6C33-0C8C-4923-A7AF-9924096C55AA} = {B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}
+		{0B827972-27AA-438B-95F0-8E3EA85E3454} = {B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {241625AD-42B6-4B07-8238-D09DFBAE423A}
