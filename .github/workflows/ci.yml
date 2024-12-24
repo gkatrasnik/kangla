@@ -24,7 +24,7 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Publish WebApi
-      run: dotnet publish src/kangla-backend.WebApi/WebApi.csproj --configuration Release --output ./publish
+      run: dotnet publish src/kangla-backend.WebApi/kangla-backend.WebApi.csproj --configuration Release --output ./publish
 
     - name: Copy files via SSH
       uses: easingthemes/ssh-deploy@v2.1.5
