@@ -23,13 +23,13 @@
 </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\kangla-backend.client\kangla-backend.client.esproj">
+		<ProjectReference Include="..\kangla.client\kangla.client.esproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\kangla-backend.Infrastructure\kangla-backend.Infrastructure.csproj" />
+		<ProjectReference Include="..\kangla.Infrastructure\kangla.Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

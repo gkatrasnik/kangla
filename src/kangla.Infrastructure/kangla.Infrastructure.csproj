@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.Application\kangla-backend.Application.csproj" />
+    <ProjectReference Include="..\kangla.Application\kangla.Application.csproj" />
   </ItemGroup>
 
 </Project>

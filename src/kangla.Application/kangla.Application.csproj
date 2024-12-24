@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kangla-backend.Domain\kangla-backend.Domain.csproj" />
+    <ProjectReference Include="..\kangla.Domain\kangla.Domain.csproj" />
   </ItemGroup>
 
 </Project>
