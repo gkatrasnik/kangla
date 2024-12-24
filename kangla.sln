@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla.Application", "src\k
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "kangla.client", "src\kangla.client\kangla.client.esproj", "{B87FFC3A-248B-4FE0-8907-E02951948733}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla.domain", "src\kangla.Domain\kangla.domain.csproj", "{0165F737-C012-463D-BEB7-8333CA6172ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla.Domain", "src\kangla.Domain\kangla.Domain.csproj", "{0165F737-C012-463D-BEB7-8333CA6172ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kangla.Infrastructure", "src\kangla.Infrastructure\kangla.Infrastructure.csproj", "{56EA4EFE-AB52-4CC4-A03A-F7B2C74816D6}"
 EndProject
