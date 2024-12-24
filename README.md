@@ -1,3 +1,10 @@
+## Kangla
+
+Dotnet web api + angular client application.
+
+User can upload photo of a plant, application will recognize the plant via openAi api, and add it to the database, with some basic info about the plant.
+User can mark when the plant was watered, and after recomended watering period for the plant, the warning will appear.
+
 ## Environment Variables
 
 To run this application, you need to set up the following environment variables:
