@@ -2,6 +2,19 @@
     padding-inline: 2rem;
 }
 
+.watering-events-table {
+    background-color: var(--mdc-elevated-card-container-color, var(--mat-app-surface-container-low));
+}
+
+.watering-events-paginator {
+    background-color: var(--mdc-elevated-card-container-color, var(--mat-app-surface-container-low));
+}
+
 .mat-column-delete {
-    width: 100px;
+  width: 100px;
+}
+
+//overriden card title
+.mat-mdc-card-title-group {
+  justify-content: center;
 }

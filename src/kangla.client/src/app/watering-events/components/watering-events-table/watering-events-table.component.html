@@ -7,7 +7,7 @@
   </mat-card-header>
   <mat-card-content>
     <div class="watering-events-table-container">
-      <table mat-table [dataSource]="wateringEvents">       
+      <table mat-table [dataSource]="wateringEvents" class="watering-events-table">       
     
         <!-- Created At Column -->
         <ng-container matColumnDef="createdAt">
@@ -41,6 +41,7 @@
         [hidePageSize]="hidePageSize"
         [pageIndex]="pageIndex"
         aria-label="Select page"
+        class="watering-events-paginator"
     />
 </div>               
 </mat-card>
@@ -48,4 +49,3 @@
 
 
 
-  
