@@ -7,9 +7,9 @@ namespace kangla.Infrastructure.Repositories
 {
     public class HumidityMeasurementRepository : IHumidityMeasurementRepository
     {
-        private readonly WateringContext _context;
+        private readonly PlantsContext _context;
 
-        public HumidityMeasurementRepository(WateringContext context)
+        public HumidityMeasurementRepository(PlantsContext context)
         {
             _context = context;
         }

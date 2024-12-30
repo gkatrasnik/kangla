@@ -7,9 +7,9 @@ namespace kangla.Infrastructure.Repositories
 {
     public class PlantsRepository : IPlantsRepository
     {
-        private readonly WateringContext _context;
+        private readonly PlantsContext _context;
 
-        public PlantsRepository(WateringContext context)
+        public PlantsRepository(PlantsContext context)
         {
             _context = context;
         }

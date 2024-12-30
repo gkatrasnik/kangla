@@ -33,7 +33,7 @@ namespace kangla.WebApi.Extensions
                 options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail = true;
             })
-                .AddEntityFrameworkStores<WateringContext>();
+                .AddEntityFrameworkStores<PlantsContext>();
 
             return services;
         }

@@ -6,9 +6,9 @@ namespace kangla.Infrastructure.Repositories
 {
     public class ImageRepository : IImageRepository
     {
-        private readonly WateringContext _context;
+        private readonly PlantsContext _context;
 
-        public ImageRepository(WateringContext context)
+        public ImageRepository(PlantsContext context)
         {
             _context = context;
         }
