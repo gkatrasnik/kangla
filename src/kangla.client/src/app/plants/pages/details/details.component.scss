@@ -12,8 +12,10 @@ img {
     margin: 1rem;
 } 
 
-.detail-section {
-    margin: 1rem;
+.detail-cards-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .watering-overdue-indicator-container {
