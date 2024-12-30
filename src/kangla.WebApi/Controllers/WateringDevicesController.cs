@@ -6,7 +6,7 @@ using kangla.Application.Interfaces;
 
 namespace kangla.WebApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class WateringDevicesController : ControllerBase
     {

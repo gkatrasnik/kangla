@@ -44,7 +44,8 @@ try
     app.UseStaticFiles();
 
     app.UseCustomMiddlewares(env);
-    app.MapIdentityApi<IdentityUser>();
+    app.MapGroup("/api")
+        .MapIdentityApi<IdentityUser>();
 
     // Apply migrations and seed 
     using (var scope = app.Services.CreateScope())
