@@ -1,2 +1,2 @@
- dotnet ef migrations add "InitialCreation" --project src/kangla-backend.Infrastructure/Infrastructure.csproj --startup-project src/kangla-backend.WebApi/WebApi.csproj
- dotnet ef database update --project src/kangla-backend.Infrastructure/Infrastructure.csproj --startup-project src/kangla-backend.WebApi/WebApi.csproj
+ dotnet ef migrations add "InitialCreation" --project src/kangla.Infrastructure/kangla.Infrastructure.csproj --startup-project src/kangla.WebApi/kangla.WebApi.csproj
+ dotnet ef database update --project src/kangla.Infrastructure/kangla.Infrastructure.csproj --startup-project src/kangla.WebApi/kangla.WebApi.csproj

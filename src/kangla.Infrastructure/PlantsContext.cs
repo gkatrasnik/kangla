@@ -7,9 +7,9 @@ using kangla.Domain.Interfaces;
 namespace kangla.Infrastructure
 {
 
-    public class WateringContext : IdentityDbContext<IdentityUser>
+    public class PlantsContext : IdentityDbContext<IdentityUser>
     {
-        public WateringContext(DbContextOptions<WateringContext> options)
+        public PlantsContext(DbContextOptions<PlantsContext> options)
         : base(options)
         {
         }

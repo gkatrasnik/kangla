@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Infrastructure.Migrations
+namespace kangla.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialcreation : Migration
+    public partial class InitialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,6 +57,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Data = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    ContentType = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -72,9 +73,9 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
-                    ScientificName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    ScientificName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     Location = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     WateringInterval = table.Column<int>(type: "INTEGER", nullable: false),

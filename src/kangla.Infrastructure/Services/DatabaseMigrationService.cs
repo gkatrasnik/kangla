@@ -5,10 +5,10 @@ namespace kangla.Infrastructure.Services
 {
     public class DatabaseMigrationService : IDatabaseMigrationService
     {
-        private readonly WateringContext _context;
+        private readonly PlantsContext _context;
         private readonly ILogger<DatabaseMigrationService> _logger;
 
-        public DatabaseMigrationService(WateringContext context, ILogger<DatabaseMigrationService> logger)
+        public DatabaseMigrationService(PlantsContext context, ILogger<DatabaseMigrationService> logger)
         {
             _context = context;
             _logger = logger;

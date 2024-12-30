@@ -19,8 +19,8 @@ namespace kangla.Infrastructure
           this IServiceCollection services,
           IConfiguration configuration)
         {
-            services.AddDbContext<WateringContext>(options =>
-                options.UseSqlite(configuration.GetConnectionString("WateringContextSQLite")));
+            services.AddDbContext<PlantsContext>(options =>
+                options.UseSqlite(configuration.GetConnectionString("PlantsContextSQLite")));
 
             services.AddTransient<DatabaseSeeder>();
             services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();

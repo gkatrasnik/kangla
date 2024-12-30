@@ -7,11 +7,11 @@ namespace kangla.Infrastructure
 {
     public class DatabaseSeeder
     {
-        private readonly WateringContext _context;
+        private readonly PlantsContext _context;
         private readonly ILogger<DatabaseSeeder> _logger;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public DatabaseSeeder(WateringContext context, ILogger<DatabaseSeeder> logger, UserManager<IdentityUser> userManager)
+        public DatabaseSeeder(PlantsContext context, ILogger<DatabaseSeeder> logger, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _logger = logger;
