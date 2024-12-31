@@ -1,6 +1,7 @@
 {
   "name": "Kangla",
   "short_name": "Kangla",
+  "description": "Kangla",
   "theme_color": "#006d33",
   "background_color": "#fafafa",
   "display": "standalone",
