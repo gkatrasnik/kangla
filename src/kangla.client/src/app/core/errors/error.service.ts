@@ -12,11 +12,11 @@ export class ErrorService {
       let errors: string[] = [];
       let statusCode: number = 0;
   
-      if (error && error.error) {
+      if (error && error.error && typeof error.error == 'string') { //api will normally return string
         try {
-          const errorResponse: AuthErrorResponse = JSON.parse(error.error);  
-          title = errorResponse.title || title; 
-          statusCode = errorResponse.status || 0; 
+          const errorResponse: AuthErrorResponse = JSON.parse(error.error);
+          title = errorResponse.title || title;
+          statusCode = errorResponse.status || 0;
           if (errorResponse.errors) {
             errors = Object.values(errorResponse.errors).flat();
           }
@@ -26,6 +26,8 @@ export class ErrorService {
         } catch (e) {
           console.error('Failed to parse error response', e);
         }
+      } else { //if app is offline, error.error is object
+        errors.push("Check your connection and try reloading the application.");
       }
   
       return { title, errors, statusCode };
