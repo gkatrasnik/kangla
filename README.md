@@ -1,9 +1,24 @@
 ## Kangla
 
-Dotnet web api + angular client application.
+Kangla is a plant care app designed as a hobby project. Users can upload photos of plants, and the app identifies them, adding them to a personal collection with basic information and recommended watering intervals. Users can log watering events, and Kangla will notify them when it’s time to water their plants again, making plant care simple and enjoyable.
 
-User can upload photo of a plant, application will recognize the plant via openAi api, and add it to the database, with some basic info about the plant.
-User can mark when the plant was watered, and after recomended watering period for the plant, the warning will appear.
+#Tech stack
+Dotnet web api + angular PWA client application.
+
+Client app:
+  - Angular 18
+  - Scss
+  - Angular Material
+  - PWA
+    
+Api:
+  - Dotnet 8
+  - Clean architecture
+  - Code first Entity framework with Sqlite
+  - ASP.NET Core Identity Endpoints
+  - Serilog logging
+  - OpenAI api integration for plant recognition
+  - Swagger
 
 ## Environment Variables
 
