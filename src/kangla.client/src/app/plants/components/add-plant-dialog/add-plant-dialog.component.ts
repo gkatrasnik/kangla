@@ -9,17 +9,18 @@ import { PlantRecognizeResponseDto } from '../../dto/plant-recognize-response-dt
 import { ImageSrcDirective } from '../../../core/directives/imagesrc.directive';
 
 @Component({
-    selector: 'app-add-device-dialog',
-    imports: [
-        MatDialogModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        MatInputModule,
-        MatButtonModule,
-        ImageSrcDirective
-    ],
-    templateUrl: './add-plant-dialog.component.html',
-    styleUrl: './add-plant-dialog.component.scss'
+  selector: 'app-add-device-dialog',
+  standalone: true,
+  imports: [   
+    MatDialogModule,  
+    MatFormFieldModule, 
+    ReactiveFormsModule, 
+    MatInputModule, 
+    MatButtonModule,
+    ImageSrcDirective
+  ],
+  templateUrl: './add-plant-dialog.component.html',
+  styleUrl: './add-plant-dialog.component.scss'
 })
 export class AddPlantDialogComponent {
   plantForm: FormGroup;

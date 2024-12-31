@@ -20,17 +20,18 @@ import { NotificationService } from '../../../core/notifications/notification.se
 import { WateringOverdueIndicatorComponent } from '../../../shared/components/watering-overdue-indicator/watering-overdue-indicator.component';
 
 @Component({
-    selector: 'app-details',
-    imports: [
-        MatButtonModule,
-        MatIconModule,
-        ImageSrcDirective,
-        WateringEventsTableComponent,
-        MatCardModule,
-        WateringOverdueIndicatorComponent
-    ],
-    templateUrl: './details.component.html',
-    styleUrl: './details.component.scss'
+  selector: 'app-details',
+  standalone: true,
+  imports: [ 
+    MatButtonModule, 
+    MatIconModule, 
+    ImageSrcDirective, 
+    WateringEventsTableComponent, 
+    MatCardModule, 
+    WateringOverdueIndicatorComponent
+  ],
+  templateUrl: './details.component.html',
+  styleUrl: './details.component.scss'
 })
 
 export class DetailsComponent {

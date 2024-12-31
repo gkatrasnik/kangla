@@ -12,18 +12,19 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'app-registration-confirmation',
-    templateUrl: './registration-confirmation.component.html',
-    styleUrls: ['./registration-confirmation.component.scss'],
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatCardModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        RouterLink
-    ]
+  selector: 'app-registration-confirmation',
+  templateUrl: './registration-confirmation.component.html',
+  styleUrls: ['./registration-confirmation.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule, 
+    MatCardModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatButtonModule,
+    RouterLink
+  ],
 })
 export class RegistrationConfirmationComponent {
   resendConfirmationForm: FormGroup;

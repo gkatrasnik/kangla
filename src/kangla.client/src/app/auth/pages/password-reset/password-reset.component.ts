@@ -12,10 +12,11 @@ import { CommonModule } from '@angular/common';
 import { ErrorService } from '../../../core/errors/error.service';
 
 @Component({
-    selector: 'app-password-reset',
-    templateUrl: './password-reset.component.html',
-    styleUrls: ['./password-reset.component.scss'],
-    imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule]
+  selector: 'app-password-reset',
+  templateUrl: './password-reset.component.html',
+  styleUrls: ['./password-reset.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule]
 })
 export class PasswordResetComponent{
   resetForm: FormGroup;

@@ -8,10 +8,11 @@ import { AsyncPipe } from '@angular/common';
 
 
 @Component({
-    selector: 'app-loading-indicator',
-    templateUrl: './loading-indicator.component.html',
-    styleUrls: ['./loading-indicator.component.scss'],
-    imports: [MatProgressSpinnerModule, AsyncPipe]
+  selector: 'app-loading-indicator',
+  templateUrl: './loading-indicator.component.html',
+  styleUrls: ['./loading-indicator.component.scss'],
+  imports: [MatProgressSpinnerModule, AsyncPipe],
+  standalone: true,
 })
 export class LoadingIndicatorComponent implements OnInit {
 
