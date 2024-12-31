@@ -9,17 +9,18 @@ import { ImagesService } from '../../../shared/services/images.service';
 import { ImageSrcDirective } from '../../../core/directives/imagesrc.directive';
 
 @Component({
-    selector: 'app-plant-device-dialog',
-    imports: [
-        MatDialogModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        ReactiveFormsModule,
-        ImageSrcDirective
-    ],
-    templateUrl: './edit-plant-dialog.component.html',
-    styleUrl: './edit-plant-dialog.component.scss'
+  selector: 'app-plant-device-dialog',
+  standalone: true,
+  imports: [
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    ImageSrcDirective
+  ],
+  templateUrl: './edit-plant-dialog.component.html',
+  styleUrl: './edit-plant-dialog.component.scss'
 })
 export class EditPlantDialogComponent {
   plantForm: FormGroup;

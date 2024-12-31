@@ -11,18 +11,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-register',
-    imports: [
-        CommonModule,
-        MatCardModule,
-        MatInputModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        RouterLink
-    ],
-    templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss']
+  selector: 'app-register',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule, 
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule, 
+    ReactiveFormsModule,
+    RouterLink
+  ],
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
 
 export class RegisterComponent implements OnInit {

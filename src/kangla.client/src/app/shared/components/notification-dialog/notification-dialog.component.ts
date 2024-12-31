@@ -5,10 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { DialogData } from '../../interfaces/dialog-data';
 
 @Component({
-    selector: 'app-notification-dialog',
-    imports: [MatButtonModule, MatDialogModule],
-    templateUrl: './notification-dialog.component.html',
-    styleUrl: './notification-dialog.component.scss'
+  selector: 'app-notification-dialog',
+  standalone: true,
+  imports: [MatButtonModule, MatDialogModule],
+  templateUrl: './notification-dialog.component.html',
+  styleUrl: './notification-dialog.component.scss'
 })
 export class NotificationDialogComponent {
   constructor(
