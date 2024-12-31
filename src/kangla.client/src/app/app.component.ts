@@ -14,6 +14,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { filter } from 'rxjs/operators';
 import { LoadingIndicatorComponent } from './shared/components/loading-indicator/loading-indicator.component';
 import { UserInfoDto } from './auth/user-info-dto';
+import { version } from '../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit{
   showToolbar: boolean = true;
   userInfo: UserInfoDto | null = null;
   private hiddenToolbarRoutes: string[] = ['/login', '/register', '/registration-confirmation', '/forgot-password', '/password-reset'];
+  public version: string = version;
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
