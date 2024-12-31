@@ -2,20 +2,25 @@
 
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="over"  position="end" class="sidenav">
-    @if (userInfo) {
+    <div class="sidenav-content">
+      @if (userInfo) {
       <div class="user-info">{{ userInfo.email }}</div>
-    }   
-    <mat-nav-list class="sidenav-list">        
-      <a mat-list-item routerLink="/home" (click)="sidenav.close()">Home</a>
-      <a mat-list-item (click)="logout()">Logout</a>
-    </mat-nav-list>
+      }
+      <mat-nav-list class="sidenav-list">
+        <a mat-list-item routerLink="/home" (click)="sidenav.close()">Home</a>
+        <a mat-list-item (click)="logout()">Logout</a>
+      </mat-nav-list>
+      <div class="spacer"></div>
+      <div class="version-info">{{version}}</div>
+    </div>    
   </mat-sidenav>
 
   <mat-sidenav-content>
     @if (showToolbar) {
       <mat-toolbar>  
         <a routerLink="/home" class="logo">
-          <span >Kangla</span>
+          <img src="./images/kangla-transparent-48x48.png" alt="kangla" />
+          <span>Kangla</span>
         </a>
         <span class="spacer"></span>
         <button mat-icon-button (click)="sidenav.toggle()">
