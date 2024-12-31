@@ -1,4 +1,4 @@
-import { ApplicationConfig, ErrorHandler, provideZoneChangeDetection, isDevMode } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { TokenInterceptor } from './core/auth/auth.interceptor';
 import { HTTP_INTERCEPTORS, withInterceptorsFromDi } from '@angular/common/http';
@@ -8,7 +8,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { GlobalErrorHandler } from './core/errors/global-error-handler';
 import { LoadingInterceptor } from './core/loading/loading.interceptor';
-import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,9 +32,6 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
       useValue: { width: '400px' }
-    }, provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }) 
+    } 
   ]
 };
