@@ -15,17 +15,16 @@ import { LoadingService } from '../../../core/loading/loading.service';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [ 
-    PlantCardComponent,
-    MatPaginatorModule,
-    MatButtonModule,    
-    MatIconModule,
-    MatMenuModule  
-  ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    selector: 'app-home',
+    imports: [
+        PlantCardComponent,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule
+    ],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   plantsList: Plant[] = [];

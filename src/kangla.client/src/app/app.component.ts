@@ -1,7 +1,5 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { HomeComponent } from './plants/pages/home/home.component';
-import { DetailsComponent } from './plants/pages/details/details.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,24 +14,21 @@ import { LoadingIndicatorComponent } from './shared/components/loading-indicator
 import { UserInfoDto } from './auth/user-info-dto';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    HomeComponent,
-    MatButtonModule,
-    DetailsComponent,
-    MatToolbarModule,
-    MatIconModule,
-    MatSidenavModule,
-    MatNavList,
-    MatListItem,
-    MatSidenav,
-    LoadingIndicatorComponent
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+        MatButtonModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatNavList,
+        MatListItem,
+        MatSidenav,
+        LoadingIndicatorComponent
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit{
   title = 'kangla';
