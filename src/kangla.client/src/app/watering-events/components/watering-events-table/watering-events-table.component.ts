@@ -14,18 +14,17 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-watering-events-table',
-  standalone: true,
-  imports: [
-    MatTableModule, 
-    CommonModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatCardModule, 
-    MatPaginatorModule
-  ],
-  templateUrl: './watering-events-table.component.html',
-  styleUrl: './watering-events-table.component.scss'
+    selector: 'app-watering-events-table',
+    imports: [
+        MatTableModule,
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        MatPaginatorModule
+    ],
+    templateUrl: './watering-events-table.component.html',
+    styleUrl: './watering-events-table.component.scss'
 })
 export class WateringEventsTableComponent implements OnInit, OnChanges {
   displayedColumns: string[] = ['createdAt', 'delete'];

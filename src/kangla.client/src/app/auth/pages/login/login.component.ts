@@ -11,19 +11,18 @@ import { CommonModule } from '@angular/common';
 import { ErrorService } from '../../../core/errors/error.service';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    RouterLink
-  ],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'app-login',
+    imports: [
+        CommonModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        ReactiveFormsModule,
+        RouterLink
+    ],
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss']
 })
 
 export class LoginComponent implements OnInit {

@@ -11,11 +11,10 @@ import { PlantService } from '../../plant.service';
 import { WateringOverdueIndicatorComponent } from '../../../shared/components/watering-overdue-indicator/watering-overdue-indicator.component';
 
 @Component({
-  selector: 'app-plant-card',
-  standalone: true,
-  imports: [MatButtonModule, MatCardModule, RouterLink, ImageSrcDirective, WateringOverdueIndicatorComponent],
-  templateUrl: './plant-card.component.html',
-  styleUrl: './plant-card.component.scss'
+    selector: 'app-plant-card',
+    imports: [MatButtonModule, MatCardModule, RouterLink, ImageSrcDirective, WateringOverdueIndicatorComponent],
+    templateUrl: './plant-card.component.html',
+    styleUrl: './plant-card.component.scss'
 })
 export class PlantCardComponent {
   @Input() plant!: Plant;
