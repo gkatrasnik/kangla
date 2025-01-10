@@ -74,7 +74,7 @@ export class EditPlantDialogComponent {
           formData.append('image', resizedFile, resizedFile.name);
         } catch (error) {
           console.error("Error resizing image:", error);
-          throw new Error('Error uploading image.');
+          throw new Error('Error processing image.');
         }
       } else if (this.imageRemoved) {
         formData.append('removeImage', 'true');
