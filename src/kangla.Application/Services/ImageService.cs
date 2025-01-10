@@ -17,7 +17,7 @@ namespace kangla.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<Image> GetImageAsync(int imageId)
+        public async Task<MediaImage> GetImageAsync(int imageId)
         {
             var image = await _imageRepository.GetImageAsync(imageId);
             if (image is null)
@@ -28,7 +28,7 @@ namespace kangla.Application.Services
             return image;
         }
 
-        public async Task<Image> CreateImageAsync(Image image)
+        public async Task<MediaImage> CreateImageAsync(MediaImage image)
         {
             var newImage = await _imageRepository.AddImageAsync(image);
             return newImage;
@@ -44,6 +44,11 @@ namespace kangla.Application.Services
 
             await _imageRepository.DeleteImageAsync(imageId);
             return true;
+        }
+
+        public async Task<string?> GetImageETagAsync(int imageId)
+        {
+            return await _imageRepository.GetImageETagAsync(imageId);
         }
 
         public string GenerateETag(byte[] imageData)

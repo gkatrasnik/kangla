@@ -19,17 +19,15 @@ namespace kangla.WebApi.Controllers
         [HttpGet("{imageId}")]
         public async Task<ActionResult> GetImage(int imageId)
         {
-            var image = await _imageService.GetImageAsync(imageId);
-
-            var eTag = _imageService.GenerateETag(image.Data);
-
+            var eTag = await _imageService.GetImageETagAsync(imageId);
             if (Request.Headers["If-None-Match"] == eTag)
             {
                 return StatusCode(StatusCodes.Status304NotModified);
             }
-
-            Response.Headers.Append("Cache-Control", "private,max-age=300");
-            Response.Headers.Append("ETag", eTag);
+            
+            var image = await _imageService.GetImageAsync(imageId);            
+            //Response.Headers.Append("Cache-Control", "private,max-age=3600");
+            Response.Headers.Append("ETag", image.ETag);
 
             return File(image.Data, image.ContentType);
         }

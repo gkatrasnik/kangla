@@ -18,7 +18,7 @@ namespace kangla.Infrastructure
         public DbSet<WateringEvent> WateringEvents { get; set; }
         public DbSet<HumidityMeasurement> HumidityMeasurements { get; set; }
         public DbSet<Plant> Plants { get; set; }
-        public DbSet<Image> Images { get; set; }
+        public DbSet<MediaImage> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
