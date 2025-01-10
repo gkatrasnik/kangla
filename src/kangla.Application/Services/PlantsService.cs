@@ -82,10 +82,12 @@ namespace kangla.Application.Services
             {
                 // if image was sent with request, create new image 
                 var resizedImage = await _imageProcessingService.ProcessImageAsync(plantDto.Image, 512, 512, 80);
-                var newImage = new Image
+                var eTag = _imageService.GenerateETag(resizedImage);
+                var newImage = new MediaImage
                 {
                     Data = resizedImage,
-                    ContentType = plantDto.Image.ContentType
+                    ContentType = plantDto.Image.ContentType,
+                    ETag = eTag
                 };
                 newImage = await _imageService.CreateImageAsync(newImage);
 
@@ -134,18 +136,18 @@ namespace kangla.Application.Services
 
             var image = plantRecognizeDto.Image;
             var resizedImage = await _imageProcessingService.ProcessImageAsync(image, 512, 512, 80);
+            var eTag = _imageService.GenerateETag(resizedImage);
 
             var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(resizedImage);
 
-            Image? newImageEntity = null;
+            MediaImage? newImageEntity = null;
             if (string.IsNullOrEmpty(recognizedPlant.Error))
             {
-                newImageEntity = await _imageService.CreateImageAsync(new Image { Data = resizedImage, ContentType = image.ContentType });
+                newImageEntity = await _imageService.CreateImageAsync(new MediaImage { Data = resizedImage, ContentType = image.ContentType, ETag = eTag });
 
                 if (newImageEntity == null)
                 {
                     throw new InvalidOperationException("Could not save image");
-
                 }
             }
 

@@ -13,13 +13,13 @@ namespace kangla.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Image?> GetImageAsync(int imageId)
+        public async Task<MediaImage?> GetImageAsync(int imageId)
         {
             var image = await _context.Images.AsNoTracking().FirstOrDefaultAsync(x => x.Id == imageId);
             return image;
         }
 
-        public async Task<Image> AddImageAsync(Image image)
+        public async Task<MediaImage> AddImageAsync(MediaImage image)
         {
             _context.Images.Add(image);
             await _context.SaveChangesAsync();
@@ -40,6 +40,15 @@ namespace kangla.Infrastructure.Repositories
         {
             return await _context.Images
                 .AnyAsync(x => x.Id == imageId);
+        }
+
+        public async Task<string?> GetImageETagAsync(int imageId)
+        {             
+            return await _context.Images
+                .AsNoTracking()
+                .Where(x => x.Id == imageId)
+                .Select(x => x.ETag)
+                .FirstOrDefaultAsync();
         }
     }
 }
