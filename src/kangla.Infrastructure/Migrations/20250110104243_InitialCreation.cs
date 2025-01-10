@@ -54,10 +54,10 @@ namespace kangla.Infrastructure.Migrations
                 name: "Images",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Data = table.Column<byte[]>(type: "BLOB", nullable: false),
                     ContentType = table.Column<string>(type: "TEXT", nullable: false),
+                    ETag = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -80,7 +80,7 @@ namespace kangla.Infrastructure.Migrations
                     Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     WateringInterval = table.Column<int>(type: "INTEGER", nullable: false),
                     WateringInstructions = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ImageId = table.Column<Guid>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },

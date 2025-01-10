@@ -20,6 +20,6 @@ namespace kangla.Application.DTO
         public int WateringInterval { get; set; } = 0;
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
         public string? WateringInstructions { get; set; } = default!;
-        public int? ImageId { get; set; }
+        public Guid? ImageId { get; set; }
     }
 }
