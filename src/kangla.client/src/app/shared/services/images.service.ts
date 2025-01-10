@@ -73,7 +73,7 @@ export class ImagesService {
     });
   }
 
-  getImageUrl(imageId?: number): string | undefined {
+  getImageUrl(imageId?: string): string | undefined {
     return imageId ? `${this.apiUrl}/images/${imageId}` : undefined;
   }
 

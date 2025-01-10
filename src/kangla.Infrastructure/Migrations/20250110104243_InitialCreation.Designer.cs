@@ -11,7 +11,7 @@ using kangla.Infrastructure;
 namespace kangla.Infrastructure.Migrations
 {
     [DbContext(typeof(PlantsContext))]
-    [Migration("20241230134517_InitialCreation")]
+    [Migration("20250110104243_InitialCreation")]
     partial class InitialCreation
     {
         /// <inheritdoc />
@@ -240,11 +240,11 @@ namespace kangla.Infrastructure.Migrations
                     b.ToTable("HumidityMeasurements");
                 });
 
-            modelBuilder.Entity("kangla.Domain.Entities.Image", b =>
+            modelBuilder.Entity("kangla.Domain.Entities.MediaImage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -256,6 +256,10 @@ namespace kangla.Infrastructure.Migrations
                     b.Property<byte[]>("Data")
                         .IsRequired()
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("ETag")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
@@ -278,8 +282,8 @@ namespace kangla.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ImageId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Location")
                         .HasMaxLength(100)

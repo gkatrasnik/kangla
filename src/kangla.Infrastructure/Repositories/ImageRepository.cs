@@ -13,7 +13,7 @@ namespace kangla.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<MediaImage?> GetImageAsync(int imageId)
+        public async Task<MediaImage?> GetImageAsync(Guid imageId)
         {
             var image = await _context.Images.AsNoTracking().FirstOrDefaultAsync(x => x.Id == imageId);
             return image;
@@ -26,7 +26,7 @@ namespace kangla.Infrastructure.Repositories
             return image;
         }
 
-        public async Task DeleteImageAsync(int imageId)
+        public async Task DeleteImageAsync(Guid imageId)
         {
             var image = await _context.Images.FindAsync(imageId);
             if (image != null)
@@ -36,13 +36,13 @@ namespace kangla.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> ImageExistsAsync(int imageId)
+        public async Task<bool> ImageExistsAsync(Guid imageId)
         {
             return await _context.Images
                 .AnyAsync(x => x.Id == imageId);
         }
 
-        public async Task<string?> GetImageETagAsync(int imageId)
+        public async Task<string?> GetImageETagAsync(Guid imageId)
         {             
             return await _context.Images
                 .AsNoTracking()

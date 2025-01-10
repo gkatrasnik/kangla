@@ -239,9 +239,9 @@ namespace kangla.Infrastructure.Migrations
 
             modelBuilder.Entity("kangla.Domain.Entities.MediaImage", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
@@ -279,8 +279,8 @@ namespace kangla.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ImageId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Location")
                         .HasMaxLength(100)

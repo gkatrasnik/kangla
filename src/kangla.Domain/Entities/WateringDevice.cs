@@ -7,6 +7,8 @@ namespace kangla.Domain.Entities
     public class WateringDevice : IEntity
     {
         [Required]
+        public int Id { get; set; }
+        [Required]
         public string UserId { get; set; } = default!;
         /// <summary>
         /// Whether the device is active - can be turned off
