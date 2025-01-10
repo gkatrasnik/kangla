@@ -88,6 +88,7 @@ export class HomeComponent {
             }
           },
           error: (err) => {
+            this.loadingService.loadingOff();
             console.error('Plant recognition failed:', err);
             this.openAddPlantDialog();
             throw new Error('Plant recognition failed');
