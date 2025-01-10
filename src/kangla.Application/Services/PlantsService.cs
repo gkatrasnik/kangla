@@ -3,6 +3,7 @@ using kangla.Application.DTO;
 using kangla.Application.Interfaces;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
+using kangla.Domain.Constants;
 
 namespace kangla.Application.Services
 {
@@ -80,6 +81,12 @@ namespace kangla.Application.Services
             }
             else if (plantDto.Image != null && plantDto.Image.Length > 0)
             {
+                
+                if (!ImageConstants.AllowedContentTypes.Contains(plantDto.Image.ContentType))
+                {
+                    throw new ArgumentException("Only JPEG, PNG, GIF and WEBP images are allowed.");
+                }
+
                 // if image was sent with request, create new image 
                 var resizedImage = await _imageProcessingService.ProcessImageAsync(plantDto.Image, 512, 512, 80);
                 var eTag = _imageService.GenerateETag(resizedImage);
@@ -132,6 +139,11 @@ namespace kangla.Application.Services
             if (plantRecognizeDto.Image == null || plantRecognizeDto.Image.Length == 0)
             {
                 throw new ArgumentException("No image provided");
+            }
+
+            if (!ImageConstants.AllowedContentTypes.Contains(plantRecognizeDto.Image.ContentType))
+            {
+                throw new ArgumentException("Only JPEG, PNG, GIF and WEBP images are allowed.");
             }
 
             var image = plantRecognizeDto.Image;
