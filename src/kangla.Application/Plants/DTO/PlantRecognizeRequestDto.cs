@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace kangla.Application.DTO
+namespace kangla.Application.Plants.DTO
 {
     public class PlantRecognizeRequestDto
     {

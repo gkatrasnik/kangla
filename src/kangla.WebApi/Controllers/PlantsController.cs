@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using kangla.Application.DTO;
-using kangla.Application.Interfaces;
+using kangla.Application.Plants;
+using kangla.Application.Plants.DTO;
+using kangla.Application.Shared;
 
 namespace kangla.WebApi.Controllers
 {

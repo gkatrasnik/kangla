@@ -1,4 +1,4 @@
-﻿namespace kangla.Application.DTO
+﻿namespace kangla.Application.WateringEvents
 {
     public class WateringEventResponseDto
     {

@@ -1,6 +1,7 @@
-﻿using kangla.Application.DTO;
+﻿using kangla.Application.Plants.DTO;
+using kangla.Application.Shared;
 
-namespace kangla.Application.Interfaces
+namespace kangla.Application.Plants
 {
     public interface IPlantsService
     {

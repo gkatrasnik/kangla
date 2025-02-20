@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using kangla.Domain.Entities;
 using kangla.Domain.Model;
-using kangla.Application.DTO;
+using kangla.Application.Plants.DTO;
+using kangla.Application.WateringEvents;
+using kangla.Application.WateringDevices;
+using kangla.Application.HumidityMeasurements;
 
-namespace kangla.Application.Mappings
+namespace kangla.Application.Shared
 {
     public class MappingProfile : Profile
     {

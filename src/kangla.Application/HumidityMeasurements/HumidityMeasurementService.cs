@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using kangla.Application.DTO;
-using kangla.Application.Interfaces;
+using kangla.Application.Shared;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
 
-namespace kangla.Application.Services
+namespace kangla.Application.HumidityMeasurements
 {
     public class HumidityMeasurementService : IHumidityMeasurementService
     {

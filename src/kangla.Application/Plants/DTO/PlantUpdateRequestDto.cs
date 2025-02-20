@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
-namespace kangla.Application.DTO
+namespace kangla.Application.Plants.DTO
 {
-    public class PlantCreateRequestDto
+    public class PlantUpdateRequestDto
     {
         [Required]
         [StringLength(50, ErrorMessage = "Name must be less than 50 characters long.")]
@@ -20,6 +21,7 @@ namespace kangla.Application.DTO
         public int WateringInterval { get; set; } = 0;
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
         public string? WateringInstructions { get; set; } = default!;
-        public int? ImageId { get; set; }
+        public IFormFile? Image { get; set; }
+        public bool RemoveImage { get; set; }
     }
 }

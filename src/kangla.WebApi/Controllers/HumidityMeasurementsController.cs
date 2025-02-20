@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using kangla.Application.DTO;
-using kangla.Application.Interfaces;
+using kangla.Application.HumidityMeasurements;
 
 namespace kangla.WebApi.Controllers
 {
