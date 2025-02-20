@@ -4,9 +4,10 @@ namespace kangla.Application.Images
 {
     public interface IImageService
     {
-        Task<Image> GetImageAsync(int ImageId);
-        Task<Image> CreateImageAsync(Image image);
-        Task<bool> DeleteImageAsync(int imageId);
+        Task<MediaImage> GetImageAsync(Guid imageId);
+        Task<MediaImage> CreateImageAsync(MediaImage image);
+        Task<bool> DeleteImageAsync(Guid imageId);
+        Task<string?> GetImageETagAsync(Guid imageId);
         string GenerateETag(byte[] imageData);
     }
 }

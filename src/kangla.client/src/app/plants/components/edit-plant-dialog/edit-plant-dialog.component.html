@@ -43,7 +43,7 @@
       </div>
     } @else {
       <button type="button" mat-button (click)="fileInput.click()">Add Image</button>
-      <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/png, image/gif, image/jpeg">
+      <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept="image/png, image/gif, image/jpeg, image/webp">
       <span class="file-name">{{selectedFile?.name}}</span>
     }   
   </form>

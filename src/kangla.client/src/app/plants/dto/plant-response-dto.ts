@@ -9,6 +9,6 @@ export interface PlantResponseDto {
     wateringInstructions?: string;
     createdAt: Date;
     updatedAt: Date;
-    imageId?: number;
+    imageId?: string;
     lastWateringDateTime?: Date;
 }

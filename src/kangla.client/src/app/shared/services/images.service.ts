@@ -66,6 +66,7 @@ export class ImagesService {
             reject(error);
           }
         };
+        img.onerror = error => reject(error);
         img.src = event.target.result;
       };
       reader.onerror = error => reject(error);
@@ -73,7 +74,7 @@ export class ImagesService {
     });
   }
 
-  getImageUrl(imageId?: number): string | undefined {
+  getImageUrl(imageId?: string): string | undefined {
     return imageId ? `${this.apiUrl}/images/${imageId}` : undefined;
   }
 

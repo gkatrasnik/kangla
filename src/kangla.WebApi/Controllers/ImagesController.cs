@@ -17,26 +17,26 @@ namespace kangla.WebApi.Controllers
 
         [Authorize]
         [HttpGet("{imageId}")]
-        public async Task<ActionResult> GetImage(int imageId)
+        public async Task<ActionResult> GetImage(Guid imageId)
         {
-            var image = await _imageService.GetImageAsync(imageId);
-
-            var eTag = _imageService.GenerateETag(image.Data);
-
-            if (Request.Headers["If-None-Match"] == eTag)
+            var eTag = await _imageService.GetImageETagAsync(imageId); 
+            if (Request.Headers["If-None-Match"] == eTag) //current angular custom image src directive does not send If-None-Match header
             {
                 return StatusCode(StatusCodes.Status304NotModified);
             }
+            
+            var image = await _imageService.GetImageAsync(imageId);
 
-            Response.Headers.Append("Cache-Control", "private,max-age=300");
-            Response.Headers.Append("ETag", eTag);
+            //315360001 - 1 year  - Images does not change, images can only be deleted or created.
+            Response.Headers.Append("Cache-Control", "private, max-age=2592000"); // 1 month
+            Response.Headers.Append("ETag", image.ETag);
 
             return File(image.Data, image.ContentType);
         }
 
         [Authorize]
         [HttpDelete("{imageId}")]
-        public async Task<IActionResult> DeleteImage(int imageId)
+        public async Task<IActionResult> DeleteImage(Guid imageId)
         {
             var deleted = await _imageService.DeleteImageAsync(imageId);
             if (!deleted)
