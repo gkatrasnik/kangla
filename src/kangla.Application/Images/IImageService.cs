@@ -1,6 +1,6 @@
 ﻿using kangla.Domain.Entities;
 
-namespace kangla.Application.Interfaces
+namespace kangla.Application.Images
 {
     public interface IImageService
     {

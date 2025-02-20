@@ -1,10 +1,9 @@
 ﻿using System.Security.Cryptography;
 using AutoMapper;
-using kangla.Application.Interfaces;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
 
-namespace kangla.Application.Services
+namespace kangla.Application.Images
 {
     public class ImageService : IImageService
     {

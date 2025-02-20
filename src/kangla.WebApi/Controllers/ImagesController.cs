@@ -1,4 +1,4 @@
-﻿using kangla.Application.Interfaces;
+﻿using kangla.Application.Images;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

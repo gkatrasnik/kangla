@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using kangla.Application.DTO;
-using kangla.Application.Interfaces;
+using kangla.Application.Images;
+using kangla.Application.Plants.DTO;
+using kangla.Application.Shared;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
 
-namespace kangla.Application.Services
+namespace kangla.Application.Plants
 {
     public class PlantsService : IPlantsService
     {

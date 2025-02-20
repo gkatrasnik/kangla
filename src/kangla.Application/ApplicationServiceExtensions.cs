@@ -1,6 +1,9 @@
-﻿using kangla.Application.Interfaces;
-using kangla.Application.Mappings;
-using kangla.Application.Services;
+﻿using kangla.Application.HumidityMeasurements;
+using kangla.Application.Images;
+using kangla.Application.Plants;
+using kangla.Application.Shared;
+using kangla.Application.WateringDevices;
+using kangla.Application.WateringEvents;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace kangla.Application
