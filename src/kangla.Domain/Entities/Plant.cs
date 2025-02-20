@@ -6,6 +6,8 @@ namespace kangla.Domain.Entities
 {
     public class Plant : IEntity
     {
+        [Required]
+        public int Id { get; set; }
         /// <summary>
         /// User id from Microsoft.AspNetCore.Identity that is owner of the plant.
         /// </summary>
@@ -32,6 +34,6 @@ namespace kangla.Domain.Entities
         public string? WateringInstructions { get; set; } = default!;
         public List<WateringEvent>? WateringEvents { get; set; }        
         public WateringDevice? WateringDevice { get; set; }        
-        public int? ImageId { get; set; } = default!;
+        public Guid? ImageId { get; set; } = default!;
     }
 }

@@ -88,9 +88,10 @@ export class HomeComponent {
             }
           },
           error: (err) => {
+            this.loadingService.loadingOff();
             console.error('Plant recognition failed:', err);
             this.openAddPlantDialog();
-            throw new Error('Plant recognition failed');
+            throw new Error('Plant recognition failed.');
           },
           complete: () => {
             this.loadingService.loadingOff();
@@ -98,7 +99,7 @@ export class HomeComponent {
         });
       } catch (error) {
         this.loadingService.loadingOff();
-        throw new Error('Error during plant recognition');
+        throw new Error('Error processing image.');
       } finally {
         fileInput.value = '';
       }

@@ -6,6 +6,8 @@ namespace kangla.Domain.Entities
     public class HumidityMeasurement : IEntity
     {
         [Required]
+        public int Id { get; set; }
+        [Required]
         public required DateTime DateTime { get; set; }
         /// <summary>
         /// Soil humidity reading from capacitive sensor

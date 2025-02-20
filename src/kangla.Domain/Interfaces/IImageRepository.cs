@@ -4,9 +4,10 @@ namespace kangla.Domain.Interfaces
 {
     public interface IImageRepository
     {
-        Task<Image?> GetImageAsync(int imageId);
-        Task<Image> AddImageAsync(Image image);
-        Task DeleteImageAsync(int imageId);
-        Task<bool> ImageExistsAsync(int imageId);
+        Task<MediaImage?> GetImageAsync(Guid imageId);
+        Task<MediaImage> AddImageAsync(MediaImage image);
+        Task DeleteImageAsync(Guid imageId);
+        Task<bool> ImageExistsAsync(Guid imageId);
+        Task<string?> GetImageETagAsync(Guid imageId);
     }
 }
