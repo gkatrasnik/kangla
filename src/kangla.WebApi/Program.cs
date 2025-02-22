@@ -44,8 +44,14 @@ try
     app.UseStaticFiles();
 
     app.UseCustomMiddlewares(env);
-    app.MapGroup("/api")
-        .MapIdentityApi<IdentityUser>();
+
+    var apiGroup = app.MapGroup("/api");
+    apiGroup.MapIdentityApi<IdentityUser>();
+    // logout endpoint is not implemented by asp.net core identity
+    apiGroup.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
+    {
+        await signInManager.SignOutAsync().ConfigureAwait(false);
+    });
 
     // Apply migrations and seed 
     using (var scope = app.Services.CreateScope())
