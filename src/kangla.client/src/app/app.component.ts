@@ -11,10 +11,11 @@ import { MatListItem } from '@angular/material/list';
 import { AuthService } from './core/auth/auth.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
-import { filter } from 'rxjs/operators';
+import { catchError, filter } from 'rxjs/operators';
 import { LoadingIndicatorComponent } from './shared/components/loading-indicator/loading-indicator.component';
 import { UserInfoDto } from './auth/user-info-dto';
 import { version } from '../../package.json';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -65,8 +66,15 @@ export class AppComponent implements OnInit{
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-    this.sidenav.close()
+    this.authService.logout().pipe(
+      catchError((error) => {
+        console.error("Logout failed:", error);
+        return of(true); // Ensure navigation happens even if logout fails
+      })
+    ).subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+
+    this.sidenav.close();
   }
 }

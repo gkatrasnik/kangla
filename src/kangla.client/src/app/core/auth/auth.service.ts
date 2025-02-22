@@ -61,24 +61,26 @@ export class AuthService {
     );
   }
 
-  public logout() {
-    /*
+  public logout(): Observable<boolean> {
     return this.http.post(`${this.apiUrl}/logout`, {}, {
       withCredentials: true,
       observe: 'response',
       responseType: 'text'
-    }).pipe<boolean>(map((res: HttpResponse<string>) => {
-      if (res.ok) {
-        this._userInfo.next(null);
-        this._authStateChanged.next(false);
-      }
-      return res.ok;
-    }));
-    */ 
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');   
-    this._userInfo.next(null);
-    this._authStateChanged.next(false);
+    }).pipe(
+      tap((res: HttpResponse<string>) => {
+        if (res.ok) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          this._userInfo.next(null);
+          this._authStateChanged.next(false);
+        }
+      }),
+      map(() => true), // Logout succeeded
+      catchError((error) => {
+        console.error("Logout API failed:", error);
+        return of(true); // return `true` even if the API fails
+      })
+    );
   }
 
   // check if the user is authenticated. the endpoint is protected so 401 if not.
