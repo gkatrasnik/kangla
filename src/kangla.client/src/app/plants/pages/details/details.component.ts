@@ -61,7 +61,7 @@ export class DetailsComponent {
     this.plantService.getPlantById(this.plantId).subscribe((data: Plant) => {
       this.plant = data;
     });
-  } 
+  }
 
   removePlant(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
