@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/home'], { replaceUrl: true });        
         },
         error: (error) => {
+          throw error;
           const { title, errors } = this.errorService.parseErrorResponse(error);
           const errorMessage = `${errors.join(', ')}`;
           this.notificationService.showServerError(title, errorMessage);

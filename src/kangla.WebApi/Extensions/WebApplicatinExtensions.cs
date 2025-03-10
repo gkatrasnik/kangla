@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Kangla.WebApi.Middlewares;
+using Serilog;
 
 namespace kangla.WebApi.Extensions
 {
@@ -6,9 +7,10 @@ namespace kangla.WebApi.Extensions
     {
         public static void UseCustomMiddlewares(this IApplicationBuilder app, IHostEnvironment env)
         {
-            app.UseExceptionHandler();
+            //app.UseExceptionHandler(); We use custom exception handlers
+            //app.UseStatusCodePages();
+            app.UseMiddleware<SerilogEnrichmentMiddleware>();
             app.UseSerilogRequestLogging();
-
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
