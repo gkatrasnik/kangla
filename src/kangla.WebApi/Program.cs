@@ -63,6 +63,13 @@ try
 
         try
         {
+            // Ensure the directory exists before migration
+            var dataFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "data");
+            if (!Directory.Exists(dataFolderPath))
+            {
+                Directory.CreateDirectory(dataFolderPath);
+            }
+
             migrationService.MigrateDatabase();
             await seeder.SeedAsync();
         }
