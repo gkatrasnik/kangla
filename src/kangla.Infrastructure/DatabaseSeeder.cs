@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using kangla.Domain.Entities;

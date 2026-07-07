@@ -53,12 +53,11 @@ try
         await signInManager.SignOutAsync().ConfigureAwait(false);
     });
 
-    // Apply migrations and seed 
+    // Apply migrations and seed development demo data.
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
         var migrationService = services.GetRequiredService<IDatabaseMigrationService>();
-        var seeder = services.GetRequiredService<DatabaseSeeder>();
         var logger = services.GetRequiredService<ILogger<Program>>();
 
         try
@@ -71,7 +70,11 @@ try
             }
 
             migrationService.MigrateDatabase();
-            await seeder.SeedAsync();
+            if (env.IsDevelopment())
+            {
+                var seeder = services.GetRequiredService<DatabaseSeeder>();
+                await seeder.SeedAsync();
+            }
         }
         catch (Exception ex)
         {
