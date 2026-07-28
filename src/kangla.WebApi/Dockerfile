@@ -1,55 +1,50 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Restore the Angular toolchain once; the JavaScript SDK invokes it during publish.
+FROM node:20-bookworm-slim AS client-dependencies
+WORKDIR /src/kangla.client
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-#USER $APP_UID  set by visual studio 
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+COPY src/kangla.client/package.json src/kangla.client/package-lock.json ./
+RUN npm ci
 
-# This is needed so that the container can be run as a non-root user and still have access to the mounted volumes
-# Accept UID and GID as build arguments
-ARG UID=1001
-ARG GID=1001
-
-# Create non-root user and group
-RUN groupadd -g $GID appgroup && useradd -m -u $UID -g appgroup appuser
-
-# Use the non-root user
-USER appuser
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS with-node
-RUN apt-get update
-RUN apt-get install curl
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash
-RUN apt-get -y install nodejs
-RUN npm install -g @angular/cli
-
-# This stage is used to build the service project
-FROM with-node AS build
+# Publish the ASP.NET Core API.
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS publish
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Directory.Packages.props", "."]
-COPY ["NuGet.Config", "."]
-COPY ["src/kangla.client/nuget.config", "src/kangla.client/"]
-COPY ["src/kangla.WebApi/kangla.WebApi.csproj", "src/kangla.WebApi/"]
-COPY ["src/kangla.client/kangla.client.esproj", "src/kangla.client/"]
-COPY ["src/kangla.Infrastructure/kangla.Infrastructure.csproj", "src/kangla.Infrastructure/"]
-COPY ["src/kangla.Application/kangla.Application.csproj", "src/kangla.Application/"]
-COPY ["src/kangla.Domain/kangla.Domain.csproj", "src/kangla.Domain/"]
-RUN dotnet restore "./src/kangla.WebApi/kangla.WebApi.csproj"
-COPY . .
-WORKDIR "/src/src/kangla.WebApi"
-RUN dotnet build "./kangla.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./kangla.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# The JavaScript SDK runs the Angular publish target while publishing the API.
+COPY --from=client-dependencies /usr/local /usr/local
+COPY Directory.Packages.props NuGet.Config ./
+COPY src/kangla.WebApi/kangla.WebApi.csproj src/kangla.WebApi/
+COPY src/kangla.client/kangla.client.esproj src/kangla.client/
+COPY src/kangla.client/nuget.config src/kangla.client/
+COPY src/kangla.Infrastructure/kangla.Infrastructure.csproj src/kangla.Infrastructure/
+COPY src/kangla.Application/kangla.Application.csproj src/kangla.Application/
+COPY src/kangla.Domain/kangla.Domain.csproj src/kangla.Domain/
+RUN dotnet restore src/kangla.WebApi/kangla.WebApi.csproj
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+COPY . ./
+COPY --from=client-dependencies /src/kangla.client/node_modules ./src/kangla.client/node_modules
+RUN dotnet publish src/kangla.WebApi/kangla.WebApi.csproj \
+    --configuration $BUILD_CONFIGURATION \
+    --output /app/publish \
+    /p:UseAppHost=false
+
+# Run with an unprivileged user. Data and logs are bind-mounted by the deployment.
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+ARG UID=1001
+ARG GID=1001
 WORKDIR /app
-COPY --from=publish /app/publish .
+
+RUN groupadd --gid $GID appgroup \
+    && useradd --uid $UID --gid appgroup --create-home appuser \
+    && mkdir /app/data /app/logs \
+    && chown -R appuser:appgroup /app
+
+COPY --from=publish --chown=appuser:appgroup /app/publish ./
+COPY --from=publish --chown=appuser:appgroup /src/src/kangla.client/dist/kangla.client/browser ./wwwroot
+
+ENV ASPNETCORE_ENVIRONMENT=Production \
+    ASPNETCORE_FORWARDEDHEADERS_ENABLED=true \
+    ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+USER appuser
 ENTRYPOINT ["dotnet", "kangla.WebApi.dll"]

@@ -1,0 +1,48 @@
+name: Docker deploy to VPS
+
+on:
+  workflow_run:
+    workflows: ["Build and Push to GHCR"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.OCI_INSTANCE_IP }}
+          REMOTE_USER: ${{ secrets.OCI_USERNAME }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > deploy_key && chmod 600 deploy_key
+
+          ssh -i deploy_key -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
+            echo $GHCR_PAT | docker login ghcr.io -u $REMOTE_USER --password-stdin
+            docker pull ghcr.io/${{ github.repository }}:latest
+            docker stop kangla || true
+            docker rm kangla || true
+            mkdir -p /home/ubuntu/docker-data/kangla
+            mkdir -p /home/ubuntu/docker-data/kangla/data
+            mkdir -p /home/ubuntu/docker-data/kangla/logs
+            sudo chown -R 1001:1001 /home/ubuntu/docker-data/kangla
+            docker run -d \
+              --name kangla \
+              --restart=unless-stopped \
+              -p 5000:8080 \
+              -v /home/ubuntu/docker-data/kangla/data:/app/data \
+              -v /home/ubuntu/docker-data/kangla/logs:/app/logs \
+              -e "EmailSettings__DefaultFromEmail=${{ secrets.EMAIL_SETTINGS_DEFAULT_FROM_EMAIL }}" \
+              -e "EmailSettings__Host=${{ secrets.EMAIL_SETTINGS_HOST }}" \
+              -e "EmailSettings__Port=${{ secrets.EMAIL_SETTINGS_PORT }}" \
+              -e "EmailSettings__Username=${{ secrets.EMAIL_SETTINGS_USERNAME }}" \
+              -e "EmailSettings__Password=${{ secrets.EMAIL_SETTINGS_PASSWORD }}" \
+              -e "OpenAI_ApiKey=${{ secrets.OPENAI_API_KEY }}" \
+              ghcr.io/${{ github.repository }}:latest
+            docker image prune -f
+          EOF

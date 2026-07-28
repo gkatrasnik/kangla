@@ -1,0 +1,46 @@
+name: Docker deploy to Hetzner VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.HETZNER_INSTANCE_IP }}
+          REMOTE_USER: ${{ secrets.HETZNER_USERNAME }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > deploy_key && chmod 600 deploy_key
+
+          ssh -i deploy_key -p 2222 -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
+            echo $GHCR_PAT | docker login ghcr.io -u $REMOTE_USER --password-stdin
+            docker pull ghcr.io/${{ github.repository }}:latest
+            
+            docker stop kangla || true
+            docker rm kangla || true
+            
+            mkdir -p /opt/containers/kangla/data
+            mkdir -p /opt/containers/kangla/logs
+            
+            sudo chown -R 1001:1001 /opt/containers/kangla
+            
+            docker run -d \
+              --name kangla \
+              --restart=unless-stopped \
+              --network web_network \
+              -v /opt/containers/kangla/data:/app/data \
+              -v /opt/containers/kangla/logs:/app/logs \
+              -e "EmailSettings__DefaultFromEmail=${{ secrets.EMAIL_SETTINGS_DEFAULT_FROM_EMAIL }}" \
+              -e "EmailSettings__Host=${{ secrets.EMAIL_SETTINGS_HOST }}" \
+              -e "EmailSettings__Port=${{ secrets.EMAIL_SETTINGS_PORT }}" \
+              -e "EmailSettings__Username=${{ secrets.EMAIL_SETTINGS_USERNAME }}" \
+              -e "EmailSettings__Password=${{ secrets.EMAIL_SETTINGS_PASSWORD }}" \
+              -e "OpenAI_ApiKey=${{ secrets.OPENAI_API_KEY }}" \
+              ghcr.io/${{ github.repository }}:latest
+            docker image prune -f
+          EOF
