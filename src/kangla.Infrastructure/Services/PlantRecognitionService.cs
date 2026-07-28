@@ -37,7 +37,7 @@ namespace kangla.Infrastructure.Services
 
         public PlantRecognitionService(IConfiguration configuration)
         {
-            var apiKey = configuration["OpenAI_ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var apiKey = configuration["OpenAI:ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
             if (string.IsNullOrWhiteSpace(apiKey))
             {
