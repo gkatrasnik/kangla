@@ -1,13 +1,14 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.10.35013.160
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12021.73 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B0D1D8F6-E43B-43C3-82FB-4ABE1368FE1D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DBBDAE01-EA76-4776-BB93-85B1C8A395F3}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build_and_push_docker.yml = .github\workflows\build_and_push_docker.yml
+		.github\workflows\deploy_docker.yml = .github\workflows\deploy_docker.yml
+		.github\workflows\deploy_docker_hetzner.yml = .github\workflows\deploy_docker_hetzner.yml
 		Directory.Packages.props = Directory.Packages.props
 		NuGet.Config = NuGet.Config
 	EndProjectSection
