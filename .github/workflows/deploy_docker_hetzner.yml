@@ -36,10 +36,7 @@ jobs:
               -v /opt/containers/kangla/data:/app/data \
               -v /opt/containers/kangla/logs:/app/logs \
               -e "EmailSettings__DefaultFromEmail=${{ secrets.EMAIL_SETTINGS_DEFAULT_FROM_EMAIL }}" \
-              -e "EmailSettings__Host=${{ secrets.EMAIL_SETTINGS_HOST }}" \
-              -e "EmailSettings__Port=${{ secrets.EMAIL_SETTINGS_PORT }}" \
-              -e "EmailSettings__Username=${{ secrets.EMAIL_SETTINGS_USERNAME }}" \
-              -e "EmailSettings__Password=${{ secrets.EMAIL_SETTINGS_PASSWORD }}" \
+              -e "EmailSettings__ResendApiKey=${{ secrets.EMAIL_SETTINGS_RESEND_API_KEY }}" \
               -e "OpenAI_ApiKey=${{ secrets.OPENAI_API_KEY }}" \
               ghcr.io/${{ github.repository }}:latest
             docker image prune -f
