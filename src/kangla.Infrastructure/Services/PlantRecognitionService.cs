@@ -43,7 +43,7 @@ namespace kangla.Infrastructure.Services
         {
             _logger = logger;
 
-            var apiKey = configuration["OpenAI_ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var apiKey = configuration["OpenAI:ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
             if (string.IsNullOrWhiteSpace(apiKey))
             {
@@ -67,11 +67,6 @@ namespace kangla.Infrastructure.Services
 
             ChatCompletionOptions options = new()
             {
-                // Plant identification is a bounded extraction task; hidden reasoning can consume
-                // the complete output budget before the JSON response is produced.
-#pragma warning disable OPENAI001
-                ReasoningEffortLevel = ChatReasoningEffortLevel.None,
-#pragma warning restore OPENAI001
                 // GPT-5 models use output tokens for both reasoning and the visible response.
                 // 800 tokens can therefore leave a partial JSON document to deserialize.
                 MaxOutputTokenCount = 2000,
