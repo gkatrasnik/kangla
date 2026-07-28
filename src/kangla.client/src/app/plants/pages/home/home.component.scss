@@ -4,6 +4,8 @@
 }
 
 .plant-card-container {
-    width: auto;
+    box-sizing: border-box;
+    display: flex;
     margin-inline: auto;
+    padding: 1rem;
 }
