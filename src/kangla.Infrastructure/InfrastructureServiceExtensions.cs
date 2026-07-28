@@ -29,7 +29,7 @@ namespace kangla.Infrastructure
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IImageProcessingService, ImageProcessingService>();
-            services.AddHttpClient<IPlantRecognitionService, PlantRecognitionService>();
+            services.AddScoped<IPlantRecognitionService, PlantRecognitionService>();
             return services;
         }
     }
