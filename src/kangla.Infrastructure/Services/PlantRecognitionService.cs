@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using OpenAI.Chat;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using kangla.Domain.Interfaces;
 using kangla.Domain.Model;
@@ -34,9 +35,14 @@ namespace kangla.Infrastructure.Services
             """);
 
         private readonly ChatClient _client;
+        private readonly ILogger<PlantRecognitionService> _logger;
 
-        public PlantRecognitionService(IConfiguration configuration)
+        public PlantRecognitionService(
+            IConfiguration configuration,
+            ILogger<PlantRecognitionService> logger)
         {
+            _logger = logger;
+
             var apiKey = configuration["OpenAI:ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
             if (string.IsNullOrWhiteSpace(apiKey))
@@ -61,7 +67,9 @@ namespace kangla.Infrastructure.Services
 
             ChatCompletionOptions options = new()
             {
-                MaxOutputTokenCount = 800,
+                // GPT-5 models use output tokens for both reasoning and the visible response.
+                // 800 tokens can therefore leave a partial JSON document to deserialize.
+                MaxOutputTokenCount = 2000,
                 ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
                     jsonSchemaFormatName: "plant_recognition",
                     jsonSchema: PlantRecognitionSchema,
@@ -70,23 +78,51 @@ namespace kangla.Infrastructure.Services
             };
 
             ChatCompletion chatCompletion = await _client.CompleteChatAsync(messages, options);
-            var jsonResponse = chatCompletion.Content[0].Text;
-            PlantRecognitionResponse plantRecognitionResult;
 
-            try
+            if (chatCompletion.FinishReason == ChatFinishReason.Length)
             {
-                plantRecognitionResult = JsonSerializer.Deserialize<PlantRecognitionResponse>(jsonResponse) ?? new PlantRecognitionResponse();
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error parsing OpenAI response: {ex.Message}");
-                plantRecognitionResult = new PlantRecognitionResponse
+                _logger.LogWarning("Plant recognition response was truncated due to the output token limit.");
+                return new PlantRecognitionResponse
                 {
-                    Error = "Failed to parse the recognition response."
+                    Error = "The recognition response was incomplete. Please try again."
                 };
             }
 
-            return plantRecognitionResult;
+            if (chatCompletion.FinishReason == ChatFinishReason.ContentFilter)
+            {
+                _logger.LogWarning("Plant recognition response was omitted by a content filter.");
+                return new PlantRecognitionResponse
+                {
+                    Error = "The image could not be processed. Please try a different image."
+                };
+            }
+
+            var jsonResponse = chatCompletion.Content.FirstOrDefault()?.Text;
+
+            if (string.IsNullOrWhiteSpace(jsonResponse))
+            {
+                _logger.LogWarning("Plant recognition returned no text content. Finish reason: {FinishReason}", chatCompletion.FinishReason);
+                return new PlantRecognitionResponse
+                {
+                    Error = "The recognition service returned no result. Please try again."
+                };
+            }
+
+            try
+            {
+                return JsonSerializer.Deserialize<PlantRecognitionResponse>(jsonResponse) ?? new PlantRecognitionResponse
+                {
+                    Error = "The recognition service returned an empty result. Please try again."
+                };
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning(ex, "Plant recognition returned invalid JSON. Finish reason: {FinishReason}", chatCompletion.FinishReason);
+                return new PlantRecognitionResponse
+                {
+                    Error = "The recognition service returned an invalid result. Please try again."
+                };
+            }
         }
     }
 }
