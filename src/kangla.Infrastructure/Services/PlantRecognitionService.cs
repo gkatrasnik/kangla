@@ -4,51 +4,72 @@ using System.Text.Json;
 using kangla.Domain.Interfaces;
 using kangla.Domain.Model;
 
-
 namespace kangla.Infrastructure.Services
 {
     public class PlantRecognitionService : IPlantRecognitionService
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
+        private static readonly BinaryData PlantRecognitionSchema = BinaryData.FromString("""
+            {
+              "type": "object",
+              "properties": {
+                "CommonName": { "type": ["string", "null"] },
+                "LatinName": { "type": ["string", "null"] },
+                "Description": { "type": ["string", "null"] },
+                "WateringInstructions": { "type": ["string", "null"] },
+                "WateringInterval": { "type": ["integer", "null"] },
+                "AdditionalTips": { "type": ["string", "null"] },
+                "Error": { "type": "string" }
+              },
+              "required": [
+                "CommonName",
+                "LatinName",
+                "Description",
+                "WateringInstructions",
+                "WateringInterval",
+                "AdditionalTips",
+                "Error"
+              ],
+              "additionalProperties": false
+            }
+            """);
 
-        public PlantRecognitionService(HttpClient httpClient, IConfiguration configuration)
+        private readonly ChatClient _client;
+
+        public PlantRecognitionService(IConfiguration configuration)
         {
-            _httpClient = httpClient;
-            _apiKey = configuration["OpenAI_ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var apiKey = configuration["OpenAI_ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-            if (string.IsNullOrEmpty(_apiKey))
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
                 throw new InvalidOperationException("API Key for OpenAI is not configured.");
             }
-        }
 
+            var model = configuration["OpenAI:PlantRecognitionModel"] ?? "gpt-5-nano";
+            _client = new ChatClient(model, apiKey);
+        }
 
         public async Task<PlantRecognitionResponse> RecognizePlantAsync(byte[] imageData)
         {
-            ChatClient client = new("gpt-4o-mini", _apiKey);
-
-
             BinaryData imageBytes = BinaryData.FromBytes(imageData);
 
-            //TODO use structured response
             List<ChatMessage> messages = [
-                new SystemChatMessage("You are a plant recognition model. You are provided with an image of a plant. Recognize the plant and return a structured response in JSON format with the following properties: CommonName, LatinName, Description, WateringInstructions, WateringInterval (recommended watering interval for this plant in days), AdditionalTips, Error. Each property should be a maximum of 300 characters long. If you recognize the plant, the error property should be empty. If there is no plant on the image or you can not recognize the plant, the error property should contain an error message and all other properties should have null values."
-),
+                new SystemChatMessage("You are a plant-recognition service. Identify the most likely plant in the image. Keep each text value to 300 characters or fewer. WateringInterval is the recommended watering interval in days. If the plant cannot be recognized or the image does not contain a plant, set Error to a concise explanation and every other property to null. Otherwise, set Error to an empty string."),
                 new UserChatMessage(
-                ChatMessageContentPart.CreateImageMessageContentPart(imageBytes, "image/png") // image detail here - low?
+                    ChatMessageContentPart.CreateImagePart(imageBytes, "image/jpeg")
                 )
             ];
 
             ChatCompletionOptions options = new()
             {
-                ResponseFormat = ChatResponseFormat.JsonObject
-
+                MaxOutputTokenCount = 800,
+                ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
+                    jsonSchemaFormatName: "plant_recognition",
+                    jsonSchema: PlantRecognitionSchema,
+                    jsonSchemaFormatDescription: "A recognized plant and its care guidance.",
+                    jsonSchemaIsStrict: true)
             };
 
-            ChatCompletion chatCompletion = await client.CompleteChatAsync(messages, options);
-
-
+            ChatCompletion chatCompletion = await _client.CompleteChatAsync(messages, options);
             var jsonResponse = chatCompletion.Content[0].Text;
             PlantRecognitionResponse plantRecognitionResult;
 
@@ -58,16 +79,14 @@ namespace kangla.Infrastructure.Services
             }
             catch (JsonException ex)
             {
-                // Handle JSON parsing errors
-                Console.WriteLine($"Error parsing JSON response: {ex.Message}");
+                Console.WriteLine($"Error parsing OpenAI response: {ex.Message}");
                 plantRecognitionResult = new PlantRecognitionResponse
                 {
-                    Error = "Failed to parse the response."
+                    Error = "Failed to parse the recognition response."
                 };
             }
 
             return plantRecognitionResult;
         }
-
     }
 }
