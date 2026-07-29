@@ -10,5 +10,6 @@ namespace kangla.Application.WateringDevices
         Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDevice, string userId);
         Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int deviceId, string userId, WateringDeviceUpdateRequestDto wateringDevice);
         Task<bool> DeleteWateringDeviceAsync(int deviceId, string userId);
+        Task<string> RotateDeviceCredentialAsync(int deviceId, string userId);
     }
 }

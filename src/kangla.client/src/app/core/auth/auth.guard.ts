@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, UrlTree } from "@angular/router";
 import { AuthService } from './auth.service'
 import { Observable, map } from "rxjs";
 
@@ -7,18 +7,11 @@ import { Observable, map } from "rxjs";
 export class AuthGuard {
   constructor(private authService: AuthService, private router: Router) { }
 
-  canActivate() {
-    return this.isSignedIn();
-  }
-
-  isSignedIn(): Observable<boolean> {
-    return this.authService.isSignedIn().pipe(
+  canActivate(): Observable<boolean | UrlTree> {
+    return this.authService.ensureAuthenticated().pipe(
       map((isSignedIn) => {
-        if (!isSignedIn) {
-          this.router.navigate(['login']);
-          return false;
-        }
-        return true;
-      }));
+        return isSignedIn ? true : this.router.createUrlTree(['/login']);
+      })
+    );
   }
 }

@@ -30,12 +30,5 @@ namespace kangla.WebApi.Controllers
             return Ok(humidityMeasurements);
         }
 
-        [Authorize] //this will be authorized by the api key
-        [HttpPost]
-        public async Task<ActionResult<HumidityMeasurementResponseDto>> PostHumidityMeasurement(HumidityMeasurementCreateRequestDto humidityMeasurement)
-        {
-            var createdMeasurement = await _humidityMeasurementService.CreateHumidityMeasurementAsync(humidityMeasurement);
-            return CreatedAtAction(nameof(GetHumidityMeasurementsForDevice), new { deviceId = createdMeasurement.WateringDeviceId }, createdMeasurement);
-        }
     }
 }

@@ -46,6 +46,10 @@ namespace kangla.Infrastructure
             modelBuilder.Entity<WateringDevice>()
                 .HasIndex(d => d.DeviceToken)
                 .IsUnique();
+
+            modelBuilder.Entity<WateringDevice>()
+                .HasIndex(d => d.DeviceCredentialHash)
+                .IsUnique();
         }
 
         public Task<int> SaveChangesAsync()

@@ -54,6 +54,7 @@ namespace kangla.WebApi.Controllers
 
         [Authorize]
         [HttpPut("{plantId}")]
+        [RequestSizeLimit(5 * 1024 * 1024)]
         public async Task<IActionResult> PutPlant(int plantId, PlantUpdateRequestDto plantDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
@@ -79,9 +80,11 @@ namespace kangla.WebApi.Controllers
 
         [Authorize]
         [HttpPost("recognize")]
+        [RequestSizeLimit(5 * 1024 * 1024)]
         public async Task<ActionResult<PlantRecognizeResponseDto>> RecognizePlant(PlantRecognizeRequestDto plantRecognizeDto)
         {
-            var recognizedPlant = await _plantsService.RecognizePlantAsync(plantRecognizeDto);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+            var recognizedPlant = await _plantsService.RecognizePlantAsync(plantRecognizeDto, userId);
             return Ok(recognizedPlant);
         }
     }

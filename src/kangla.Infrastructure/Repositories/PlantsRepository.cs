@@ -63,14 +63,18 @@ namespace kangla.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePlantAsync(int plantId)
+        public async Task<bool> DeletePlantAsync(int plantId, string userId)
         {
-            var plant = await _context.Plants.FindAsync(plantId);
+            var plant = await _context.Plants
+                .FirstOrDefaultAsync(p => p.Id == plantId && p.UserId == userId);
             if (plant != null)
             {
                 _context.Plants.Remove(plant);
                 await _context.SaveChangesAsync();
+                return true;
             }
+
+            return false;
         }
 
         public async Task<bool> PlantExistsAsync(int plantId)

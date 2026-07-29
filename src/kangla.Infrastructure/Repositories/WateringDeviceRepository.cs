@@ -16,7 +16,9 @@ namespace kangla.Infrastructure.Repositories
 
         public async Task<PagedResponse<WateringDevice>> GetWateringDevicesAsync(string userId, int pageNumber, int pageSize)
         {
-            var totalRecords = await _context.WateringDevices.AsNoTracking().CountAsync();
+            var totalRecords = await _context.WateringDevices.AsNoTracking()
+                .Where(w => w.UserId == userId)
+                .CountAsync();
             var wateringDevices = await _context.WateringDevices.AsNoTracking()
                 .Where(w => w.UserId == userId)
                 .OrderByDescending(x => x.CreatedAt)
@@ -39,6 +41,18 @@ namespace kangla.Infrastructure.Repositories
             return await _context.WateringDevices.AsNoTracking()
                 .Where(d => d.PlantId == plantId && d.UserId == userId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<WateringDevice?> GetWateringDeviceByCredentialHashAsync(string credentialHash)
+        {
+            return await _context.WateringDevices.AsNoTracking()
+                .FirstOrDefaultAsync(d => d.DeviceCredentialHash == credentialHash);
+        }
+
+        public async Task<WateringDevice?> GetLegacyWateringDeviceByTokenAsync(string deviceToken)
+        {
+            return await _context.WateringDevices.AsNoTracking()
+                .FirstOrDefaultAsync(d => d.DeviceCredentialHash == null && d.DeviceToken == deviceToken);
         }
 
         public async Task AddWateringDeviceAsync(WateringDevice device)
@@ -67,14 +81,18 @@ namespace kangla.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteWateringDeviceAsync(int deviceId)
+        public async Task<bool> DeleteWateringDeviceAsync(int deviceId, string userId)
         {
-            var device = await _context.WateringDevices.FindAsync(deviceId);
+            var device = await _context.WateringDevices
+                .FirstOrDefaultAsync(d => d.Id == deviceId && d.UserId == userId);
             if (device != null)
             {
                 _context.WateringDevices.Remove(device);
                 await _context.SaveChangesAsync();
+                return true;
             }
+
+            return false;
         }
 
         public async Task<bool> WateringDeviceExistsAsync(int deviceId)

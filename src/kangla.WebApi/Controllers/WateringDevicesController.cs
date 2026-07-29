@@ -84,5 +84,14 @@ namespace kangla.WebApi.Controllers
 
             return NoContent();
         }
+
+        [Authorize]
+        [HttpPost("{deviceId}/credential")]
+        public async Task<ActionResult<WateringDeviceResponseDto>> RotateDeviceCredential(int deviceId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+            var credential = await _wateringDeviceService.RotateDeviceCredentialAsync(deviceId, userId);
+            return Ok(new WateringDeviceResponseDto { Id = deviceId, DeviceCredential = credential });
+        }
     }
 }

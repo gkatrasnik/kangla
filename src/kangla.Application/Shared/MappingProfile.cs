@@ -25,6 +25,7 @@ namespace kangla.Application.Shared
 
             CreateMap<HumidityMeasurement, HumidityMeasurementResponseDto>();
             CreateMap<HumidityMeasurementCreateRequestDto, HumidityMeasurement>();
+            CreateMap<DeviceHumidityMeasurementCreateRequestDto, HumidityMeasurement>();
 
             CreateMap(typeof(PagedResponse<>), typeof(PagedResponseDto<>));
         }

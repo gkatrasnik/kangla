@@ -258,6 +258,10 @@ namespace kangla.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
@@ -332,6 +336,10 @@ namespace kangla.Infrastructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DeviceCredentialHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("MinimumSoilHumidity")
                         .HasColumnType("INTEGER");
 
@@ -357,6 +365,9 @@ namespace kangla.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceToken")
+                        .IsUnique();
+
+                    b.HasIndex("DeviceCredentialHash")
                         .IsUnique();
 
                     b.HasIndex("PlantId")
