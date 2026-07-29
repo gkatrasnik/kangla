@@ -38,7 +38,11 @@ export class RegisterComponent implements OnInit {
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]], //match requirements with API
+      password: ['', [
+        Validators.required,
+        Validators.minLength(12),
+        Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/)
+      ]], // match API requirements
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.mustMatch('password', 'confirmPassword') });
   }

@@ -28,6 +28,16 @@ To run this application, you need to set up the following environment variables:
 - `EMAIL_SETTINGS_RESEND_API_KEY`: Your Resend API key.
 - `OPENAI_API_KEY`: OpenAI api key for recognizing images.
 
+Copy `.env.example` for local tooling only. Never commit a populated `.env` file.
+
+## Device humidity ingestion
+
+Physical devices submit readings to `POST /api/device/humidity-measurements` with an
+`X-Device-Credential` header. The API derives the device from the credential; it
+does not accept a device ID from the request. A credential is returned exactly once
+when a device is created or rotated via `POST /api/WateringDevices/{deviceId}/credential`.
+Store it on the physical device immediately.
+
 ## Docker deployment
 
 Pushing to `main` builds the combined .NET 9 API and Angular PWA, publishes both
@@ -41,10 +51,12 @@ Add these GitHub repository secrets:
   the automatic OCI VPS deployment.
 - `HETZNER_INSTANCE_IP` and `HETZNER_USERNAME` for the manual Hetzner deployment
   (it reuses `OCI_SSH_PRIVATE_KEY` and `GHCR_PAT`).
-- `EMAIL_SETTINGS_DEFAULT_FROM_EMAIL`, `EMAIL_SETTINGS_HOST`,
-  `EMAIL_SETTINGS_PORT`, `EMAIL_SETTINGS_USERNAME`, `EMAIL_SETTINGS_PASSWORD`,
-  and `OPENAI_API_KEY`.
+- `EMAIL_SETTINGS_DEFAULT_FROM_EMAIL`, `EMAIL_SETTINGS_RESEND_API_KEY`, and
+  `OPENAI_API_KEY`.
 
 The Docker user must be able to run Docker and use passwordless `sudo` to create
 the application data directories. They are owned by the container's non-root
 user (UID/GID `1001`).
+
+Development seeding creates predictable demonstration accounts and must never be
+enabled on an internet-accessible deployment.

@@ -16,8 +16,11 @@ namespace kangla.WebApi.Extensions
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseRouting();
             app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
+            app.UseRateLimiter();
+            app.UseAuthentication();
             app.UseAuthorization();
         }
     }

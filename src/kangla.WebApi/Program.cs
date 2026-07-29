@@ -19,6 +19,7 @@ try
     builder.Services.AddCustomLogging(builder.Configuration)
         .AddCustomExceptionHandlers()
         .AddCustomSwagger(env)
+        .AddSecurityRateLimiting()
         .AddCustomServices(builder.Configuration)
         .AddIdentityServices()
         .AddCors(options =>
@@ -46,7 +47,7 @@ try
     app.UseCustomMiddlewares(env);
 
     var apiGroup = app.MapGroup("/api");
-    apiGroup.MapIdentityApi<IdentityUser>();
+    apiGroup.MapIdentityApi<IdentityUser>().RequireRateLimiting("identity");
     // logout endpoint is not implemented by asp.net core identity
     apiGroup.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
     {

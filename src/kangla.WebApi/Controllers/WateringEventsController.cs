@@ -35,7 +35,8 @@ namespace kangla.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<WateringEventResponseDto>> PostWateringEvent(WateringEventCreateRequestDto wateringEvent)
         {
-            var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+            var createdEvent = await _wateringEventService.CreateWateringEventAsync(wateringEvent, userId);
             return CreatedAtAction(nameof(GetWateringEventsForPlant), new { plantId = createdEvent.PlantId }, createdEvent);
         }
 
@@ -44,8 +45,7 @@ namespace kangla.WebApi.Controllers
         public async Task<IActionResult> DeletePlant(int wateringEventId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
-
-            var deleted = await _wateringEventService.DeleteWateringEventAsync(wateringEventId);
+            var deleted = await _wateringEventService.DeleteWateringEventAsync(wateringEventId, userId);
             if (!deleted)
             {
                 return NotFound(new { message = $"Watering event with ID {wateringEventId} not found." });

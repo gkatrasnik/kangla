@@ -16,9 +16,9 @@ namespace kangla.Application.Images
             _mapper = mapper;
         }
 
-        public async Task<MediaImage> GetImageAsync(Guid imageId)
+        public async Task<MediaImage> GetImageAsync(Guid imageId, string userId)
         {
-            var image = await _imageRepository.GetImageAsync(imageId);
+            var image = await _imageRepository.GetImageAsync(imageId, userId);
             if (image is null)
             {
                 throw new KeyNotFoundException($"Image with ID {imageId} can not be found.");
@@ -27,27 +27,21 @@ namespace kangla.Application.Images
             return image;
         }
 
-        public async Task<MediaImage> CreateImageAsync(MediaImage image)
+        public async Task<MediaImage> CreateImageAsync(MediaImage image, string userId)
         {
+            image.UserId = userId;
             var newImage = await _imageRepository.AddImageAsync(image);
             return newImage;
         }
 
-        public async Task<bool> DeleteImageAsync(Guid imageId)
+        public async Task<bool> DeleteImageAsync(Guid imageId, string userId)
         {
-            var imageExists = await _imageRepository.ImageExistsAsync(imageId);
-            if (!imageExists)
-            {
-                return false;
-            }
-
-            await _imageRepository.DeleteImageAsync(imageId);
-            return true;
+            return await _imageRepository.DeleteImageAsync(imageId, userId);
         }
 
-        public async Task<string?> GetImageETagAsync(Guid imageId)
+        public async Task<string?> GetImageETagAsync(Guid imageId, string userId)
         {
-            return await _imageRepository.GetImageETagAsync(imageId);
+            return await _imageRepository.GetImageETagAsync(imageId, userId);
         }
 
         public string GenerateETag(byte[] imageData)

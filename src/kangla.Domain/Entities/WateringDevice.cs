@@ -43,6 +43,12 @@ namespace kangla.Domain.Entities
         [StringLength(10, MinimumLength = 10, ErrorMessage = "DeviceToken must be 10 characters long.")]
         public string DeviceToken { get; set; } = default!;
         /// <summary>
+        /// SHA-256 hash of the long-lived credential used by the physical device.
+        /// A null value identifies a legacy device that has not been re-provisioned yet.
+        /// </summary>
+        [StringLength(64)]
+        public string? DeviceCredentialHash { get; set; }
+        /// <summary>
         /// User id from Microsoft.AspNetCore.Identity that is owner of the device.
         /// </summary>
         [Required]

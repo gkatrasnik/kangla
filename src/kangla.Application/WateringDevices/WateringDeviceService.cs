@@ -3,6 +3,8 @@ using kangla.Application.Images;
 using kangla.Application.Shared;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace kangla.Application.WateringDevices
 {
@@ -62,10 +64,14 @@ namespace kangla.Application.WateringDevices
 
             var entity = _mapper.Map<WateringDevice>(wateringDeviceDto);
             entity.UserId = userId;
+            var credential = GenerateDeviceCredential();
+            entity.DeviceCredentialHash = HashDeviceCredential(credential);
 
             await _wateringDeviceRepository.AddWateringDeviceAsync(entity);
 
-            return _mapper.Map<WateringDeviceResponseDto>(entity);
+            var response = _mapper.Map<WateringDeviceResponseDto>(entity);
+            response.DeviceCredential = credential;
+            return response;
         }
 
         public async Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int deviceId, string userId, WateringDeviceUpdateRequestDto wateringDeviceDto)
@@ -73,10 +79,10 @@ namespace kangla.Application.WateringDevices
             var existingEntity = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId)
                 ?? throw new KeyNotFoundException($"Watering device with id {deviceId} not found for current user.");
 
-            var plantExists = await _plantsRepository.PlantExistsAsync(wateringDeviceDto.PlantId);
+            var plantExists = await _plantsRepository.PlantExistsForUserAsync(wateringDeviceDto.PlantId, userId);
             if (!plantExists)
             {
-                throw new ArgumentException($"The plant with ID {wateringDeviceDto.PlantId} does not exist.");
+                throw new KeyNotFoundException($"The plant with ID {wateringDeviceDto.PlantId} was not found.");
             }
 
             if (existingEntity.PlantId == wateringDeviceDto.PlantId)
@@ -106,8 +112,31 @@ namespace kangla.Application.WateringDevices
                 return false;
             }
 
-            await _wateringDeviceRepository.DeleteWateringDeviceAsync(deviceId);
-            return true;
+            return await _wateringDeviceRepository.DeleteWateringDeviceAsync(deviceId, userId);
+        }
+
+        public async Task<string> RotateDeviceCredentialAsync(int deviceId, string userId)
+        {
+            var existingEntity = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId)
+                ?? throw new KeyNotFoundException($"Watering device with ID {deviceId} was not found.");
+
+            var credential = GenerateDeviceCredential();
+            existingEntity.DeviceCredentialHash = HashDeviceCredential(credential);
+            await _wateringDeviceRepository.UpdateWateringDeviceAsync(existingEntity, userId);
+            return credential;
+        }
+
+        private static string GenerateDeviceCredential()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32))
+                .TrimEnd('=')
+                .Replace('+', '-')
+                .Replace('/', '_');
+        }
+
+        internal static string HashDeviceCredential(string credential)
+        {
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(credential)));
         }
     }
 }

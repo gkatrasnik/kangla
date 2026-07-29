@@ -1,9 +1,27 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpResponse, HttpStatusCode } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { UserInfoDto } from "../../auth/user-info-dto";
-import { BehaviorSubject, Observable, Subject, catchError, map, of, tap, throwError } from "rxjs";
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  distinctUntilChanged,
+  finalize,
+  map,
+  of,
+  shareReplay,
+  switchMap,
+  tap,
+  throwError
+} from "rxjs";
 import { environment } from '../../../environments/environment';
 
+type AuthenticationState = 'unknown' | 'authenticated' | 'anonymous';
+
+interface TokenResponse {
+  accessToken: string;
+  refreshToken: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -13,35 +31,47 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   private apiUrl = environment.apiUrl;
-  private _authStateChanged: Subject<boolean> = new BehaviorSubject<boolean>(false);
-  private _userInfo: BehaviorSubject<UserInfoDto | null> = new BehaviorSubject<UserInfoDto | null>(null);
+  private readonly authState = new BehaviorSubject<AuthenticationState>('unknown');
+  private readonly userInfo = new BehaviorSubject<UserInfoDto | null>(null);
+  private sessionCheck$: Observable<boolean> | null = null;
+  private refreshRequest$: Observable<TokenResponse> | null = null;
 
-  public onStateChanged() {
-    return this._authStateChanged.asObservable();
+  public onStateChanged(): Observable<boolean> {
+    return this.authState.pipe(
+      map((state) => state === 'authenticated'),
+      distinctUntilChanged()
+    );
   }
 
   public get userInfo$(): Observable<UserInfoDto | null> {
-    return this._userInfo.asObservable();
+    return this.userInfo.asObservable();
   }
 
   //To login with cookies: /login?useCookies=true
   //At the moment we use Bearer token authentication
   public login(email: string, password: string): Observable<boolean> {
-    return this.http.post(`${this.apiUrl}/login`, { 
+    return this.http.post(`${this.apiUrl}/login`, {
       email: email,
       password: password
     }, {
       observe: 'response',
       responseType: 'text'
     }).pipe(
-      map((res: HttpResponse<string>) => {
-        if (res.body) {
-          const responseBody = JSON.parse(res.body);
-          localStorage.setItem('accessToken', responseBody.accessToken);
-          localStorage.setItem('refreshToken', responseBody.refreshToken);
+      switchMap((res: HttpResponse<string>) => {
+        if (!res.body) {
+          this.clearAuthentication();
+          return of(false);
         }
-        this._authStateChanged.next(res.ok);
-        return res.ok;
+
+        const responseBody = JSON.parse(res.body) as TokenResponse;
+        this.storeTokens(responseBody);
+        this.authState.next('authenticated');
+
+        return this.fetchUserInfo().pipe(
+          map(() => res.ok),
+          // Login succeeded even if profile loading temporarily fails.
+          catchError(() => of(res.ok))
+        );
       })
     );
   }
@@ -67,58 +97,122 @@ export class AuthService {
       observe: 'response',
       responseType: 'text'
     }).pipe(
-      tap((res: HttpResponse<string>) => {
-        if (res.ok) {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          this._userInfo.next(null);
-          this._authStateChanged.next(false);
-        }
-      }),
       map(() => true), // Logout succeeded
       catchError((error) => {
         console.error("Logout API failed:", error);
         return of(true); // return `true` even if the API fails
-      })
+      }),
+      finalize(() => this.clearAuthentication())
     );
   }
 
-  // check if the user is authenticated. the endpoint is protected so 401 if not.
-  private fetchUserInfo() {
+  private fetchUserInfo(): Observable<UserInfoDto> {
     return this.http.get<UserInfoDto>(`${this.apiUrl}/manage/info`).pipe(
-      map((userInfo: UserInfoDto) => {
-        this._userInfo.next(userInfo); //side effect - set userInfo
-        return userInfo;
-      }),
-      catchError((_: HttpErrorResponse, __: Observable<UserInfoDto>) => {
-        return of({} as UserInfoDto);
-      }));
+      tap((userInfo) => this.userInfo.next(userInfo))
+    );
   }
 
-  // is signed in when the call completes without error and the user has an email
-  public isSignedIn(): Observable<boolean> {
-    return this.fetchUserInfo().pipe(
+  public ensureAuthenticated(): Observable<boolean> {
+    if (this.authState.value === 'authenticated') {
+      return of(true);
+    }
+
+    if (this.authState.value === 'anonymous') {
+      return of(false);
+    }
+
+    if (this.sessionCheck$) {
+      return this.sessionCheck$;
+    }
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!accessToken && !refreshToken) {
+      this.clearAuthentication();
+      return of(false);
+    }
+
+    const prepareAccessToken$ = accessToken
+      ? of(null)
+      : this.refreshAccessToken().pipe(map(() => null));
+
+    this.sessionCheck$ = prepareAccessToken$.pipe(
+      switchMap(() => this.fetchUserInfo()),
       map((userInfo) => {
         const valid = !!(userInfo && userInfo.email && userInfo.email.length > 0);
+        this.authState.next(valid ? 'authenticated' : 'anonymous');
         return valid;
       }),
-      catchError((_) => {
-        return of(false);
-      }));
+      catchError(() => {
+        if (this.authState.value === 'anonymous' || !localStorage.getItem('accessToken')) {
+          return of(false);
+        }
+
+        // A transient error must not turn an existing local session into a logout.
+        // Protected API endpoints remain responsible for enforcing authentication.
+        this.authState.next('authenticated');
+        return of(true);
+      }),
+      finalize(() => this.sessionCheck$ = null),
+      shareReplay({ bufferSize: 1, refCount: false })
+    );
+
+    return this.sessionCheck$;
   }
 
-  public refreshAccessToken(): Observable<any> {
+  public refreshAccessToken(): Observable<TokenResponse> {
+    if (this.refreshRequest$) {
+      return this.refreshRequest$;
+    }
+
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
+      this.clearAuthentication();
       return throwError(() => new Error('No refresh token found'));
     }
-    
-    return this.http.post<any>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+
+    this.refreshRequest$ = this.http.post<TokenResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
       tap((response) => {
-        localStorage.setItem('accessToken', response.accessToken);
-        localStorage.setItem('refreshToken', response.refreshToken);
-      })
+        this.storeTokens(response);
+        this.authState.next('authenticated');
+      }),
+      catchError((error: unknown) => {
+        if (this.isRejectedCredential(error)) {
+          this.clearAuthentication();
+        }
+
+        return throwError(() => error);
+      }),
+      finalize(() => this.refreshRequest$ = null),
+      shareReplay({ bufferSize: 1, refCount: false })
     );
+
+    return this.refreshRequest$;
+  }
+
+  public clearAuthentication(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    this.userInfo.next(null);
+    this.authState.next('anonymous');
+    this.sessionCheck$ = null;
+  }
+
+  public hasStoredCredentials(): boolean {
+    return !!(localStorage.getItem('accessToken') || localStorage.getItem('refreshToken'));
+  }
+
+  private storeTokens(response: TokenResponse): void {
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+  }
+
+  private isRejectedCredential(error: unknown): boolean {
+    return error instanceof HttpErrorResponse
+      && (error.status === HttpStatusCode.BadRequest
+        || error.status === HttpStatusCode.Unauthorized
+        || error.status === HttpStatusCode.Forbidden);
   }
 
   public resendConfirmationEmail(email: string): Observable<boolean> {

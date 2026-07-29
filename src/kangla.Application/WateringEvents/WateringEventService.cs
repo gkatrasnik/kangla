@@ -31,12 +31,12 @@ namespace kangla.Application.WateringEvents
             return _mapper.Map<PagedResponseDto<WateringEventResponseDto>>(wateringEvents);
         }
 
-        public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEventDto)
+        public async Task<WateringEventResponseDto> CreateWateringEventAsync(WateringEventCreateRequestDto wateringEventDto, string userId)
         {
-            var plantExists = await _plantsRepository.PlantExistsAsync(wateringEventDto.PlantId);
+            var plantExists = await _plantsRepository.PlantExistsForUserAsync(wateringEventDto.PlantId, userId);
             if (!plantExists)
             {
-                throw new ArgumentException($"Plant with ID {wateringEventDto.PlantId} does not exist.");
+                throw new KeyNotFoundException($"Plant with ID {wateringEventDto.PlantId} was not found.");
             }
 
             var entity = _mapper.Map<WateringEvent>(wateringEventDto);
@@ -45,16 +45,9 @@ namespace kangla.Application.WateringEvents
             return _mapper.Map<WateringEventResponseDto>(entity);
         }
 
-        public async Task<bool> DeleteWateringEventAsync(int wateringEventId)
+        public async Task<bool> DeleteWateringEventAsync(int wateringEventId, string userId)
         {
-            var existingEntity = await _wateringEventRepository.WateringEventExistsAsync(wateringEventId);
-            if (existingEntity == false)
-            {
-                return false;
-            }
-
-            await _wateringEventRepository.DeleteWateringEventAsync(wateringEventId);
-            return true;
+            return await _wateringEventRepository.DeleteWateringEventAsync(wateringEventId, userId);
         }
     }
 }

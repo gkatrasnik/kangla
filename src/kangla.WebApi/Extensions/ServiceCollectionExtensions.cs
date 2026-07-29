@@ -4,6 +4,7 @@ using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System.Threading.RateLimiting;
 using kangla.Infrastructure;
 using kangla.WebApi.ExceptionHandlers;
 using kangla.Application;
@@ -24,18 +25,42 @@ namespace kangla.WebApi.Extensions
             services.AddAuthorization();
             services.AddIdentityApiEndpoints<IdentityUser>(options =>
             {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 12;
+                options.Password.RequiredUniqueChars = 4;
                 options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail = true;
             })
                 .AddEntityFrameworkStores<PlantsContext>();
 
             return services;
+        }
+
+        public static IServiceCollection AddSecurityRateLimiting(this IServiceCollection services)
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+                options.AddPolicy("identity", context => CreateFixedWindowLimiter(context, permitLimit: 20, TimeSpan.FromMinutes(1)));
+                options.AddPolicy("device-ingestion", context => CreateFixedWindowLimiter(context, permitLimit: 60, TimeSpan.FromMinutes(1)));
+            });
+
+            return services;
+        }
+
+        private static RateLimitPartition<string> CreateFixedWindowLimiter(HttpContext context, int permitLimit, TimeSpan window)
+        {
+            var partitionKey = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            return RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = permitLimit,
+                Window = window,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
         }
 
         public static IServiceCollection AddCustomExceptionHandlers(this IServiceCollection services)

@@ -33,7 +33,11 @@ export class PasswordResetComponent{
     this.resetForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       resetCode: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]]
+      newPassword: ['', [
+        Validators.required,
+        Validators.minLength(12),
+        Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/)
+      ]]
     });
   }
 

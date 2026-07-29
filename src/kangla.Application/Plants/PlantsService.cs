@@ -56,6 +56,11 @@ namespace kangla.Application.Plants
 
         public async Task<PlantResponseDto> CreatePlantAsync(PlantCreateRequestDto plantDto, string userId)
         {
+            if (plantDto.ImageId.HasValue)
+            {
+                await _imageService.GetImageAsync(plantDto.ImageId.Value, userId);
+            }
+
             var plantEntity = _mapper.Map<Plant>(plantDto);
             plantEntity.UserId = userId;
 
@@ -76,7 +81,7 @@ namespace kangla.Application.Plants
             {
                 if (existingEntity.ImageId.HasValue)
                 {
-                    await _imageService.DeleteImageAsync(existingEntity.ImageId.Value);
+                    await _imageService.DeleteImageAsync(existingEntity.ImageId.Value, userId);
                 }
                 existingEntity.ImageId = null;
             }
@@ -97,12 +102,12 @@ namespace kangla.Application.Plants
                     ContentType = plantDto.Image.ContentType,
                     ETag = eTag
                 };
-                newImage = await _imageService.CreateImageAsync(newImage);
+                newImage = await _imageService.CreateImageAsync(newImage, userId);
 
                 //delete old image 
                 if (existingEntity.ImageId.HasValue)
                 {
-                    await _imageService.DeleteImageAsync(existingEntity.ImageId.Value);
+                    await _imageService.DeleteImageAsync(existingEntity.ImageId.Value, userId);
                 }
 
                 // adding new images id to wateringDevice
@@ -129,13 +134,12 @@ namespace kangla.Application.Plants
             }
             if (plantEntity.ImageId.HasValue)
             {
-                await _imageService.DeleteImageAsync(plantEntity.ImageId.Value);
+                await _imageService.DeleteImageAsync(plantEntity.ImageId.Value, userId);
             }
-            await _plantsRepository.DeletePlantAsync(plantId);
-            return true;
+            return await _plantsRepository.DeletePlantAsync(plantId, userId);
         }
 
-        public async Task<PlantRecognizeResponseDto> RecognizePlantAsync(PlantRecognizeRequestDto plantRecognizeDto)
+        public async Task<PlantRecognizeResponseDto> RecognizePlantAsync(PlantRecognizeRequestDto plantRecognizeDto, string userId)
         {
             if (plantRecognizeDto.Image == null || plantRecognizeDto.Image.Length == 0)
             {
@@ -156,7 +160,7 @@ namespace kangla.Application.Plants
             MediaImage? newImageEntity = null;
             if (string.IsNullOrEmpty(recognizedPlant.Error))
             {
-                newImageEntity = await _imageService.CreateImageAsync(new MediaImage { Data = resizedImage, ContentType = image.ContentType, ETag = eTag });
+                newImageEntity = await _imageService.CreateImageAsync(new MediaImage { Data = resizedImage, ContentType = image.ContentType, ETag = eTag }, userId);
 
                 if (newImageEntity == null)
                 {

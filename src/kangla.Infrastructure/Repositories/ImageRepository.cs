@@ -13,9 +13,10 @@ namespace kangla.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<MediaImage?> GetImageAsync(Guid imageId)
+        public async Task<MediaImage?> GetImageAsync(Guid imageId, string userId)
         {
-            var image = await _context.Images.AsNoTracking().FirstOrDefaultAsync(x => x.Id == imageId);
+            var image = await _context.Images.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == imageId && x.UserId == userId);
             return image;
         }
 
@@ -26,27 +27,25 @@ namespace kangla.Infrastructure.Repositories
             return image;
         }
 
-        public async Task DeleteImageAsync(Guid imageId)
+        public async Task<bool> DeleteImageAsync(Guid imageId, string userId)
         {
-            var image = await _context.Images.FindAsync(imageId);
+            var image = await _context.Images
+                .FirstOrDefaultAsync(x => x.Id == imageId && x.UserId == userId);
             if (image != null)
             {
                 _context.Images.Remove(image);
                 await _context.SaveChangesAsync();
+                return true;
             }
+
+            return false;
         }
 
-        public async Task<bool> ImageExistsAsync(Guid imageId)
-        {
-            return await _context.Images
-                .AnyAsync(x => x.Id == imageId);
-        }
-
-        public async Task<string?> GetImageETagAsync(Guid imageId)
+        public async Task<string?> GetImageETagAsync(Guid imageId, string userId)
         {             
             return await _context.Images
                 .AsNoTracking()
-                .Where(x => x.Id == imageId)
+                .Where(x => x.Id == imageId && x.UserId == userId)
                 .Select(x => x.ETag)
                 .FirstOrDefaultAsync();
         }

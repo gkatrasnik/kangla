@@ -1,6 +1,7 @@
 ﻿using kangla.Application.Images;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace kangla.WebApi.Controllers
 {
@@ -19,13 +20,12 @@ namespace kangla.WebApi.Controllers
         [HttpGet("{imageId}")]
         public async Task<ActionResult> GetImage(Guid imageId)
         {
-            var eTag = await _imageService.GetImageETagAsync(imageId); 
-            if (Request.Headers["If-None-Match"] == eTag) //current angular custom image src directive does not send If-None-Match header
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+            var image = await _imageService.GetImageAsync(imageId, userId);
+            if (Request.Headers["If-None-Match"] == image.ETag) //current angular custom image src directive does not send If-None-Match header
             {
                 return StatusCode(StatusCodes.Status304NotModified);
             }
-            
-            var image = await _imageService.GetImageAsync(imageId);
 
             //315360001 - 1 year  - Images does not change, images can only be deleted or created.
             Response.Headers.Append("Cache-Control", "private, max-age=2592000"); // 1 month
@@ -38,7 +38,8 @@ namespace kangla.WebApi.Controllers
         [HttpDelete("{imageId}")]
         public async Task<IActionResult> DeleteImage(Guid imageId)
         {
-            var deleted = await _imageService.DeleteImageAsync(imageId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
+            var deleted = await _imageService.DeleteImageAsync(imageId, userId);
             if (!deleted)
             {
                 return NotFound(new { message = $"Image with ID {imageId} not found." });

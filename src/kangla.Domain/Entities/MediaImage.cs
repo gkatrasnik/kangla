@@ -7,6 +7,8 @@ namespace kangla.Domain.Entities
     {
         [Required]
         public Guid Id { get; set; }
+        [Required]
+        public string UserId { get; set; } = default!;
         public byte[] Data { get; set; } = default!;
         public string ContentType { get; set; } = default!;
         public string ETag { get; set; } = default!;

@@ -10,6 +10,6 @@ namespace kangla.Application.Plants
         Task<PlantResponseDto> CreatePlantAsync(PlantCreateRequestDto plantDto, string userId);
         Task<PlantResponseDto> UpdatePlantAsync(int plantId, string userId, PlantUpdateRequestDto plantDto);
         Task<bool> DeletePlantAsync(int plantId, string userId);
-        Task<PlantRecognizeResponseDto> RecognizePlantAsync(PlantRecognizeRequestDto plantRecognizeDto);
+        Task<PlantRecognizeResponseDto> RecognizePlantAsync(PlantRecognizeRequestDto plantRecognizeDto, string userId);
     }
 }
