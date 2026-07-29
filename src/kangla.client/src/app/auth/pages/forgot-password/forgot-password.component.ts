@@ -3,6 +3,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../core/notifications/notification.service';
+import { ErrorService } from '../../../core/errors/error.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,6 +33,7 @@ export class ForgotPasswordComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private notificationService: NotificationService,
+    private errorService: ErrorService,
     private authService: AuthService,
     private router: Router
   ) {
@@ -47,8 +49,12 @@ export class ForgotPasswordComponent implements OnInit {
       const { email } = this.forgotPasswordForm.value;
       this.authService.forgotPassword(email).subscribe({
         next: () => {
-          this.notificationService.showNonErrorSnackBar('Password reset email sent.');
+          this.notificationService.showNonErrorSnackBar('If the account exists and its email is confirmed, a password reset email has been sent.');
           this.router.navigate(['/password-reset']);
+        },
+        error: (error) => {
+          const { title, errors } = this.errorService.parseErrorResponse(error);
+          this.notificationService.showServerError(title, errors.join(', '));
         }
       });
     }
