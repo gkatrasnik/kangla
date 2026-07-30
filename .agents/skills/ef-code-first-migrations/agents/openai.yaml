@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Cycling Features"
+  short_description: "Build features using this repository structure"
+  default_prompt: "Use $build-cycling-feature to implement this Cycling Performance feature."
