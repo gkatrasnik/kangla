@@ -11,30 +11,26 @@ namespace kangla.Domain.Entities
         [Required]
         public string UserId { get; set; } = default!;
         /// <summary>
-        /// Whether the device is active - can be turned off
-        /// </summary>
-        [Required]
-        public bool WaterNow { get; set; }
-        /// <summary>
-        /// Minimum humidity to start watering 
-        /// This is actual read value from capacitive humidity sensor
+        /// Reserved for a future automatic-watering mode.
+        /// This is a raw value from a capacitive humidity sensor.
         /// </summary>
         [Required]
         [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]
         public int MinimumSoilHumidity { get; set; } = 400;
         /// <summary>
-        /// Interval in hours between watering events
+        /// Reserved for a future automatic-watering mode. Unit is days.
         /// </summary>
         [Required]
-        [Range(1, 365, ErrorMessage = "Interval must be between 1 and 1000 days.")]
+        [Range(1, 365, ErrorMessage = "Interval must be between 1 and 365 days.")]
         public int WateringIntervalSetting { get; set; } = 7;
         /// <summary>
-        /// Duration in seconds for watering duration
+        /// Pump duration in seconds for a manual watering command.
         /// </summary>
         [Required]
-        [Range(1, 60, ErrorMessage = "Duration must be between 1 and 1000 seconds.")]
+        [Range(1, 60, ErrorMessage = "Duration must be between 1 and 60 seconds.")]
         public int WateringDurationSetting { get; set; } = 3;
         public List<HumidityMeasurement>? HumidityMeasurements { get; set; }
+        public List<WateringCommand>? WateringCommands { get; set; }
         /// <summary>
         /// Device token by which user adds watering device to his account
         /// Should be written on device

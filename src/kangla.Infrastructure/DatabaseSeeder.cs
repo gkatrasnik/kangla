@@ -62,7 +62,6 @@ namespace kangla.Infrastructure
                     UserId = demoUser1Id,
                     WateringDevice = new WateringDevice
                     {
-                        WaterNow = false,
                         MinimumSoilHumidity = 400,
                         WateringIntervalSetting = 7,
                         WateringDurationSetting = 5,
@@ -91,7 +90,6 @@ namespace kangla.Infrastructure
                     UserId = demoUser1Id,
                     WateringDevice = new WateringDevice
                     {
-                        WaterNow = true,
                         MinimumSoilHumidity = 450,
                         WateringIntervalSetting = 3,
                         WateringDurationSetting = 4,
@@ -120,7 +118,6 @@ namespace kangla.Infrastructure
                     UserId = demoUser2Id,
                     WateringDevice = new WateringDevice
                     {
-                        WaterNow = false,
                         MinimumSoilHumidity = 350,
                         WateringIntervalSetting = 14,
                         WateringDurationSetting = 3,
@@ -149,7 +146,6 @@ namespace kangla.Infrastructure
                     UserId = demoUser2Id,
                     WateringDevice = new WateringDevice
                     {
-                        WaterNow = false,
                         MinimumSoilHumidity = 375,
                         WateringIntervalSetting = 5,
                         WateringDurationSetting = 3,

@@ -4,6 +4,7 @@ using kangla.Application.Plants;
 using kangla.Application.Shared;
 using kangla.Application.WateringDevices;
 using kangla.Application.WateringEvents;
+using kangla.Application.WateringCommands;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace kangla.Application
@@ -16,6 +17,7 @@ namespace kangla.Application
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddScoped<IWateringDeviceService, WateringDeviceService>();
             services.AddScoped<IWateringEventService, WateringEventService>();
+            services.AddScoped<IWateringCommandService, WateringCommandService>();
             services.AddScoped<IHumidityMeasurementService, HumidityMeasurementService>();
             services.AddScoped<IPlantsService, PlantsService>();
             services.AddScoped<IImageService, ImageService>();

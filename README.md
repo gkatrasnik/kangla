@@ -30,13 +30,32 @@ To run this application, you need to set up the following environment variables:
 
 Copy `.env.example` for local tooling only. Never commit a populated `.env` file.
 
-## Device humidity ingestion
+## Future plans: ESP32 watering devices
 
-Physical devices submit readings to `POST /api/device/humidity-measurements` with an
-`X-Device-Credential` header. The API derives the device from the credential; it
-does not accept a device ID from the request. A credential is returned exactly once
-when a device is created or rotated via `POST /api/WateringDevices/{deviceId}/credential`.
-Store it on the physical device immediately.
+Kangla is planned to support physical watering devices built with ESP32 hardware.
+Each device will be linked to a plant, allowing users to trigger watering for that
+plant from the app. Devices will also send soil-humidity readings to Kangla, so
+users can view the `HumidityMeasurement` data collected from their plants.
+
+## ESP32 watering-device protocol
+
+Kangla is ready for ESP32 watering devices. Each device is linked to one plant and
+uses the long-lived credential returned when the device is created or rotated via
+`POST /api/WateringDevices/{deviceId}/credential`. Store that credential on the
+physical device immediately; it is sent in the `X-Device-Credential` header and is
+never included in an API response again.
+
+The device calls `POST /api/device/check-ins` every minute. Include an optional raw
+`soilHumidity` value from `0` through `1000` once per hour; Kangla stores it as a
+humidity measurement for the linked device. The response contains any pending
+manual watering command. A device must acknowledge a command before activating its
+pump, then report either completion or failure. Kangla records a watering event only
+after confirmed completion.
+
+Users create a manual watering request with
+`POST /api/WateringDevices/{deviceId}/watering-commands`. Commands expire after 15
+minutes if the device does not acknowledge them, and only one active command is
+allowed per device.
 
 ## Docker deployment
 

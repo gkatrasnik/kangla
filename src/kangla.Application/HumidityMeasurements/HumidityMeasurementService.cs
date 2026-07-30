@@ -2,10 +2,13 @@
 using kangla.Application.Shared;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
-using kangla.Application.WateringDevices;
 
 namespace kangla.Application.HumidityMeasurements
 {
+    /// <summary>
+    /// Provides the authenticated app with paginated, historical humidity readings for a device.
+    /// Device check-ins create readings through <c>WateringCommandService</c> instead.
+    /// </summary>
     public class HumidityMeasurementService : IHumidityMeasurementService
     {
         private readonly IHumidityMeasurementRepository _humidityMeasurementRepository;
@@ -19,6 +22,9 @@ namespace kangla.Application.HumidityMeasurements
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Verifies device ownership and returns its stored sensor-reading history.
+        /// </summary>
         public async Task<PagedResponseDto<HumidityMeasurementResponseDto>> GetHumidityMeasurementsForDeviceAsync(int deviceId, string userId, int pageNumber, int pageSize)
         {
             var deviceExists = await _wateringDeviceRepository.WateringDeviceExistsForUserAsync(deviceId, userId);
@@ -32,27 +38,5 @@ namespace kangla.Application.HumidityMeasurements
             return _mapper.Map<PagedResponseDto<HumidityMeasurementResponseDto>>(humidityMeasurements);
         }
 
-        public async Task<HumidityMeasurementResponseDto> CreateDeviceHumidityMeasurementAsync(DeviceHumidityMeasurementCreateRequestDto humidityMeasurementDto, string deviceCredential)
-        {
-            if (string.IsNullOrWhiteSpace(deviceCredential))
-            {
-                throw new UnauthorizedAccessException("A device credential is required.");
-            }
-
-            var credentialHash = WateringDeviceService.HashDeviceCredential(deviceCredential);
-            var device = await _wateringDeviceRepository.GetWateringDeviceByCredentialHashAsync(credentialHash)
-                ?? await _wateringDeviceRepository.GetLegacyWateringDeviceByTokenAsync(deviceCredential);
-
-            if (device is null)
-            {
-                throw new UnauthorizedAccessException("The device credential is invalid.");
-            }
-
-            var entity = _mapper.Map<HumidityMeasurement>(humidityMeasurementDto);
-            entity.WateringDeviceId = device.Id;
-            await _humidityMeasurementRepository.AddHumidityMeasurementAsync(entity);
-
-            return _mapper.Map<HumidityMeasurementResponseDto>(entity);
-        }
     }
 }

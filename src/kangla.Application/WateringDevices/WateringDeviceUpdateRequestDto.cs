@@ -5,7 +5,6 @@ namespace kangla.Application.WateringDevices
 {
     public class WateringDeviceUpdateRequestDto
     {
-        public bool WaterNow { get; set; }
         [Required]
         [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]
         public int MinimumSoilHumidity { get; set; }

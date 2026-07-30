@@ -15,7 +15,13 @@
     <div class="main-buttons-container">
         <button mat-stroked-button (click)="removePlant()">Remove Plant</button>
         <button mat-stroked-button (click)="editPlant()">Edit Plant</button>
-        <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">Water Now</button>
+        <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">Log Watering</button>
+        @if (wateringDevice) {
+          <button mat-flat-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">Water Device</button>
+          @if (deviceWateringStatus) {
+            <span>Device watering: {{ deviceWateringStatus }}</span>
+          }
+        }
     </div>
     <div class="plant-image">
         @if (plant?.imageId) {            

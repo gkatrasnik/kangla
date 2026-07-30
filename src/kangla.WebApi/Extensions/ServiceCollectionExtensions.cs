@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Threading.RateLimiting;
+using System.Security.Cryptography;
+using System.Text;
 using kangla.Infrastructure;
 using kangla.WebApi.ExceptionHandlers;
 using kangla.Application;
@@ -45,7 +47,7 @@ namespace kangla.WebApi.Extensions
             {
                 options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
                 options.AddPolicy("identity", context => CreateFixedWindowLimiter(context, permitLimit: 20, TimeSpan.FromMinutes(1)));
-                options.AddPolicy("device-ingestion", context => CreateFixedWindowLimiter(context, permitLimit: 60, TimeSpan.FromMinutes(1)));
+                options.AddPolicy("device-api", context => CreateDeviceLimiter(context));
             });
 
             return services;
@@ -58,6 +60,22 @@ namespace kangla.WebApi.Extensions
             {
                 PermitLimit = permitLimit,
                 Window = window,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+        }
+
+        private static RateLimitPartition<string> CreateDeviceLimiter(HttpContext context)
+        {
+            var credential = context.Request.Headers["X-Device-Credential"].FirstOrDefault();
+            var partitionKey = string.IsNullOrWhiteSpace(credential)
+                ? context.Connection.RemoteIpAddress?.ToString() ?? "unknown"
+                : Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(credential)));
+
+            return RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0,
                 AutoReplenishment = true
             });

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Kangla EF Code-First Migrations"
+  short_description: "Model-first EF Core schema changes for Kangla"
+  default_prompt: "Use $ef-code-first-migrations to update the Kangla data model and scaffold a verified EF CLI migration."
+
+policy:
+  allow_implicit_invocation: true

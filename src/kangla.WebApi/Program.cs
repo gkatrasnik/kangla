@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using kangla.Infrastructure.Services;
 using kangla.Infrastructure;
 using kangla.WebApi.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -34,6 +36,7 @@ try
                 });
         })
         .AddControllers()
+            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)))
             .ConfigureApiBehaviorOptions(options =>
             {
                 options.ConfigureCustomInvalidModelStateResponse();
