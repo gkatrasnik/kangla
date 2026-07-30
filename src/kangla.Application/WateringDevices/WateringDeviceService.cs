@@ -85,15 +85,13 @@ namespace kangla.Application.WateringDevices
                 throw new KeyNotFoundException($"The plant with ID {wateringDeviceDto.PlantId} was not found.");
             }
 
-            if (existingEntity.PlantId == wateringDeviceDto.PlantId)
+            if (existingEntity.PlantId != wateringDeviceDto.PlantId)
             {
-                throw new ArgumentException($"The plant with ID {wateringDeviceDto.PlantId} is already assigned to this watering device.");
-            }
-
-            var existingDeviceForPlant = await _wateringDeviceRepository.GetWateringDeviceByPlantIdAsync(wateringDeviceDto.PlantId, userId);
-            if (existingDeviceForPlant != null)
-            {
-                throw new InvalidOperationException($"The plant with ID {wateringDeviceDto.PlantId} already has a different watering device.");
+                var existingDeviceForPlant = await _wateringDeviceRepository.GetWateringDeviceByPlantIdAsync(wateringDeviceDto.PlantId, userId);
+                if (existingDeviceForPlant != null)
+                {
+                    throw new InvalidOperationException($"The plant with ID {wateringDeviceDto.PlantId} already has a different watering device.");
+                }
             }
 
             _mapper.Map(wateringDeviceDto, existingEntity);

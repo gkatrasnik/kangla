@@ -1,5 +1,11 @@
 # Agent Instructions
 
+## Project Skills
+
+- Project-specific skills are stored in `.agents/skills/<skill-name>/SKILL.md`.
+- Before working on a task, check whether a relevant project skill exists and read its `SKILL.md` completely before taking task actions.
+- Follow the applicable project skill in addition to these instructions. If a project skill conflicts with these instructions, these instructions take precedence.
+
 ## Line Endings
 
 - Preserve existing line endings when editing files.

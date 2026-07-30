@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { PlantService } from '../../plant.service';
 import { ActivatedRoute } from '@angular/router';
 import { Plant } from '../../plant';
@@ -18,6 +18,12 @@ import { MatCardModule } from '@angular/material/card';
 import { WateringEventCreateRequestDto } from '../../../watering-events/dto/watering-event-create-request-dto';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { WateringOverdueIndicatorComponent } from '../../../shared/components/watering-overdue-indicator/watering-overdue-indicator.component';
+import { WateringDeviceService } from '../../../watering-devices/watering-device.service';
+import { WateringDevice } from '../../../watering-devices/watering-device';
+import { WateringCommandService } from '../../../watering-commands/watering-command.service';
+import { WateringCommand } from '../../../watering-commands/watering-command';
+import { of, Subscription, timer } from 'rxjs';
+import { catchError, switchMap, takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-details',
@@ -34,12 +40,16 @@ import { WateringOverdueIndicatorComponent } from '../../../shared/components/wa
   styleUrl: './details.component.scss'
 })
 
-export class DetailsComponent {
+export class DetailsComponent implements OnDestroy {
   route: ActivatedRoute = inject(ActivatedRoute);
   plantId = -1;
   plant: Plant | undefined;
   wateringButtonDisabled = false;
+  deviceWateringButtonDisabled = false;
+  deviceWateringStatus: string | null = null;
+  wateringDevice: WateringDevice | null = null;
   reloadTrigger = 0;
+  private commandStatusSubscription?: Subscription;
 
   constructor(
     private router: Router, 
@@ -47,6 +57,8 @@ export class DetailsComponent {
     public plantService: PlantService,
     public imagesService: ImagesService,
     private wateringEventService: WateringEventService,
+    private wateringDeviceService: WateringDeviceService,
+    private wateringCommandService: WateringCommandService,
     private notificationService: NotificationService,
     public dialog: MatDialog
   ) {
@@ -61,6 +73,9 @@ export class DetailsComponent {
     this.plantService.getPlantById(this.plantId).subscribe((data: Plant) => {
       this.plant = data;
     });
+    this.wateringDeviceService.getByPlantId(this.plantId).pipe(
+      catchError(() => of(null))
+    ).subscribe(device => this.wateringDevice = device);
   }
 
   removePlant(): void {
@@ -125,6 +140,61 @@ export class DetailsComponent {
         console.error('Error creating watering event', error);
       }
     });
+  }
+
+  triggerDeviceWatering(): void {
+    if (!this.wateringDevice) {
+      return;
+    }
+
+    this.deviceWateringButtonDisabled = true;
+    this.wateringCommandService.create(this.wateringDevice.id).subscribe({
+      next: command => this.pollDeviceWateringCommand(command),
+      error: () => {
+        this.deviceWateringButtonDisabled = false;
+        this.notificationService.showClientError('Could not request device watering');
+      }
+    });
+  }
+
+  private pollDeviceWateringCommand(command: WateringCommand): void {
+    this.deviceWateringStatus = this.toDisplayStatus(command.status);
+    this.commandStatusSubscription?.unsubscribe();
+    this.commandStatusSubscription = timer(0, 5000).pipe(
+      switchMap(() => this.wateringCommandService.get(command.deviceId, command.id)),
+      takeWhile(current => this.isActiveCommand(current), true)
+    ).subscribe({
+      next: current => {
+        this.deviceWateringStatus = this.toDisplayStatus(current.status);
+        if (current.status === 'completed') {
+          this.plant!.lastWateringDateTime = new Date(current.finishedAtUtc!);
+          this.reloadTrigger++;
+          this.notificationService.showNonErrorSnackBar('Device watering completed');
+        } else if (!this.isActiveCommand(current)) {
+          this.notificationService.showClientError(current.failureReason ?? `Device watering ${current.status}`);
+        }
+
+        if (!this.isActiveCommand(current)) {
+          this.deviceWateringButtonDisabled = false;
+        }
+      },
+      error: () => {
+        this.deviceWateringButtonDisabled = false;
+        this.notificationService.showClientError('Could not read device watering status');
+      }
+    });
+  }
+
+  private isActiveCommand(command: WateringCommand): boolean {
+    return command.status === 'pending' || command.status === 'acknowledged';
+  }
+
+  private toDisplayStatus(status: WateringCommand['status']): string {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  ngOnDestroy(): void {
+    this.commandStatusSubscription?.unsubscribe();
   }
 
   isWateringOverdue(): boolean {

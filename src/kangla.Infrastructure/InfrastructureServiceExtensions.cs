@@ -22,6 +22,7 @@ namespace kangla.Infrastructure
             services.AddTransient<IDatabaseMigrationService, DatabaseMigrationService>();
             services.AddScoped<IWateringDeviceRepository, WateringDeviceRepository>();
             services.AddScoped<IWateringEventRepository, WateringEventRepository>();
+            services.AddScoped<IWateringCommandRepository, WateringCommandRepository>();
             services.AddScoped<IHumidityMeasurementRepository, HumidityMeasurementRepository>();
             services.AddScoped<IPlantsRepository, PlantsRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
