@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using kangla.Application.WateringCommands;
+using kangla.Application.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,6 +36,13 @@ namespace kangla.WebApi.Controllers
         {
             var command = await _wateringCommandService.GetForUserAsync(deviceId, commandId, GetUserId());
             return Ok(command);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<PagedResponseDto<WateringCommandResponseDto>>> GetForDevice(int deviceId, int pageNumber = 1, int pageSize = 10)
+        {
+            var commands = await _wateringCommandService.GetForDeviceForUserAsync(deviceId, GetUserId(), pageNumber, pageSize);
+            return Ok(commands);
         }
 
         [HttpDelete("{commandId}")]

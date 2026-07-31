@@ -391,26 +391,26 @@ namespace kangla.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DeviceCredentialHash")
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeviceAccessKeyHash")
                         .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DeviceToken")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("MinimumSoilHumidity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PlantId")
+                    b.Property<int?>("PlantId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("WateringDurationSetting")
@@ -421,10 +421,7 @@ namespace kangla.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeviceCredentialHash")
-                        .IsUnique();
-
-                    b.HasIndex("DeviceToken")
+                    b.HasIndex("DeviceAccessKeyHash")
                         .IsUnique();
 
                     b.HasIndex("PlantId")
@@ -545,9 +542,7 @@ namespace kangla.Infrastructure.Migrations
                 {
                     b.HasOne("kangla.Domain.Entities.Plant", "Plant")
                         .WithOne("WateringDevice")
-                        .HasForeignKey("kangla.Domain.Entities.WateringDevice", "PlantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("kangla.Domain.Entities.WateringDevice", "PlantId");
 
                     b.Navigation("Plant");
                 });

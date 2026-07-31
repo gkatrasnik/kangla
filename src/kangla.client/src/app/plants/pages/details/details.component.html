@@ -15,12 +15,15 @@
     <div class="main-buttons-container">
         <button mat-stroked-button (click)="removePlant()">Remove Plant</button>
         <button mat-stroked-button (click)="editPlant()">Edit Plant</button>
-        <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">Log Watering</button>
+        <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">Log Manual Watering</button>
         @if (wateringDevice) {
-          <button mat-flat-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">Water Device</button>
+          <button mat-flat-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">Send Watering Command</button>
+          <button mat-stroked-button (click)="detachWateringDevice()">Detach Watering Device</button>
           @if (deviceWateringStatus) {
-            <span>Device watering: {{ deviceWateringStatus }}</span>
+            <span>Device command: {{ deviceWateringStatus }}</span>
           }
+        } @else {
+          <button mat-stroked-button (click)="attachWateringDevice()">Attach Device From Inventory</button>
         }
     </div>
     <div class="plant-image">
@@ -48,6 +51,24 @@
           </div>
         </mat-card-content>
       </mat-card>
+
+      @if (wateringDevice) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Watering Device</mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="plant-info">
+            <p><b>Status:</b> {{ wateringDevice.active ? 'Active' : 'Inactive' }}</p>
+            <p><b>Manual watering duration:</b> {{ wateringDevice.wateringDurationSetting }} seconds</p>
+            <p><b>Minimum soil humidity (reserved):</b> {{ wateringDevice.minimumSoilHumidity }}</p>
+            <p><b>Watering interval (reserved):</b> {{ wateringDevice.wateringIntervalSetting }} days</p>
+            <p><b>Automatic watering:</b> Not implemented yet</p>
+          </mat-card-content>
+        </mat-card>
+
+        <app-watering-commands-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
+        <app-humidity-measurements-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
+      }
 
       <app-watering-events-table [plantId]="this.plantId" [reloadTrigger]="reloadTrigger" />
     </div>    

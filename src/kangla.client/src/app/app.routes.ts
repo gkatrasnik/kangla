@@ -7,6 +7,7 @@ import { AuthGuard } from './core/auth/auth.guard';
 import { RegistrationConfirmationComponent } from './auth/pages/registration-confirmation/registration-confirmation.component';
 import { PasswordResetComponent } from './auth/pages/password-reset/password-reset.component';
 import { ForgotPasswordComponent } from './auth/pages/forgot-password/forgot-password.component';
+import { WateringDevicesPageComponent } from './watering-devices/pages/watering-devices-page/watering-devices-page.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -17,4 +18,5 @@ export const routes: Routes = [
     { path: 'password-reset', component: PasswordResetComponent },
     { path: 'home', component: HomeComponent, canActivate: mapToCanActivate([AuthGuard])  },
     { path: 'details/:id', component: DetailsComponent, canActivate: mapToCanActivate([AuthGuard])  },
+    { path: 'watering-devices', component: WateringDevicesPageComponent, canActivate: mapToCanActivate([AuthGuard]) },
 ];

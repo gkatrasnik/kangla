@@ -67,10 +67,10 @@ namespace kangla.WebApi.Extensions
 
         private static RateLimitPartition<string> CreateDeviceLimiter(HttpContext context)
         {
-            var credential = context.Request.Headers["X-Device-Credential"].FirstOrDefault();
-            var partitionKey = string.IsNullOrWhiteSpace(credential)
+            var accessKey = context.Request.Headers["X-Device-Access-Key"].FirstOrDefault();
+            var partitionKey = string.IsNullOrWhiteSpace(accessKey)
                 ? context.Connection.RemoteIpAddress?.ToString() ?? "unknown"
-                : Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(credential)));
+                : Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(accessKey)));
 
             return RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
             {

@@ -6,10 +6,10 @@ namespace kangla.Application.WateringDevices
     {
         Task<PagedResponseDto<WateringDeviceResponseDto>> GetWateringDevicesAsync(string userId, int pageNumber, int pageSize);
         Task<WateringDeviceResponseDto> GetWateringDeviceAsync(int deviceId, string userId);
-        Task<WateringDeviceResponseDto> GetWateringDeviceByPlantIdAsync(int plantId, string userId);
-        Task<WateringDeviceResponseDto> CreateWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDevice, string userId);
+        Task<WateringDeviceResponseDto?> GetWateringDeviceByPlantIdAsync(int plantId, string userId);
+        Task<WateringDeviceResponseDto> ClaimWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDevice, string userId);
         Task<WateringDeviceResponseDto> UpdateWateringDeviceAsync(int deviceId, string userId, WateringDeviceUpdateRequestDto wateringDevice);
+        Task<bool> DetachWateringDeviceAsync(int deviceId, string userId);
         Task<bool> DeleteWateringDeviceAsync(int deviceId, string userId);
-        Task<string> RotateDeviceCredentialAsync(int deviceId, string userId);
     }
 }
