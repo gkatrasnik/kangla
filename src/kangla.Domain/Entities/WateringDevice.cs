@@ -8,8 +8,10 @@ namespace kangla.Domain.Entities
     {
         [Required]
         public int Id { get; set; }
-        [Required]
-        public string UserId { get; set; } = default!;
+        /// <summary>
+        /// Null until the device has been claimed by a user.
+        /// </summary>
+        public string? UserId { get; set; }
         /// <summary>
         /// Reserved for a future automatic-watering mode.
         /// This is a raw value from a capacitive humidity sensor.
@@ -32,23 +34,20 @@ namespace kangla.Domain.Entities
         public List<HumidityMeasurement>? HumidityMeasurements { get; set; }
         public List<WateringCommand>? WateringCommands { get; set; }
         /// <summary>
-        /// Device token by which user adds watering device to his account
-        /// Should be written on device
-        /// </summary>
-        [Required]
-        [StringLength(10, MinimumLength = 10, ErrorMessage = "DeviceToken must be 10 characters long.")]
-        public string DeviceToken { get; set; } = default!;
-        /// <summary>
-        /// SHA-256 hash of the long-lived credential used by the physical device.
-        /// A null value identifies a legacy device that has not been re-provisioned yet.
+        /// SHA-256 hash of the device access key printed on the physical device.
+        /// The access key itself is never persisted.
         /// </summary>
         [StringLength(64)]
-        public string? DeviceCredentialHash { get; set; }
+        public string? DeviceAccessKeyHash { get; set; }
+        /// <summary>
+        /// True after the device has been removed from a user's inventory. The record is retained for command and measurement history.
+        /// </summary>
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAtUtc { get; set; }
         /// <summary>
         /// User id from Microsoft.AspNetCore.Identity that is owner of the device.
         /// </summary>
-        [Required]
-        public int PlantId { get; set; } = default!;
-        public Plant Plant { get; set; } = default!;
+        public int? PlantId { get; set; }
+        public Plant? Plant { get; set; }
     }
 }

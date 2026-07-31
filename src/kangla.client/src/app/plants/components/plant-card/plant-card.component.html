@@ -4,6 +4,10 @@
         <mat-card-title>{{ plant.name }}</mat-card-title>
         <mat-card-subtitle>{{ plant.location }}</mat-card-subtitle>
 
+        @if (hasWateringDevice) {
+          <span class="device-attached"><mat-icon>water_drop</mat-icon> Device attached</span>
+        }
+
         @if (this.plantService.isWateringOverdue(this.plant)) {
           <app-watering-overdue-indicator></app-watering-overdue-indicator> 
         } 
@@ -25,7 +29,7 @@
           <button mat-stroked-button >Details</button>
         </a>
         @if (this.plantService.isWateringOverdue(this.plant)) {
-          <button mat-flat-button (click)="triggerWatering()">Water Now</button>  
+          <button mat-flat-button (click)="triggerWatering()">Log Manual Watering</button>
         } 
     </mat-card-actions>
 

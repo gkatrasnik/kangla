@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Attach Device From Inventory</h2>
+<mat-dialog-content>
+  <p>Select one of your unattached devices.</p>
+  <mat-form-field>
+    <mat-label>Watering device</mat-label>
+    <mat-select [(ngModel)]="selectedDeviceId">
+      @for (device of devices; track device.id) {
+        <mat-option [value]="device.id">Watering Device #{{ device.id }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button [disabled]="selectedDeviceId === null" (click)="attach()">Attach</button>
+</mat-dialog-actions>

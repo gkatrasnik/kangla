@@ -21,13 +21,13 @@ namespace kangla.WebApi.Controllers
 
         [HttpPost]
         /// <summary>
-        /// Authenticates the device using its credential header and delegates the check-in protocol to the application service.
+        /// Authenticates the device using its access-key header and delegates the check-in protocol to the application service.
         /// </summary>
         public async Task<ActionResult<DeviceCheckInResponseDto>> CheckIn(
             DeviceCheckInRequestDto request,
-            [FromHeader(Name = "X-Device-Credential")] string? deviceCredential)
+            [FromHeader(Name = "X-Device-Access-Key")] string? deviceAccessKey)
         {
-            var response = await _wateringCommandService.CheckInAsync(request, deviceCredential ?? string.Empty);
+            var response = await _wateringCommandService.CheckInAsync(request, deviceAccessKey ?? string.Empty);
             return Ok(response);
         }
     }

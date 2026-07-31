@@ -3,6 +3,7 @@ namespace kangla.Application.WateringCommands
     public class DeviceCheckInResponseDto
     {
         public DateTime ServerTimeUtc { get; set; }
+        // Only user-requested manual watering commands are returned until automatic watering is implemented.
         public DeviceWateringCommandDto? Command { get; set; }
     }
 

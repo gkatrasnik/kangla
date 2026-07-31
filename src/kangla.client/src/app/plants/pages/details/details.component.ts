@@ -24,6 +24,9 @@ import { WateringCommandService } from '../../../watering-commands/watering-comm
 import { WateringCommand } from '../../../watering-commands/watering-command';
 import { of, Subscription, timer } from 'rxjs';
 import { catchError, switchMap, takeWhile } from 'rxjs/operators';
+import { AttachInventoryDeviceDialogComponent } from '../../../watering-devices/components/attach-inventory-device-dialog/attach-inventory-device-dialog.component';
+import { WateringCommandsTableComponent } from '../../../watering-commands/components/watering-commands-table/watering-commands-table.component';
+import { HumidityMeasurementsTableComponent } from '../../../humidity-measurements/components/humidity-measurements-table/humidity-measurements-table.component';
 
 @Component({
   selector: 'app-details',
@@ -34,7 +37,9 @@ import { catchError, switchMap, takeWhile } from 'rxjs/operators';
     ImageSrcDirective, 
     WateringEventsTableComponent, 
     MatCardModule, 
-    WateringOverdueIndicatorComponent
+    WateringOverdueIndicatorComponent,
+    WateringCommandsTableComponent,
+    HumidityMeasurementsTableComponent
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
@@ -49,6 +54,7 @@ export class DetailsComponent implements OnDestroy {
   deviceWateringStatus: string | null = null;
   wateringDevice: WateringDevice | null = null;
   reloadTrigger = 0;
+  deviceActivityReloadTrigger = 0;
   private commandStatusSubscription?: Subscription;
 
   constructor(
@@ -149,7 +155,10 @@ export class DetailsComponent implements OnDestroy {
 
     this.deviceWateringButtonDisabled = true;
     this.wateringCommandService.create(this.wateringDevice.id).subscribe({
-      next: command => this.pollDeviceWateringCommand(command),
+      next: command => {
+        this.deviceActivityReloadTrigger++;
+        this.pollDeviceWateringCommand(command);
+      },
       error: () => {
         this.deviceWateringButtonDisabled = false;
         this.notificationService.showClientError('Could not request device watering');
@@ -169,8 +178,10 @@ export class DetailsComponent implements OnDestroy {
         if (current.status === 'completed') {
           this.plant!.lastWateringDateTime = new Date(current.finishedAtUtc!);
           this.reloadTrigger++;
+          this.deviceActivityReloadTrigger++;
           this.notificationService.showNonErrorSnackBar('Device watering completed');
         } else if (!this.isActiveCommand(current)) {
+          this.deviceActivityReloadTrigger++;
           this.notificationService.showClientError(current.failureReason ?? `Device watering ${current.status}`);
         }
 
@@ -191,6 +202,65 @@ export class DetailsComponent implements OnDestroy {
 
   private toDisplayStatus(status: WateringCommand['status']): string {
     return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+
+  attachWateringDevice(): void {
+    this.wateringDeviceService.getAll(1, 1000).subscribe(devicesResponse => {
+      const availableDevices = devicesResponse.data.filter(device => device.plantId === null);
+      if (availableDevices.length === 0) {
+        this.notificationService.showClientError('No unattached watering devices are available in your inventory. Add one from Watering Devices first.');
+        return;
+      }
+
+      this.dialog.open(AttachInventoryDeviceDialogComponent, { data: availableDevices })
+        .afterClosed().subscribe((deviceId?: number) => {
+          const device = availableDevices.find(availableDevice => availableDevice.id === deviceId);
+          if (!device) {
+            return;
+          }
+
+          this.wateringDeviceService.update(device.id, {
+            plantId: this.plantId,
+            minimumSoilHumidity: device.minimumSoilHumidity,
+            wateringIntervalSetting: device.wateringIntervalSetting,
+            wateringDurationSetting: device.wateringDurationSetting
+          }).subscribe({
+            next: updatedDevice => {
+              this.wateringDevice = updatedDevice;
+              this.notificationService.showNonErrorSnackBar('Watering device attached');
+            },
+            error: () => this.notificationService.showClientError('Could not attach watering device')
+          });
+        });
+    });
+  }
+
+  detachWateringDevice(): void {
+    if (!this.wateringDevice) {
+      return;
+    }
+
+    this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Detach watering device',
+        message: 'Detach this device from the plant? It will remain in your watering-device inventory. A pending watering command will be cancelled; a watering device currently in progress cannot be detached.',
+        confirmAction: 'Detach'
+      } as DialogData
+    }).afterClosed().subscribe(confirmed => {
+      if (!confirmed || !this.wateringDevice) {
+        return;
+      }
+
+      this.wateringDeviceService.detach(this.wateringDevice.id).subscribe({
+        next: () => {
+          this.commandStatusSubscription?.unsubscribe();
+          this.wateringDevice = null;
+          this.deviceWateringStatus = null;
+          this.notificationService.showNonErrorSnackBar('Watering device detached');
+        },
+        error: () => this.notificationService.showClientError('Could not detach watering device. It may currently be watering.')
+      });
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,4 +1,5 @@
 using kangla.Application.HumidityMeasurements;
+using kangla.Application.Shared;
 using kangla.Application.WateringDevices;
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
@@ -63,6 +64,27 @@ namespace kangla.Application.WateringCommands
             return ToResponse(command);
         }
 
+        public async Task<PagedResponseDto<WateringCommandResponseDto>> GetForDeviceForUserAsync(int deviceId, string userId, int pageNumber, int pageSize)
+        {
+            if (pageNumber < 1 || pageSize < 1)
+            {
+                throw new ArgumentException("Page number and page size must be greater than 0.");
+            }
+
+            var device = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId)
+                ?? throw new KeyNotFoundException($"Watering device with ID {deviceId} was not found.");
+            var commands = await _wateringCommandRepository.GetForDeviceForUserAsync(device.Id, userId, pageNumber, pageSize);
+
+            return new PagedResponseDto<WateringCommandResponseDto>
+            {
+                PageNumber = commands.PageNumber,
+                PageSize = commands.PageSize,
+                TotalPages = commands.TotalPages,
+                TotalRecords = commands.TotalRecords,
+                Data = commands.Data.Select(ToResponse).ToList()
+            };
+        }
+
         public async Task CancelForUserAsync(int deviceId, int commandId, string userId)
         {
             var command = await _wateringCommandRepository.GetByIdForUserAsync(commandId, deviceId, userId)
@@ -82,9 +104,9 @@ namespace kangla.Application.WateringCommands
         /// Authenticates a device check-in, persists the supplied raw humidity reading when present,
         /// and returns the pending command that the device should execute.
         /// </summary>
-        public async Task<DeviceCheckInResponseDto> CheckInAsync(DeviceCheckInRequestDto request, string deviceCredential)
+        public async Task<DeviceCheckInResponseDto> CheckInAsync(DeviceCheckInRequestDto request, string deviceAccessKey)
         {
-            var device = await GetDeviceForCredentialAsync(deviceCredential);
+            var device = await GetDeviceForAccessKeyAsync(deviceAccessKey);
             var nowUtc = DateTime.UtcNow;
 
             if (request.SoilHumidity.HasValue)
@@ -107,9 +129,9 @@ namespace kangla.Application.WateringCommands
             };
         }
 
-        public async Task<WateringCommandResponseDto> AcknowledgeAsync(int commandId, string deviceCredential)
+        public async Task<WateringCommandResponseDto> AcknowledgeAsync(int commandId, string deviceAccessKey)
         {
-            var device = await GetDeviceForCredentialAsync(deviceCredential);
+            var device = await GetDeviceForAccessKeyAsync(deviceAccessKey);
             var command = await _wateringCommandRepository.GetByIdForDeviceAsync(commandId, device.Id)
                 ?? throw new KeyNotFoundException($"Watering command with ID {commandId} was not found.");
 
@@ -133,9 +155,9 @@ namespace kangla.Application.WateringCommands
         /// <summary>
         /// Records the device result. A completed result creates the linked plant watering event exactly once.
         /// </summary>
-        public async Task<WateringCommandResponseDto> ReportResultAsync(int commandId, DeviceWateringCommandResultRequestDto request, string deviceCredential)
+        public async Task<WateringCommandResponseDto> ReportResultAsync(int commandId, DeviceWateringCommandResultRequestDto request, string deviceAccessKey)
         {
-            var device = await GetDeviceForCredentialAsync(deviceCredential);
+            var device = await GetDeviceForAccessKeyAsync(deviceAccessKey);
             var command = await _wateringCommandRepository.GetByIdForDeviceAsync(commandId, device.Id)
                 ?? throw new KeyNotFoundException($"Watering command with ID {commandId} was not found.");
 
@@ -163,7 +185,7 @@ namespace kangla.Application.WateringCommands
 
                 var wateringEvent = new WateringEvent
                 {
-                    PlantId = device.PlantId,
+                    PlantId = device.PlantId!.Value,
                     Start = request.StartedAtUtc.Value,
                     End = request.FinishedAtUtc.Value
                 };
@@ -191,17 +213,23 @@ namespace kangla.Application.WateringCommands
             throw new ArgumentException("Watering command outcome is invalid.");
         }
 
-        private async Task<WateringDevice> GetDeviceForCredentialAsync(string deviceCredential)
+        private async Task<WateringDevice> GetDeviceForAccessKeyAsync(string deviceAccessKey)
         {
-            if (string.IsNullOrWhiteSpace(deviceCredential))
+            if (string.IsNullOrWhiteSpace(deviceAccessKey))
             {
-                throw new UnauthorizedAccessException("A device credential is required.");
+                throw new UnauthorizedAccessException("A device access key is required.");
             }
 
-            var credentialHash = WateringDeviceService.HashDeviceCredential(deviceCredential);
-            return await _wateringDeviceRepository.GetWateringDeviceByCredentialHashAsync(credentialHash)
-                ?? await _wateringDeviceRepository.GetLegacyWateringDeviceByTokenAsync(deviceCredential)
-                ?? throw new UnauthorizedAccessException("The device credential is invalid.");
+            var accessKeyHash = WateringDeviceService.HashDeviceAccessKey(deviceAccessKey);
+            var device = await _wateringDeviceRepository.GetWateringDeviceByAccessKeyHashAsync(accessKeyHash)
+                ?? throw new UnauthorizedAccessException("The device access key is invalid.");
+
+            if (device.UserId is null || !device.PlantId.HasValue)
+            {
+                throw new UnauthorizedAccessException("The device has not been attached to a plant.");
+            }
+
+            return device;
         }
 
         private async Task ExpireIfNeededAsync(WateringCommand command)

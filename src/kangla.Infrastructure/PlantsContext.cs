@@ -37,7 +37,8 @@ namespace kangla.Infrastructure
             modelBuilder.Entity<WateringDevice>()
                 .HasOne(w => w.Plant)
                 .WithOne(p => p.WateringDevice)
-                .HasForeignKey<WateringDevice>(w => w.PlantId);
+                .HasForeignKey<WateringDevice>(w => w.PlantId)
+                .IsRequired(false);
 
             modelBuilder.Entity<WateringDevice>()
                 .HasMany(w => w.HumidityMeasurements)
@@ -71,11 +72,7 @@ namespace kangla.Infrastructure
                 .HasFilter("\"Status\" IN ('Pending', 'Acknowledged')");
 
             modelBuilder.Entity<WateringDevice>()
-                .HasIndex(d => d.DeviceToken)
-                .IsUnique();
-
-            modelBuilder.Entity<WateringDevice>()
-                .HasIndex(d => d.DeviceCredentialHash)
+                .HasIndex(d => d.DeviceAccessKeyHash)
                 .IsUnique();
         }
 

@@ -1,5 +1,6 @@
 using kangla.Domain.Entities;
 using kangla.Domain.Interfaces;
+using kangla.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace kangla.Infrastructure.Repositories
@@ -51,6 +52,21 @@ namespace kangla.Infrastructure.Repositories
             return await _context.WateringCommands
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == commandId && c.WateringDeviceId == deviceId && c.WateringDevice.UserId == userId);
+        }
+
+        public async Task<PagedResponse<WateringCommand>> GetForDeviceForUserAsync(int deviceId, string userId, int pageNumber, int pageSize)
+        {
+            var commands = _context.WateringCommands.AsNoTracking()
+                .Where(c => c.WateringDeviceId == deviceId && c.WateringDevice.UserId == userId);
+
+            var totalRecords = await commands.CountAsync();
+            var page = await commands
+                .OrderByDescending(c => c.RequestedAtUtc)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResponse<WateringCommand>(page, pageNumber, pageSize, totalRecords);
         }
 
         public async Task<(WateringCommand Command, bool Created)> CreateOrGetActiveAsync(WateringCommand command, DateTime nowUtc)

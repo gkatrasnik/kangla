@@ -1,0 +1,49 @@
+<div class="page-container">
+  <h2 class="page-title">Watering Devices</h2>
+  <div class="main-buttons-container">
+    <button mat-flat-button (click)="openAttachDialog()">Add Watering Device</button>
+  </div>
+
+  <div class="device-grid">
+    @for (device of devices; track device.id) {
+      <mat-card>
+        <mat-card-header><mat-card-title>Watering Device #{{ device.id }}</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <mat-form-field>
+            <mat-label>Assigned plant</mat-label>
+            <mat-select [(ngModel)]="device.plantId">
+              @if (!device.plantId) {
+                <mat-option [value]="null">Not attached</mat-option>
+              }
+              @for (plant of plants; track plant.id) {
+                <mat-option [value]="plant.id" [disabled]="isAssignedToAnotherDevice(plant.id, device.id)">{{ plant.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Manual watering duration (seconds)</mat-label>
+            <input matInput type="number" min="1" max="60" [(ngModel)]="device.wateringDurationSetting">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Minimum soil humidity (reserved)</mat-label>
+            <input matInput type="number" min="250" max="750" [(ngModel)]="device.minimumSoilHumidity">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Watering interval (reserved days)</mat-label>
+            <input matInput type="number" min="1" max="365" [(ngModel)]="device.wateringIntervalSetting">
+          </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          @if (device.plantId) {
+            <a mat-button [routerLink]="['/details', device.plantId]">Open Plant</a>
+            <button mat-button (click)="detach(device)">Detach from Plant</button>
+          }
+          <button mat-button (click)="save(device)">Save</button>
+          <button mat-button color="warn" (click)="deleteFromInventory(device)">Remove from Inventory</button>
+        </mat-card-actions>
+      </mat-card>
+    } @empty {
+      <p>Your watering-device inventory is empty.</p>
+    }
+  </div>
+</div>

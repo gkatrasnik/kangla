@@ -9,17 +9,19 @@ import { WateringEventService } from '../../../watering-events/watering-event.se
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { PlantService } from '../../plant.service';
 import { WateringOverdueIndicatorComponent } from '../../../shared/components/watering-overdue-indicator/watering-overdue-indicator.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-plant-card',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, RouterLink, ImageSrcDirective, WateringOverdueIndicatorComponent],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective, WateringOverdueIndicatorComponent],
   templateUrl: './plant-card.component.html',
   styleUrl: './plant-card.component.scss'
 })
 export class PlantCardComponent {
   @Input() plant!: Plant;
   @Input() imageUrl!: string | undefined;
+  @Input() hasWateringDevice = false;
 /**
  * Initializes a new instance of the PlantCardComponent class.
  * @param wateringEventService - Service to handle watering events.

@@ -13,6 +13,8 @@ import { PlantRecognizeResponseDto } from '../../dto/plant-recognize-response-dt
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { LoadingService } from '../../../core/loading/loading.service';
 import { MatMenuModule } from '@angular/material/menu';
+import { WateringDeviceService } from '../../../watering-devices/watering-device.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -29,6 +31,7 @@ import { MatMenuModule } from '@angular/material/menu';
 })
 export class HomeComponent {
   plantsList: Plant[] = [];
+  devicePlantIds = new Set<number>();
 
   plantsListLength = 0;
   pageSize = 10;
@@ -45,6 +48,7 @@ export class HomeComponent {
     public imagesService: ImagesService,
     private notificationService: NotificationService,
     private loadingService: LoadingService,
+    private wateringDeviceService: WateringDeviceService,
     public dialog: MatDialog
   ) {}
 
@@ -60,9 +64,13 @@ export class HomeComponent {
   }
 
   loadPlants(pageIndex: number, pageSize: number): void {
-    this.plantService.getAllPlants(pageIndex + 1, pageSize).subscribe((response: PagedResponse<Plant>) => {
-      this.plantsList = response.data;
-      this.plantsListLength = response.totalRecords;
+    forkJoin({
+      plants: this.plantService.getAllPlants(pageIndex + 1, pageSize),
+      devices: this.wateringDeviceService.getAll(1, 1000)
+    }).subscribe(({ plants, devices }) => {
+      this.plantsList = plants.data;
+      this.plantsListLength = plants.totalRecords;
+      this.devicePlantIds = new Set(devices.data.flatMap(device => device.plantId === null ? [] : [device.plantId]));
     });
   }
 

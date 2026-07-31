@@ -4,10 +4,12 @@ namespace kangla.Application.WateringDevices
 {
     public class WateringDeviceCreateRequestDto
     {
+        // Stored for future automatic watering; it is not currently evaluated by the API or device protocol.
         [Required]
         [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]
         public int MinimumSoilHumidity { get; set; }
 
+        // Stored for future automatic watering; it is not currently evaluated by the API or device protocol.
         [Required]
         [Range(1, 365, ErrorMessage = "Interval must be between 1 and 365 days.")]
         public int WateringIntervalSetting { get; set; }
@@ -17,8 +19,8 @@ namespace kangla.Application.WateringDevices
         public int WateringDurationSetting { get; set; }
 
         [Required]
-        [StringLength(10, MinimumLength = 10, ErrorMessage = "DeviceToken must be 10 characters long.")]
-        public string DeviceToken { get; set; } = default!;
-        public int PlantId { get; set; } = default!;
+        [StringLength(128)]
+        public string DeviceAccessKey { get; set; } = default!;
+        public int? PlantId { get; set; }
     }
 }

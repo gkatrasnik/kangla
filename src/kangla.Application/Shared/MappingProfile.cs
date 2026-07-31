@@ -12,7 +12,9 @@ namespace kangla.Application.Shared
     {
         public MappingProfile()
         {
-            CreateMap<WateringDevice, WateringDeviceResponseDto>();
+            CreateMap<WateringDevice, WateringDeviceResponseDto>()
+                .ForMember(destination => destination.Active, options => options.MapFrom(source => !source.IsDeleted && source.PlantId.HasValue))
+                .ForMember(destination => destination.Deleted, options => options.MapFrom(source => source.IsDeleted));
             CreateMap<WateringDeviceCreateRequestDto, WateringDevice>();
             CreateMap<WateringDeviceUpdateRequestDto, WateringDevice>();
 

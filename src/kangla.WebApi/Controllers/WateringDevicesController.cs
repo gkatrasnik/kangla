@@ -47,17 +47,17 @@ namespace kangla.WebApi.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
             var wateringDevice = await _wateringDeviceService.GetWateringDeviceByPlantIdAsync(plantId, userId);
-            return Ok(wateringDevice);
+            return wateringDevice is null ? NotFound() : Ok(wateringDevice);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<WateringDeviceResponseDto>> PostWateringDevice(WateringDeviceCreateRequestDto wateringDevice)
+        public async Task<ActionResult<WateringDeviceResponseDto>> ClaimWateringDevice(WateringDeviceCreateRequestDto wateringDevice)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
 
-            var createdDevice = await _wateringDeviceService.CreateWateringDeviceAsync(wateringDevice, userId);
-            return CreatedAtAction(nameof(GetWateringDevice), new { deviceId = createdDevice.Id }, createdDevice);
+            var claimedDevice = await _wateringDeviceService.ClaimWateringDeviceAsync(wateringDevice, userId);
+            return CreatedAtAction(nameof(GetWateringDevice), new { deviceId = claimedDevice.Id }, claimedDevice);
         }
 
         [Authorize]
@@ -86,12 +86,18 @@ namespace kangla.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("{deviceId}/credential")]
-        public async Task<ActionResult<WateringDeviceResponseDto>> RotateDeviceCredential(int deviceId)
+        [HttpDelete("{deviceId}/plant")]
+        public async Task<IActionResult> DetachWateringDevice(int deviceId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("User ID could not be retrieved from the token.");
-            var credential = await _wateringDeviceService.RotateDeviceCredentialAsync(deviceId, userId);
-            return Ok(new WateringDeviceResponseDto { Id = deviceId, DeviceCredential = credential });
+            var detached = await _wateringDeviceService.DetachWateringDeviceAsync(deviceId, userId);
+            if (!detached)
+            {
+                return NotFound(new { message = $"Watering device with ID {deviceId} not found." });
+            }
+
+            return NoContent();
         }
+
     }
 }

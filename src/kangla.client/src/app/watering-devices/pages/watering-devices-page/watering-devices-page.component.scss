@@ -1,0 +1,11 @@
+.device-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 24rem));
+  justify-content: start;
+  margin-top: 1rem;
+}
+
+mat-form-field {
+  display: block;
+}

@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Attach Watering Device</h2>
+<mat-dialog-content [formGroup]="form">
+  <p>Enter the access key printed on the device sticker. You can keep the device in your inventory or attach it to a plant now.</p>
+
+  <mat-form-field>
+    <mat-label>Device access key</mat-label>
+    <input matInput formControlName="deviceAccessKey" maxlength="128" required>
+  </mat-form-field>
+  @if (!data.plantId) {
+    <mat-form-field>
+      <mat-label>Plant (optional)</mat-label>
+      <mat-select formControlName="plantId">
+        <mat-option [value]="null">Keep in inventory</mat-option>
+        @for (plant of data.plants; track plant.id) {
+          <mat-option [value]="plant.id">{{ plant.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+  <mat-form-field>
+    <mat-label>Minimum soil humidity</mat-label>
+    <input matInput type="number" formControlName="minimumSoilHumidity" min="250" max="750" required>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Watering interval (days)</mat-label>
+    <input matInput type="number" formControlName="wateringIntervalSetting" min="1" max="365" required>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Manual watering duration (seconds)</mat-label>
+    <input matInput type="number" formControlName="wateringDurationSetting" min="1" max="60" required>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-flat-button [disabled]="form.invalid" (click)="submit()">Attach</button>
+</mat-dialog-actions>

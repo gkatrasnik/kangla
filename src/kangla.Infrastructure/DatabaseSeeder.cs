@@ -1,7 +1,10 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using kangla.Domain.Entities;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace kangla.Infrastructure
 {
@@ -20,6 +23,8 @@ namespace kangla.Infrastructure
 
         public async Task SeedAsync()
         {
+            await SeedSimulatorDeviceAsync();
+
             if (_context.Plants.Any())
             {
                 _logger.LogInformation("Database already seeded");
@@ -60,19 +65,6 @@ namespace kangla.Infrastructure
                     WateringInterval = 7,
                     WateringInstructions = "Water weekly during the growing season.",
                     UserId = demoUser1Id,
-                    WateringDevice = new WateringDevice
-                    {
-                        MinimumSoilHumidity = 400,
-                        WateringIntervalSetting = 7,
-                        WateringDurationSetting = 5,
-                        DeviceToken = "device12345",
-                        UserId = demoUser1Id,
-                        HumidityMeasurements = new List<HumidityMeasurement>
-                        {
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 657 },
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 349 }
-                        }
-                    },
                     WateringEvents = new List<WateringEvent>
                     {
                         new WateringEvent { Start = DateTime.Parse("2024-07-06T08:00:00Z"), End = DateTime.Parse("2024-07-06T08:05:00Z") }
@@ -88,19 +80,6 @@ namespace kangla.Infrastructure
                     WateringInterval = 3,
                     WateringInstructions = "Water every 3 days during fruiting.",
                     UserId = demoUser1Id,
-                    WateringDevice = new WateringDevice
-                    {
-                        MinimumSoilHumidity = 450,
-                        WateringIntervalSetting = 3,
-                        WateringDurationSetting = 4,
-                        DeviceToken = "device1236",
-                        UserId = demoUser1Id,
-                        HumidityMeasurements = new List<HumidityMeasurement>
-                        {
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 362 },
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 693 }
-                        }
-                    },
                     WateringEvents = new List<WateringEvent>
                     {
                         new WateringEvent { Start = DateTime.Parse("2024-07-06T09:00:00Z"), End = DateTime.Parse("2024-07-06T09:04:00Z") }
@@ -116,19 +95,6 @@ namespace kangla.Infrastructure
                     WateringInterval = 14,
                     WateringInstructions = "Water biweekly, less in winter.",
                     UserId = demoUser2Id,
-                    WateringDevice = new WateringDevice
-                    {
-                        MinimumSoilHumidity = 350,
-                        WateringIntervalSetting = 14,
-                        WateringDurationSetting = 3,
-                        DeviceToken = "device1237",
-                        UserId = demoUser2Id,
-                        HumidityMeasurements = new List<HumidityMeasurement>
-                        {
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 731 },
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 371 }
-                        }
-                    },
                     WateringEvents = new List<WateringEvent>
                     {
                         new WateringEvent { Start = DateTime.Parse("2024-07-06T10:00:00Z"), End = DateTime.Parse("2024-07-06T10:03:00Z") }
@@ -144,19 +110,6 @@ namespace kangla.Infrastructure
                     WateringInterval = 5,
                     WateringInstructions = "Water every 5 days.",
                     UserId = demoUser2Id,
-                    WateringDevice = new WateringDevice
-                    {
-                        MinimumSoilHumidity = 375,
-                        WateringIntervalSetting = 5,
-                        WateringDurationSetting = 3,
-                        DeviceToken = "device1238",
-                        UserId = demoUser2Id,
-                        HumidityMeasurements = new List<HumidityMeasurement>
-                        {
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T06:00:00Z"), SoilHumidity = 734 },
-                            new HumidityMeasurement { DateTime = DateTime.Parse("2024-07-06T07:00:00Z"), SoilHumidity = 374 }
-                        }
-                    },
                     WateringEvents = new List<WateringEvent>
                     {
                         new WateringEvent { Start = DateTime.Parse("2024-07-07T10:00:00Z"), End = DateTime.Parse("2024-07-07T10:03:00Z") }
@@ -166,6 +119,31 @@ namespace kangla.Infrastructure
 
             _context.Plants.AddRange(plants);
             await _context.SaveChangesAsync();
+        }
+
+        private async Task SeedSimulatorDeviceAsync()
+        {
+            const string simulatorAccessKey = "kangla-simulator-01";
+            var accessKeyHash = HashDeviceAccessKey(simulatorAccessKey);
+            if (await _context.WateringDevices.AnyAsync(device => device.DeviceAccessKeyHash == accessKeyHash))
+            {
+                return;
+            }
+
+            _context.WateringDevices.Add(new WateringDevice
+            {
+                MinimumSoilHumidity = 400,
+                WateringIntervalSetting = 7,
+                WateringDurationSetting = 3,
+                DeviceAccessKeyHash = accessKeyHash
+            });
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Seeded the unclaimed development simulator device.");
+        }
+
+        private static string HashDeviceAccessKey(string accessKey)
+        {
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(accessKey)));
         }
 
     }

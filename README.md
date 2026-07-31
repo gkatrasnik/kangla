@@ -39,11 +39,10 @@ users can view the `HumidityMeasurement` data collected from their plants.
 
 ## ESP32 watering-device protocol
 
-Kangla is ready for ESP32 watering devices. Each device is linked to one plant and
-uses the long-lived credential returned when the device is created or rotated via
-`POST /api/WateringDevices/{deviceId}/credential`. Store that credential on the
-physical device immediately; it is sent in the `X-Device-Credential` header and is
-never included in an API response again.
+Kangla is ready for ESP32 watering devices. Each device has a fixed device access
+key printed on its sticker. The user enters that key to claim and attach the device
+to one plant. Kangla stores only a SHA-256 hash of the key; the key is sent by the
+device in the `X-Device-Access-Key` header and is never returned by the API.
 
 The device calls `POST /api/device/check-ins` every minute. Include an optional raw
 `soilHumidity` value from `0` through `1000` once per hour; Kangla stores it as a
@@ -56,6 +55,27 @@ Users create a manual watering request with
 `POST /api/WateringDevices/{deviceId}/watering-commands`. Commands expire after 15
 minutes if the device does not acknowledge them, and only one active command is
 allowed per device.
+
+Automatic watering is not implemented yet. `minimumSoilHumidity` and
+`wateringIntervalSetting` are stored as device settings for that future feature,
+but Kangla currently does not evaluate them or send automatic watering commands.
+
+## Device simulator
+
+`src/kangla.DeviceSimulator` is a local .NET console application that implements
+the current device protocol against a running API. Its development-only sticker
+access key is `kangla-simulator-01`. Attach that key to a plant in the UI, then run:
+
+```powershell
+dotnet run --project src/kangla.DeviceSimulator -- https://localhost:7049 500 5
+```
+
+The optional final arguments are the simulated raw soil-humidity value and
+check-in interval in seconds. It acknowledges and completes any manual watering
+command returned by a check-in, using the device's configured duration.
+
+On Windows, [run-device-simulator.bat](run-device-simulator.bat) starts the
+simulator against the local HTTPS API address with its built-in development key.
 
 ## Docker deployment
 

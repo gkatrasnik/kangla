@@ -19,11 +19,11 @@ namespace kangla.WebApi.Controllers
         [HttpPost("{commandId}/acknowledgements")]
         public async Task<ActionResult<WateringCommandResponseDto>> Acknowledge(
             int commandId,
-            [FromHeader(Name = "X-Device-Credential")] string? deviceCredential)
+            [FromHeader(Name = "X-Device-Access-Key")] string? deviceAccessKey)
         {
             try
             {
-                var command = await _wateringCommandService.AcknowledgeAsync(commandId, deviceCredential ?? string.Empty);
+                var command = await _wateringCommandService.AcknowledgeAsync(commandId, deviceAccessKey ?? string.Empty);
                 return Ok(command);
             }
             catch (InvalidOperationException exception)
@@ -36,11 +36,11 @@ namespace kangla.WebApi.Controllers
         public async Task<ActionResult<WateringCommandResponseDto>> ReportResult(
             int commandId,
             DeviceWateringCommandResultRequestDto request,
-            [FromHeader(Name = "X-Device-Credential")] string? deviceCredential)
+            [FromHeader(Name = "X-Device-Access-Key")] string? deviceAccessKey)
         {
             try
             {
-                var command = await _wateringCommandService.ReportResultAsync(commandId, request, deviceCredential ?? string.Empty);
+                var command = await _wateringCommandService.ReportResultAsync(commandId, request, deviceAccessKey ?? string.Empty);
                 return Ok(command);
             }
             catch (InvalidOperationException exception)
