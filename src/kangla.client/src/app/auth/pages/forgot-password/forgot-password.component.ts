@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { ErrorService } from '../../../core/errors/error.service';
@@ -10,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
@@ -28,10 +28,10 @@ import { CommonModule } from '@angular/common';
 })
 export class ForgotPasswordComponent implements OnInit {
   forgotPasswordForm: FormGroup;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private notificationService: NotificationService,
     private errorService: ErrorService,
     private authService: AuthService,
@@ -45,9 +45,12 @@ export class ForgotPasswordComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmit(): void {
-    if (this.forgotPasswordForm.valid) {
+    if (this.forgotPasswordForm.valid && !this.isSubmitting) {
       const { email } = this.forgotPasswordForm.value;
-      this.authService.forgotPassword(email).subscribe({
+      this.isSubmitting = true;
+      this.authService.forgotPassword(email).pipe(
+        finalize(() => this.isSubmitting = false)
+      ).subscribe({
         next: () => {
           this.notificationService.showNonErrorSnackBar('If the account exists and its email is confirmed, a password reset email has been sent.');
           this.router.navigate(['/password-reset']);

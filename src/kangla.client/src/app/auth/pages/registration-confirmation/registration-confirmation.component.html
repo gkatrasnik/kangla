@@ -18,12 +18,13 @@
           </mat-error>
         </mat-form-field>
   
-        <button mat-flat-button class="full-width" type="submit" [disabled]="resendConfirmationForm.invalid">Resend Confirmation Email</button>
+        <button mat-flat-button class="full-width" color="primary" type="submit" [disabled]="resendConfirmationForm.invalid || isSubmitting" [attr.aria-busy]="isSubmitting">
+          {{ isSubmitting ? 'Sending…' : 'Resend Confirmation Email' }}
+        </button>
       </form>
     </mat-card-content>
-    <mat-card-actions>
-      <a mat-button routerLink="/login">Login</a>
+    <mat-card-actions class="auth-card-actions">
+      <p class="auth-link-row">Already confirmed? <a class="auth-link" routerLink="/login">Login</a></p>
     </mat-card-actions>      
   </mat-card>
 </div>
-  
