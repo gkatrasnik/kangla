@@ -1,0 +1,36 @@
+.dialog-intro {
+  color: var(--app-text-muted);
+  margin-top: 0;
+}
+
+.plant-preview {
+  background: var(--app-surface-muted);
+  border-radius: var(--app-radius-medium);
+  margin-bottom: 1rem;
+  max-height: 15rem;
+  overflow: hidden;
+}
+
+.plant-preview img {
+  display: block;
+  max-height: 15rem;
+  object-fit: cover;
+  width: 100%;
+}
+
+.optional-details {
+  border-top: 1px solid var(--app-border);
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+}
+
+.optional-details summary {
+  color: var(--app-primary);
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.optional-fields {
+  display: grid;
+}

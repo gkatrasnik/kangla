@@ -9,7 +9,8 @@ import { HumidityMeasurement } from '../../humidity-measurement';
   selector: 'app-humidity-measurements-table',
   standalone: true,
   imports: [DatePipe, MatCardModule, MatTableModule],
-  templateUrl: './humidity-measurements-table.component.html'
+  templateUrl: './humidity-measurements-table.component.html',
+  styleUrl: './humidity-measurements-table.component.scss'
 })
 export class HumidityMeasurementsTableComponent implements OnInit, OnChanges {
   @Input({ required: true }) deviceId!: number;

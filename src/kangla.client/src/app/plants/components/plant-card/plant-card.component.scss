@@ -1,49 +1,111 @@
 :host {
-    display: flex;
-    height: 100%;
+  display: block;
+  min-width: 0;
 }
 
 .plant-card {
-    box-sizing: border-box;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    height: 100%;
-    width: 20rem;
-    min-height: 20rem;
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-large);
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
 }
 
-.plant-card-header {
-    margin-bottom: 0.5rem;
+.plant-card:hover {
+  border-color: color-mix(in srgb, var(--app-primary) 55%, var(--app-border));
+  box-shadow: var(--app-shadow-soft);
+  transform: translateY(-2px);
 }
 
-.device-attached {
-    align-items: center;
-    color: #2e7d32;
-    display: inline-flex;
-    font-size: 0.8rem;
-    gap: 0.25rem;
+.plant-card-image {
+  background: var(--app-surface-muted);
+  display: block;
+  height: 13rem;
+  overflow: hidden;
 }
 
-.device-attached mat-icon {
-    font-size: 1rem;
-    height: 1rem;
-    width: 1rem;
+.plant-card-image img {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 200ms ease;
+  width: 100%;
+}
+
+.plant-card:hover .plant-card-image img {
+  transform: scale(1.02);
 }
 
 .plant-card-content {
-    margin-top: 0.5rem;
-    flex: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-top: 1rem;
 }
 
-.plant-card img {
-    margin-block: 0.5rem;
+.plant-card-heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
 }
 
-.plant-card-actions{
-    margin-top: auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1rem;
+.plant-card-title {
+  color: var(--app-text);
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.plant-card-title:hover {
+  text-decoration: underline;
+}
+
+.plant-card-heading p {
+  color: var(--app-text-muted);
+  margin: 0.2rem 0 0;
+}
+
+.device-attached {
+  align-items: center;
+  color: var(--app-primary);
+  display: inline-flex;
+  font-size: 0.8rem;
+  gap: 0.25rem;
+}
+
+.device-attached mat-icon {
+  font-size: 1rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.plant-description {
+  color: var(--app-text-muted);
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.plant-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding: 0 1rem 1rem;
+}
+
+.plant-card-actions > * {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 420px) {
+  .plant-card-heading {
+    flex-direction: column;
+  }
 }

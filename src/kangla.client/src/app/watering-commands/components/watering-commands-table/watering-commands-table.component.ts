@@ -9,7 +9,8 @@ import { WateringCommand } from '../../watering-command';
   selector: 'app-watering-commands-table',
   standalone: true,
   imports: [DatePipe, MatCardModule, MatTableModule],
-  templateUrl: './watering-commands-table.component.html'
+  templateUrl: './watering-commands-table.component.html',
+  styleUrl: './watering-commands-table.component.scss'
 })
 export class WateringCommandsTableComponent implements OnInit, OnChanges {
   @Input({ required: true }) deviceId!: number;

@@ -1,49 +1,80 @@
 <div class="page-container">
-  <h2 class="page-title">Watering Devices</h2>
-  <div class="main-buttons-container">
-    <button mat-flat-button (click)="openAttachDialog()">Add Watering Device</button>
-  </div>
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Device inventory</p>
+      <h1>Watering devices</h1>
+      <p class="page-subtitle">Attach devices to plants and configure how long their pumps run.</p>
+    </div>
+    <button mat-flat-button class="page-primary-action" (click)="openAttachDialog()"><mat-icon>add</mat-icon>Add device</button>
+  </header>
 
-  <div class="device-grid">
-    @for (device of devices; track device.id) {
-      <mat-card>
-        <mat-card-header><mat-card-title>Watering Device #{{ device.id }}</mat-card-title></mat-card-header>
-        <mat-card-content>
-          <mat-form-field>
-            <mat-label>Assigned plant</mat-label>
-            <mat-select [(ngModel)]="device.plantId">
-              @if (!device.plantId) {
-                <mat-option [value]="null">Not attached</mat-option>
-              }
-              @for (plant of plants; track plant.id) {
-                <mat-option [value]="plant.id" [disabled]="isAssignedToAnotherDevice(plant.id, device.id)">{{ plant.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Manual watering duration (seconds)</mat-label>
-            <input matInput type="number" min="1" max="60" [(ngModel)]="device.wateringDurationSetting">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Minimum soil humidity (reserved)</mat-label>
-            <input matInput type="number" min="250" max="750" [(ngModel)]="device.minimumSoilHumidity">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Watering interval (reserved days)</mat-label>
-            <input matInput type="number" min="1" max="365" [(ngModel)]="device.wateringIntervalSetting">
-          </mat-form-field>
-        </mat-card-content>
-        <mat-card-actions align="end">
-          @if (device.plantId) {
-            <a mat-button [routerLink]="['/details', device.plantId]">Open Plant</a>
-            <button mat-button (click)="detach(device)">Detach from Plant</button>
-          }
-          <button mat-button (click)="save(device)">Save</button>
-          <button mat-button color="warn" (click)="deleteFromInventory(device)">Remove from Inventory</button>
-        </mat-card-actions>
-      </mat-card>
-    } @empty {
-      <p>Your watering-device inventory is empty.</p>
-    }
-  </div>
+  @if (loading) {
+    <section class="state-panel" aria-live="polite"><mat-icon>water</mat-icon><div><h2>Loading your devices</h2><p>Checking your inventory and plant assignments.</p></div></section>
+  } @else if (loadError) {
+    <section class="state-panel state-panel-error" role="alert"><mat-icon>cloud_off</mat-icon><div><h2>We could not load your devices</h2><p>Check your connection and try again.</p><button mat-stroked-button (click)="load()">Try again</button></div></section>
+  } @else if (devices.length) {
+    <div class="device-grid">
+      @for (device of devices; track device.id) {
+        <mat-card class="device-card" appearance="outlined">
+          <mat-card-header>
+            <div mat-card-avatar class="device-avatar"><mat-icon>water</mat-icon></div>
+            <mat-card-title>Watering device #{{ device.id }}</mat-card-title>
+            <mat-card-subtitle>{{ getPlantName(device.plantId) }}</mat-card-subtitle>
+            <button mat-icon-button [matMenuTriggerFor]="deviceMenu" class="device-menu-button" [attr.aria-label]="'Open actions for watering device ' + device.id"><mat-icon>more_vert</mat-icon></button>
+            <mat-menu #deviceMenu="matMenu" xPosition="before">
+              <button mat-menu-item class="danger-menu-item" (click)="deleteFromInventory(device)"><mat-icon>delete</mat-icon><span>Remove from inventory</span></button>
+            </mat-menu>
+          </mat-card-header>
+
+          <mat-card-content>
+            <span class="care-badge" [class.care-badge-calm]="device.plantId" [class.device-unassigned]="!device.plantId">
+              <mat-icon>{{ device.plantId ? 'link' : 'inventory_2' }}</mat-icon>
+              {{ device.plantId ? 'Attached' : 'Ready to attach' }}
+            </span>
+
+            <dl class="device-facts">
+              <div><dt>Assigned plant</dt><dd>{{ getPlantName(device.plantId) }}</dd></div>
+              <div><dt>Pump run time</dt><dd>{{ device.wateringDurationSetting }} seconds</dd></div>
+            </dl>
+
+            <details class="device-settings">
+              <summary>Configure device</summary>
+              <div class="device-settings-fields">
+                <mat-form-field>
+                  <mat-label>Assigned plant</mat-label>
+                  <mat-select [(ngModel)]="device.plantId">
+                    @if (!device.plantId) { <mat-option [value]="null">Keep in inventory</mat-option> }
+                    @for (plant of plants; track plant.id) {
+                      <mat-option [value]="plant.id" [disabled]="isAssignedToAnotherDevice(plant.id, device.id)">{{ plant.name }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Pump run time</mat-label>
+                  <input matInput type="number" min="1" max="60" [(ngModel)]="device.wateringDurationSetting">
+                  <span matTextSuffix>seconds</span>
+                </mat-form-field>
+                <button mat-flat-button (click)="save(device)">Save settings</button>
+              </div>
+            </details>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            @if (device.plantId) {
+              <a mat-button [routerLink]="['/details', device.plantId]">Open plant</a>
+              <button mat-button (click)="detach(device)">Detach</button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  } @else {
+    <section class="devices-empty-state">
+      <div class="devices-empty-icon"><mat-icon>water</mat-icon></div>
+      <p class="eyebrow">Connect your first device</p>
+      <h2>Your device inventory is empty</h2>
+      <p>Use the access key printed on your watering device, then optionally attach it to a plant.</p>
+      <button mat-flat-button (click)="openAttachDialog()"><mat-icon>add</mat-icon>Add device</button>
+    </section>
+  }
 </div>

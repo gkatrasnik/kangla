@@ -1,37 +1,39 @@
-<mat-card class="plant-card">
-    <mat-card-header class="plant-card-header">
-      <mat-card-title-group>
-        <mat-card-title>{{ plant.name }}</mat-card-title>
-        <mat-card-subtitle>{{ plant.location }}</mat-card-subtitle>
-
-        @if (hasWateringDevice) {
-          <span class="device-attached"><mat-icon>water_drop</mat-icon> Device attached</span>
-        }
-
-        @if (this.plantService.isWateringOverdue(this.plant)) {
-          <app-watering-overdue-indicator></app-watering-overdue-indicator> 
-        } 
-      </mat-card-title-group>
-    </mat-card-header>
-  
+<mat-card class="plant-card" appearance="outlined">
+  <a class="plant-card-image" [routerLink]="['/details', plant.id]" [attr.aria-label]="'Open ' + plant.name">
     @if (imageUrl) {
-        <img mat-card-image [imageSrc]="imageUrl">
+      <img [imageSrc]="imageUrl" [alt]="'Photo of ' + plant.name">
     } @else {
-      <img mat-card-image src="./images/plant-placeholder.jpg">
-    }  
-    <mat-card-content class="plant-card-content">
-      <div>
-        {{ plant.description }}
-      </div>   
-    </mat-card-content>
-    <mat-card-actions align="end" class="plant-card-actions">      
-        <a [routerLink]="['/details', plant.id]">
-          <button mat-stroked-button >Details</button>
-        </a>
-        @if (this.plantService.isWateringOverdue(this.plant)) {
-          <button mat-flat-button (click)="triggerWatering()">Log Manual Watering</button>
-        } 
-    </mat-card-actions>
+      <img src="./images/plant-placeholder.jpg" alt="">
+    }
+  </a>
 
-    
-  </mat-card>
+  <mat-card-content class="plant-card-content">
+    <div class="plant-card-heading">
+      <div>
+        <a class="plant-card-title" [routerLink]="['/details', plant.id]">{{ plant.name }}</a>
+        <p>{{ plant.location || 'Location not set' }}</p>
+      </div>
+      <span class="care-badge" [class.care-badge-warning]="plantService.isWateringOverdue(plant)" [class.care-badge-calm]="!plantService.isWateringOverdue(plant)">
+        <mat-icon>{{ plantService.isWateringOverdue(plant) ? 'water_drop' : 'event' }}</mat-icon>
+        {{ plantService.getCareStatusLabel(plant) }}
+      </span>
+    </div>
+
+    @if (hasWateringDevice) {
+      <span class="device-attached"><mat-icon>water_drop</mat-icon>Watering device attached</span>
+    }
+
+    @if (plant.description) {
+      <p class="plant-description">{{ plant.description }}</p>
+    }
+  </mat-card-content>
+
+  <mat-card-actions class="plant-card-actions">
+    <a mat-stroked-button [routerLink]="['/details', plant.id]">View plant</a>
+    @if (plantService.isWateringOverdue(plant)) {
+      <button mat-flat-button (click)="triggerWatering()" [disabled]="watering">
+        @if (watering) { Saving… } @else { Mark as watered }
+      </button>
+    }
+  </mat-card-actions>
+</mat-card>

@@ -1,75 +1,120 @@
+<div class="page-container details-page">
+  <button mat-button class="back-button" (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
 
+  @if (loading) {
+    <section class="state-panel" aria-live="polite">
+      <mat-icon>potted_plant</mat-icon>
+      <div><h2>Loading plant details</h2><p>Gathering care and device information.</p></div>
+    </section>
+  } @else if (loadError || !plant) {
+    <section class="state-panel state-panel-error" role="alert">
+      <mat-icon>cloud_off</mat-icon>
+      <div><h2>We could not load this plant</h2><p>Check your connection and try again.</p><button mat-stroked-button (click)="loadPlant()">Try again</button></div>
+    </section>
+  } @else {
+    <header class="plant-hero">
+      <div class="plant-hero-image">
+        @if (plant.imageId) {
+          <img [imageSrc]="imagesService.getImageUrl(plant.imageId)" [alt]="'Photo of ' + plant.name">
+        } @else {
+          <img src="./images/plant-placeholder.jpg" alt="">
+        }
+      </div>
 
-<button mat-icon-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-</button>
-<div class="page-container">
-    
-    <h2 class="page-title">{{plant?.name}}</h2>
-    @if (this.plant && this.plantService.isWateringOverdue(this.plant)) {
-        <div class="watering-overdue-indicator-container">
-            <app-watering-overdue-indicator></app-watering-overdue-indicator> 
-        </div> 
-    } 
-    
-    <div class="main-buttons-container">
-        <button mat-stroked-button (click)="removePlant()">Remove Plant</button>
-        <button mat-stroked-button (click)="editPlant()">Edit Plant</button>
-        <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">Log Manual Watering</button>
-        @if (wateringDevice) {
-          <button mat-flat-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">Send Watering Command</button>
-          <button mat-stroked-button (click)="detachWateringDevice()">Detach Watering Device</button>
-          @if (deviceWateringStatus) {
-            <span>Device command: {{ deviceWateringStatus }}</span>
-          }
-        } @else {
-          <button mat-stroked-button (click)="attachWateringDevice()">Attach Device From Inventory</button>
-        }
-    </div>
-    <div class="plant-image">
-        @if (plant?.imageId) {            
-            <img mat-card-image [imageSrc]="this.imagesService.getImageUrl(plant!.imageId)">            
-        } @else {
-            <img mat-card-image src="./images/plant-placeholder.jpg"> 
-        }
-    </div>
-    <div class="detail-cards-section">
-      <mat-card>
-        <mat-card-header class="plant-card-header">
-          <mat-card-title-group>
-            <mat-card-title>Details</mat-card-title>
-          </mat-card-title-group>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="plant-info">
-            <p><b>Scientific Name:</b> {{plant?.scientificName}}</p>
-            <p><b>Location:</b> {{plant?.location}}</p>
-            <p><b>Description:</b> {{plant?.description}}</p>
-            <p><b>Notes:</b> {{plant?.notes}}</p>
-            <p><b>Watering Interval:</b> {{plant?.wateringInterval}}</p>
-            <p><b>Watering Instructions:</b> {{plant?.wateringInstructions}}</p>
+      <div class="plant-hero-content">
+        <div class="plant-title-row">
+          <div>
+            <p class="eyebrow">{{ plant.location || 'Location not set' }}</p>
+            <h1>{{ plant.name }}</h1>
+            @if (plant.scientificName) { <p class="scientific-name">{{ plant.scientificName }}</p> }
           </div>
+          <button mat-icon-button [matMenuTriggerFor]="plantMenu" aria-label="Open plant actions"><mat-icon>more_vert</mat-icon></button>
+          <mat-menu #plantMenu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="editPlant()"><mat-icon>edit</mat-icon><span>Edit plant</span></button>
+            <button mat-menu-item class="danger-menu-item" (click)="removePlant()"><mat-icon>delete</mat-icon><span>Remove plant</span></button>
+          </mat-menu>
+        </div>
+
+        <div class="care-summary">
+          <span class="care-badge" [class.care-badge-warning]="plantService.isWateringOverdue(plant)" [class.care-badge-calm]="!plantService.isWateringOverdue(plant)">
+            <mat-icon>{{ plantService.isWateringOverdue(plant) ? 'water_drop' : 'event' }}</mat-icon>
+            {{ plantService.getCareStatusLabel(plant) }}
+          </span>
+          <dl>
+            <div><dt>Last watered</dt><dd>{{ plant.lastWateringDateTime ? (plant.lastWateringDateTime | date:'mediumDate') : 'Not recorded yet' }}</dd></div>
+            <div><dt>Schedule</dt><dd>Every {{ plant.wateringInterval }} {{ plant.wateringInterval === 1 ? 'day' : 'days' }}</dd></div>
+            <div><dt>Next watering</dt><dd>{{ plantService.getNextWateringDate(plant) ? (plantService.getNextWateringDate(plant) | date:'mediumDate') : 'Due now' }}</dd></div>
+          </dl>
+        </div>
+
+        <div class="hero-actions">
+          <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">
+            <mat-icon>check</mat-icon>
+            {{ wateringButtonDisabled ? 'Watered' : 'Mark as watered' }}
+          </button>
+          @if (wateringDevice) {
+            <button mat-stroked-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">
+              <mat-icon>water</mat-icon>
+              {{ deviceWateringButtonDisabled ? 'Waiting for device…' : 'Water with device' }}
+            </button>
+          }
+        </div>
+        @if (deviceWateringStatus) {
+          <p class="command-status" role="status"><mat-icon>sync</mat-icon>Device command: {{ deviceWateringStatus }}</p>
+        }
+      </div>
+    </header>
+
+    <div class="detail-grid">
+      <mat-card appearance="outlined" class="detail-card">
+        <mat-card-header><mat-card-title>Care instructions</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <p>{{ plant.wateringInstructions || 'No watering instructions have been added yet.' }}</p>
         </mat-card-content>
       </mat-card>
 
+      <mat-card appearance="outlined" class="detail-card">
+        <mat-card-header><mat-card-title>About this plant</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <dl class="plant-facts">
+            <div><dt>Description</dt><dd>{{ plant.description || 'No description added' }}</dd></div>
+            <div><dt>Notes</dt><dd>{{ plant.notes || 'No private notes added' }}</dd></div>
+          </dl>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <section class="device-section" aria-labelledby="device-heading">
+      <div class="section-header">
+        <div><p class="eyebrow">Optional automation</p><h2 id="device-heading">Watering device</h2></div>
+        <a routerLink="/watering-devices">Manage devices</a>
+      </div>
+
       @if (wateringDevice) {
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Watering Device</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="plant-info">
-            <p><b>Status:</b> {{ wateringDevice.active ? 'Active' : 'Inactive' }}</p>
-            <p><b>Manual watering duration:</b> {{ wateringDevice.wateringDurationSetting }} seconds</p>
-            <p><b>Minimum soil humidity (reserved):</b> {{ wateringDevice.minimumSoilHumidity }}</p>
-            <p><b>Watering interval (reserved):</b> {{ wateringDevice.wateringIntervalSetting }} days</p>
-            <p><b>Automatic watering:</b> Not implemented yet</p>
-          </mat-card-content>
-        </mat-card>
-
-        <app-watering-commands-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
-        <app-humidity-measurements-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
+        <div class="device-summary">
+          <div class="device-icon"><mat-icon>water</mat-icon></div>
+          <div><h3>Watering device #{{ wateringDevice.id }}</h3><p>Attached to {{ plant.name }} · Pump runs for {{ wateringDevice.wateringDurationSetting }} seconds</p></div>
+          <span class="care-badge care-badge-calm"><mat-icon>link</mat-icon>Attached</span>
+          <button mat-stroked-button (click)="detachWateringDevice()">Detach</button>
+        </div>
+      } @else {
+        <div class="device-empty">
+          <div class="device-icon"><mat-icon>water</mat-icon></div>
+          <div><h3>No watering device attached</h3><p>Attach a device from your inventory to water this plant remotely.</p></div>
+          <button mat-stroked-button (click)="attachWateringDevice()">Attach a device</button>
+        </div>
       }
+    </section>
 
-      <app-watering-events-table [plantId]="this.plantId" [reloadTrigger]="reloadTrigger" />
-    </div>    
+    <section class="activity-section" aria-labelledby="activity-heading">
+      <div class="section-header"><div><p class="eyebrow">History</p><h2 id="activity-heading">Plant activity</h2></div></div>
+      <div class="activity-stack">
+        <app-watering-events-table [plantId]="plantId" [reloadTrigger]="reloadTrigger" />
+        @if (wateringDevice) {
+          <app-watering-commands-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
+          <app-humidity-measurements-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
+        }
+      </div>
+    </section>
+  }
 </div>

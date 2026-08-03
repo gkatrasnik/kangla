@@ -10,8 +10,10 @@ export class LoadingService {
 
   loading$ = this.loadingSubject.asObservable();
   loadingText$ = this.loadingTextSubject.asObservable();
+  private activeRequests = 0;
 
   loadingOn(text?: string) {
+    this.activeRequests++;
     if (text) {
       this.loadingTextSubject.next(text);
     }
@@ -19,8 +21,11 @@ export class LoadingService {
   }
 
   loadingOff() {
-    this.loadingSubject.next(false);
-    this.resetLoadingText();
+    this.activeRequests = Math.max(0, this.activeRequests - 1);
+    if (this.activeRequests === 0) {
+      this.loadingSubject.next(false);
+      this.resetLoadingText();
+    }
   }
 
   private resetLoadingText() {

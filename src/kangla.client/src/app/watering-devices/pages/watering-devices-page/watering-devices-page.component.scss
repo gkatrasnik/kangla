@@ -1,11 +1,123 @@
 .device-grid {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 24rem));
-  justify-content: start;
+  gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.device-card {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-large);
+}
+
+.device-card mat-card-header {
+  position: relative;
+}
+
+.device-avatar,
+.devices-empty-icon {
+  align-items: center;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+  display: flex;
+  justify-content: center;
+}
+
+.device-avatar {
+  border-radius: var(--app-radius-medium);
+}
+
+.device-menu-button {
+  margin-left: auto;
+}
+
+.device-unassigned {
+  background: var(--app-surface-muted);
+  color: var(--app-text-muted);
+}
+
+.device-facts {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.25rem 0;
+}
+
+.device-facts div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.device-facts dt {
+  color: var(--app-text-muted);
+  font-size: 0.78rem;
+}
+
+.device-facts dd {
+  margin: 0;
+}
+
+.device-settings {
+  border-top: 1px solid var(--app-border);
+  padding-top: 1rem;
+}
+
+.device-settings summary {
+  color: var(--app-primary);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.device-settings-fields {
+  display: grid;
+  gap: 0.25rem;
   margin-top: 1rem;
 }
 
-mat-form-field {
-  display: block;
+.device-settings-fields button {
+  justify-self: end;
+}
+
+.devices-empty-state {
+  align-items: center;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-large);
+  display: flex;
+  flex-direction: column;
+  margin: 2rem auto;
+  max-width: 42rem;
+  padding: clamp(2rem, 6vw, 4rem);
+  text-align: center;
+}
+
+.devices-empty-state > p:not(.eyebrow) {
+  color: var(--app-text-muted);
+  margin: 0.5rem 0 1.5rem;
+}
+
+.devices-empty-icon {
+  border-radius: 50%;
+  height: 5rem;
+  margin-bottom: 1.5rem;
+  width: 5rem;
+}
+
+.devices-empty-icon mat-icon {
+  font-size: 2.5rem;
+  height: 2.5rem;
+  width: 2.5rem;
+}
+
+@media (max-width: 760px) {
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .device-facts {
+    grid-template-columns: 1fr;
+  }
 }

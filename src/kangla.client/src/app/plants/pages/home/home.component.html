@@ -1,52 +1,73 @@
 <div class="page-container">
-    <h2 class="page-title">My Plants</h2>
-    <div class="main-buttons-container">      
-        <button mat-raised-button [matMenuTriggerFor]="belowMenu">
-            <mat-icon>add</mat-icon>
-            Add Plant
-        </button>
-        <mat-menu #belowMenu="matMenu" yPosition="below">
-            <button mat-menu-item (click)="fileInput.click()">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Your collection</p>
+            <h1>My plants</h1>
+            <p class="page-subtitle">See each plant’s care status, watering schedule, and history.</p>
+        </div>
+        <div class="plant-page-actions">
+            <button mat-flat-button (click)="fileInput.click()">
                 <mat-icon>add_a_photo</mat-icon>
-                Recognize Plant
-            </button>           
-            <button mat-menu-item (click)="this.openAddPlantDialog()">
-                <mat-icon>edit</mat-icon>
-                Add Manually
+                Identify a plant
             </button>
-        </mat-menu>
-        <input type="file" #fileInput accept="image/png, image/gif, image/jpeg, image/webp" style="display: none;" (change)="onImageSelected($event)">
-    </div>
+            <button mat-stroked-button (click)="openAddPlantDialog()">
+                <mat-icon>edit</mat-icon>
+                Add manually
+            </button>
+            <input type="file" #fileInput accept="image/png, image/gif, image/jpeg, image/webp" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Choose a plant photo">
+        </div>
+    </header>
 
-    
-    <div class="plant-cards-container">
+    @if (loading) {
+        <section class="state-panel" aria-live="polite">
+            <mat-icon>potted_plant</mat-icon>
+            <div><h2>Loading your plants</h2><p>Your collection will be ready in a moment.</p></div>
+        </section>
+    } @else if (loadError) {
+        <section class="state-panel state-panel-error" role="alert">
+            <mat-icon>cloud_off</mat-icon>
+            <div>
+                <h2>We could not load your plants</h2>
+                <p>Check your connection and try again.</p>
+                <button mat-stroked-button (click)="reloadPlants()">Try again</button>
+            </div>
+        </section>
+    } @else if (plantsList.length) {
+        <div class="plant-cards-container">
             @for (plant of plantsList; track plant.id) {
-                <div class="plant-card-container">
-                    <app-plant-card 
-                        [plant]="plant"
-                        [imageUrl]="imagesService.getImageUrl(plant.imageId)"
-                        [hasWateringDevice]="devicePlantIds.has(plant.id)"
-                    ></app-plant-card>
-                </div>        
+                <app-plant-card
+                    [plant]="plant"
+                    [imageUrl]="imagesService.getImageUrl(plant.imageId)"
+                    [hasWateringDevice]="devicePlantIds.has(plant.id)"
+                ></app-plant-card>
+            }
+        </div>
+    } @else {
+        <section class="plants-empty-state">
+            <div class="plants-empty-icon"><mat-icon>potted_plant</mat-icon></div>
+            <p class="eyebrow">Start your collection</p>
+            <h2>Add your first plant</h2>
+            <p>Use a photo for quick identification and care suggestions, or enter the details yourself.</p>
+            <div class="plant-page-actions">
+                <button mat-flat-button (click)="fileInput.click()"><mat-icon>add_a_photo</mat-icon>Identify from photo</button>
+                <button mat-stroked-button (click)="openAddPlantDialog()">Add manually</button>
+            </div>
+        </section>
+    }
 
-                } @empty {
-                    <h2>No Plants</h2>
-                }
-    </div>
-
-    <div class="paginator-container">
-        <mat-paginator        
-            (page)="handlePageEvent($event)"
-            [length]="plantsListLength"
-            [pageSize]="pageSize"
-            [disabled]="disabled"
-            [showFirstLastButtons]="showFirstLastButtons"
-            [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-            [hidePageSize]="hidePageSize"
-            [pageIndex]="pageIndex"
-            aria-label="Select page"
-        />
-    </div>
+    @if (!loading && !loadError && plantsListLength > pageSize) {
+        <div class="paginator-container">
+            <mat-paginator
+                (page)="handlePageEvent($event)"
+                [length]="plantsListLength"
+                [pageSize]="pageSize"
+                [disabled]="disabled"
+                [showFirstLastButtons]="showFirstLastButtons"
+                [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+                [hidePageSize]="hidePageSize"
+                [pageIndex]="pageIndex"
+                aria-label="Plant collection pages"
+            />
+        </div>
+    }
 </div>
-
-

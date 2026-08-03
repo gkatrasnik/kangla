@@ -1,5 +1,5 @@
 .watering-events-table-container {
-    padding-inline: 2rem;
+    overflow-x: auto;
 }
 
 .watering-events-table {
@@ -14,7 +14,25 @@
   width: 100px;
 }
 
-//overriden card title
-.mat-mdc-card-title-group {
-  justify-content: center;
+.detail-section {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-large);
+}
+
+.table-state {
+  align-items: flex-start;
+  color: var(--app-text-muted);
+  display: flex;
+  gap: 0.75rem;
+  padding-block: 1rem;
+}
+
+.table-state h3,
+.table-state p {
+  margin: 0;
+}
+
+.table-state p + button {
+  margin-top: 0.75rem;
 }

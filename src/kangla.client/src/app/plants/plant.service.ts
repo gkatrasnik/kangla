@@ -79,16 +79,58 @@ export class PlantService {
 
   isWateringOverdue(plant: Plant): boolean {
     if (!plant.lastWateringDateTime) {
-        // If there's no last watering date, consider it overdue
-        return true;
+      return true;
+    }
+
+    const nextWateringDate = this.getNextWateringDate(plant);
+    return nextWateringDate ? new Date() > nextWateringDate : true;
+  }
+
+  getNextWateringDate(plant: Plant): Date | null {
+    if (!plant.lastWateringDateTime) {
+      return null;
     }
 
     const lastWateredDate = new Date(plant.lastWateringDateTime);
-    const currentDate = new Date();
+    if (Number.isNaN(lastWateredDate.getTime())) {
+      return null;
+    }
 
     const nextWateringDate = new Date(lastWateredDate);
     nextWateringDate.setDate(nextWateringDate.getDate() + plant.wateringInterval);
+    return nextWateringDate;
+  }
 
-    return currentDate > nextWateringDate;
+  getDaysUntilWatering(plant: Plant): number | null {
+    const nextWateringDate = this.getNextWateringDate(plant);
+    if (!nextWateringDate) {
+      return null;
+    }
+
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    return Math.ceil((nextWateringDate.getTime() - Date.now()) / millisecondsPerDay);
+  }
+
+  getCareStatusLabel(plant: Plant): string {
+    const daysUntilWatering = this.getDaysUntilWatering(plant);
+
+    if (daysUntilWatering === null) {
+      return 'Needs first watering';
+    }
+
+    if (this.isWateringOverdue(plant)) {
+      const overdueDays = Math.max(1, Math.abs(daysUntilWatering));
+      return overdueDays === 1 ? 'Overdue by 1 day' : `Overdue by ${overdueDays} days`;
+    }
+
+    if (daysUntilWatering === 0) {
+      return 'Due today';
+    }
+
+    if (daysUntilWatering === 1) {
+      return 'Water tomorrow';
+    }
+
+    return `Water in ${daysUntilWatering} days`;
   }
 }

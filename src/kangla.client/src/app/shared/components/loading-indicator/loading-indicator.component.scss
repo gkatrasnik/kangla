@@ -1,22 +1,28 @@
   .loading-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
+    animation: loading-overlay-in 120ms 160ms both;
+    position: fixed;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.32);
+    background: rgba(19, 30, 21, 0.28);
+    backdrop-filter: blur(1px);
     z-index: 2000;
   }
 
   .loading-badge {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background-color: rgba(0, 0, 0, 0.7); 
-    color: white;
-    border-radius: 12px;
-    font-size: 16px;    
-    text-align: center;
+    align-items: center;
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius-large);
+    box-shadow: var(--app-shadow-soft);
+    color: var(--app-text);
+    display: inline-flex;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+  }
+
+  @keyframes loading-overlay-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }

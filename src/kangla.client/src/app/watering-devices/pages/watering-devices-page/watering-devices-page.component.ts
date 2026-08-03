@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Plant } from '../../../plants/plant';
 import { PlantService } from '../../../plants/plant.service';
 import { NotificationService } from '../../../core/notifications/notification.service';
@@ -20,13 +22,15 @@ import { WateringDeviceCreateRequest, WateringDeviceService, WateringDeviceUpdat
 @Component({
   selector: 'app-watering-devices-page',
   standalone: true,
-  imports: [RouterLink, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [RouterLink, FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatIconModule, MatMenuModule],
   templateUrl: './watering-devices-page.component.html',
   styleUrl: './watering-devices-page.component.scss'
 })
 export class WateringDevicesPageComponent implements OnInit {
   devices: WateringDevice[] = [];
   plants: Plant[] = [];
+  loading = true;
+  loadError = false;
 
   constructor(
     private wateringDeviceService: WateringDeviceService,
@@ -40,17 +44,28 @@ export class WateringDevicesPageComponent implements OnInit {
   }
 
   load(): void {
+    this.loading = true;
+    this.loadError = false;
     forkJoin({
       devices: this.wateringDeviceService.getAll(1, 1000),
       plants: this.plantService.getAllPlants(1, 1000)
-    }).subscribe(({ devices, plants }) => {
-      this.devices = devices.data;
-      this.plants = plants.data;
+    }).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: ({ devices, plants }) => {
+        this.devices = devices.data;
+        this.plants = plants.data;
+      },
+      error: () => this.loadError = true
     });
   }
 
   openAttachDialog(): void {
-    this.dialog.open(AddWateringDeviceDialogComponent, { data: { plants: this.plants } })
+    this.dialog.open(AddWateringDeviceDialogComponent, {
+      data: { plants: this.plants },
+      width: '32rem',
+      maxWidth: 'calc(100vw - 2rem)'
+    })
       .afterClosed()
       .subscribe((request?: WateringDeviceCreateRequest) => {
         if (!request) {
@@ -133,5 +148,9 @@ export class WateringDevicesPageComponent implements OnInit {
 
   isAssignedToAnotherDevice(plantId: number, currentDeviceId: number): boolean {
     return this.devices.some(device => device.id !== currentDeviceId && device.plantId === plantId);
+  }
+
+  getPlantName(plantId: number | null): string {
+    return this.plants.find(plant => plant.id === plantId)?.name ?? 'Not attached';
   }
 }

@@ -1,0 +1,23 @@
+.detail-section {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-large);
+}
+
+.activity-table-container {
+  overflow-x: auto;
+}
+
+table {
+  min-width: 40rem;
+  width: 100%;
+}
+
+.table-state {
+  color: var(--app-text-muted);
+  padding-block: 1rem;
+}
+
+.table-state p {
+  margin: 0;
+}

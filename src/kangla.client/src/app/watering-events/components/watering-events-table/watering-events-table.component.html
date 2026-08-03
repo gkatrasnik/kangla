@@ -1,49 +1,54 @@
-@if(this.wateringEvents.length) {
-  <mat-card class="detail-section">            
-  <mat-card-header class="plant-card-header">
-      <mat-card-title-group>                    
-          <mat-card-title>Watering Events</mat-card-title>
-      </mat-card-title-group>
+<mat-card class="detail-section" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Watering history</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <div class="watering-events-table-container">
-      <table mat-table [dataSource]="wateringEvents" class="watering-events-table">
+    @if (loading) {
+      <p class="table-state" aria-live="polite">Loading watering history…</p>
+    } @else if (loadError) {
+      <div class="table-state" role="alert">
+        <div><p>Watering history could not be loaded.</p><button mat-stroked-button (click)="loadWateringEvents(pageIndex, pageSize)">Try again</button></div>
+      </div>
+    } @else if (wateringEvents.length) {
+      <div class="watering-events-table-container">
+        <table mat-table [dataSource]="wateringEvents" class="watering-events-table">
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+            <td mat-cell *matCellDef="let element">{{ element.createdAt | date: 'short' }}</td>
+          </ng-container>
 
-        <!-- Created At Column -->
-        <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef> Time </th>
-          <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'short'}} </td>
-        </ng-container>
+          <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef><span class="visually-hidden">Actions</span></th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button (click)="deleteWateringEvent(element.id)" [attr.aria-label]="'Delete watering event from ' + (element.createdAt | date: 'medium')">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
 
-        <ng-container matColumnDef="delete">
-          <th mat-header-cell *matHeaderCellDef> Delete </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button (click)="deleteWateringEvent(element.id)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-
-        <!-- Header and Row Declarations -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </div>
-    <div class="paginator-container">
-      <mat-paginator (page)="handlePageEvent($event)"
-                     [length]="wateringEventsListLength"
-                     [pageSize]="pageSize"
-                     [disabled]="disabled"
-                     [showFirstLastButtons]="showFirstLastButtons"
-                     [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
-                     [hidePageSize]="hidePageSize"
-                     [pageIndex]="pageIndex"
-                     aria-label="Select page"
-                     class="watering-events-paginator" />
-    </div>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+      @if (wateringEventsListLength > pageSize) {
+        <div class="paginator-container">
+          <mat-paginator (page)="handlePageEvent($event)"
+                         [length]="wateringEventsListLength"
+                         [pageSize]="pageSize"
+                         [disabled]="disabled"
+                         [showFirstLastButtons]="showFirstLastButtons"
+                         [pageSizeOptions]="showPageSizeOptions ? pageSizeOptions : []"
+                         [hidePageSize]="hidePageSize"
+                         [pageIndex]="pageIndex"
+                         aria-label="Watering history pages"
+                         class="watering-events-paginator" />
+        </div>
+      }
+    } @else {
+      <div class="table-state">
+        <mat-icon>history</mat-icon>
+        <div><h3>No watering history yet</h3><p>Watering events will appear here after you mark this plant as watered.</p></div>
+      </div>
+    }
   </mat-card-content>
 </mat-card>
-} 
-
-
-

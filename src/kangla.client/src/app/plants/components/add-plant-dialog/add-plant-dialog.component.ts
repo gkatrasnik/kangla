@@ -27,6 +27,7 @@ export class AddPlantDialogComponent {
   selectedFile: File | null = null;
   imageId: string | null = null;
   imageUrl: string | undefined;
+  isRecognizedPlant = false;
   
   constructor(
     private formBuilder: FormBuilder, 
@@ -34,6 +35,7 @@ export class AddPlantDialogComponent {
     private imagesService: ImagesService,
     @Inject(MAT_DIALOG_DATA) public data: PlantRecognizeResponseDto
   ) {
+    this.isRecognizedPlant = !!data?.commonName;
     this.plantForm = this.formBuilder.group({
       name: [data?.commonName || '', [Validators.required, Validators.maxLength(50)]],
       scientificName: [data?.latinName || '', [Validators.maxLength(100)]],
