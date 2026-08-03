@@ -12,6 +12,7 @@ import { DialogData } from '../../../shared/interfaces/dialog-data';
 import { PagedResponse } from '../../../shared/interfaces/paged-response';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-watering-events-table',
@@ -44,6 +45,8 @@ export class WateringEventsTableComponent implements OnInit, OnChanges {
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   disabled = false;
+  loading = true;
+  loadError = false;
 
   constructor(
     private wateringEventService: WateringEventService,
@@ -70,14 +73,21 @@ export class WateringEventsTableComponent implements OnInit, OnChanges {
 
   loadWateringEvents(pageIndex: number, pageSize: number): void {
     if (!this.plantId) {
+      this.loading = false;
       return;
     }
 
-    this.wateringEventService.getAllWateringEventsByPlantId(this.plantId, pageIndex + 1, pageSize).subscribe((pagedResponse: PagedResponse<WateringEvent>) => {
-      this.wateringEvents = pagedResponse.data;
-      this.dataSource.data = this.wateringEvents;
-
-      this.wateringEventsListLength = pagedResponse.totalRecords;
+    this.loading = true;
+    this.loadError = false;
+    this.wateringEventService.getAllWateringEventsByPlantId(this.plantId, pageIndex + 1, pageSize).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: (pagedResponse: PagedResponse<WateringEvent>) => {
+        this.wateringEvents = pagedResponse.data;
+        this.dataSource.data = this.wateringEvents;
+        this.wateringEventsListLength = pagedResponse.totalRecords;
+      },
+      error: () => this.loadError = true
     });
   }
 

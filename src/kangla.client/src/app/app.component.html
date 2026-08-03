@@ -1,34 +1,53 @@
 <app-loading-indicator [detectRouteTransitions]="true"></app-loading-indicator>
 
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="over"  position="end" class="sidenav">
-    <div class="sidenav-content">
-      @if (userInfo) {
-      <div class="user-info">{{ userInfo.email }}</div>
-      }
-      <mat-nav-list class="sidenav-list">
-        <a mat-list-item routerLink="/home" (click)="sidenav.close()">Home</a>
-        <a mat-list-item routerLink="/watering-devices" (click)="sidenav.close()">Watering Devices</a>
-        <a mat-list-item (click)="logout()">Logout</a>
-      </mat-nav-list>
-      <div class="spacer"></div>
-      <div class="version-info">{{version}}</div>
-    </div>    
-  </mat-sidenav>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <mat-sidenav-content>
-    @if (showToolbar) {
-      <mat-toolbar>  
-        <a routerLink="/home" class="logo">
-          <span>Kangla</span>
-          <img src="./images/kangla-transparent-96x96.png" alt="kangla" height="48" width="48" />
+@if (showToolbar) {
+  <header class="app-header">
+    <mat-toolbar class="app-toolbar">
+      <a routerLink="/home" class="logo" aria-label="Kangla overview">
+        <span class="logo-mark"><img src="./images/kangla-transparent-96x96.png" alt="" height="36" width="36" /></span>
+        <span>Kangla</span>
+      </a>
+
+      <nav class="primary-navigation" aria-label="Main navigation">
+        <a mat-button routerLink="/home" routerLinkActive="active-navigation-item" [routerLinkActiveOptions]="{exact: true}" ariaCurrentWhenActive="page">
+          <mat-icon>home</mat-icon>
+          Overview
         </a>
-        <span class="spacer"></span>
-        <button mat-icon-button (click)="sidenav.toggle()">
-          <mat-icon>menu</mat-icon>
-        </button>
-      </mat-toolbar>      
+        <a mat-button routerLink="/plants" routerLinkActive="active-navigation-item" ariaCurrentWhenActive="page">
+          <mat-icon>local_florist</mat-icon>
+          Plants
+        </a>
+        <a mat-button routerLink="/watering-devices" routerLinkActive="active-navigation-item" ariaCurrentWhenActive="page">
+          <mat-icon>water</mat-icon>
+          Devices
+        </a>
+      </nav>
+
+      <button mat-icon-button [matMenuTriggerFor]="accountMenu" class="account-button" aria-label="Open account menu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+    </mat-toolbar>
+  </header>
+
+  <mat-menu #accountMenu="matMenu" xPosition="before">
+    @if (userInfo) {
+      <div class="account-summary" (click)="$event.stopPropagation()">
+        <span>Signed in as</span>
+        <strong>{{ userInfo.email }}</strong>
+      </div>
+      <mat-divider></mat-divider>
     }
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Log out</span>
+    </button>
+    <mat-divider></mat-divider>
+    <div class="version-info" (click)="$event.stopPropagation()">Version {{version}}</div>
+  </mat-menu>
+}
+
+<main id="main-content" class="app-main" [class.auth-main]="!showToolbar">
     <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+</main>

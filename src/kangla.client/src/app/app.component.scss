@@ -1,49 +1,146 @@
-.sidenav-container {
-  height: 100%;
-}
-
-mat-sidenav {
-  width: 15rem;  
-}
-
-mat-toolbar {
+.app-header {
+  background: color-mix(in srgb, var(--app-surface) 94%, transparent);
+  border-bottom: 1px solid var(--app-border);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
-.spacer {
-  flex: 1 1 auto;
+.app-toolbar {
+  background: transparent;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding-inline: 1.5rem;
+  width: 100%;
+}
+
+.app-main {
+  min-height: calc(100dvh - 64px);
+}
+
+.auth-main {
+  min-height: 100dvh;
 }
 
 .logo {
-  color: inherit;
-  text-decoration: none;
-  display: flex;
   align-items: center;
-}
-
-.user-info {
-  margin-top: 2rem;
-  margin-inline: 2rem;
-}
-
-.sidenav-content {
-  height: 100%;
+  color: inherit;
   display: flex;
-  flex-direction: column;
+  font-size: 1.15rem;
+  font-weight: 600;
+  gap: 0.5rem;
+  text-decoration: none;
 }
 
-.sidenav-list {
-  padding: 1rem;
+.logo-mark {
+  align-items: center;
+  background: var(--app-primary-soft);
+  border-radius: 0.65rem;
+  display: flex;
+  height: 2.5rem;
+  justify-content: center;
+  width: 2.5rem;
 }
 
-.sidenav-list a {
-  margin-bottom: 0.5rem;
+.primary-navigation {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.primary-navigation a {
+  color: var(--app-text-muted);
+  border-radius: 999px;
+}
+
+.primary-navigation a mat-icon {
+  margin-right: 0.35rem;
+}
+
+.primary-navigation .active-navigation-item {
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+}
+
+.account-button {
+  color: var(--app-text-muted);
 }
 
 .version-info {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.5rem;
+  color: var(--app-text-muted);
+  font-size: 0.75rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+.account-summary {
+  display: flex;
+  flex-direction: column;
+  max-width: 18rem;
+  padding: 0.9rem 1rem;
+}
+
+.account-summary span {
+  color: var(--app-text-muted);
+  font-size: 0.75rem;
+}
+
+.account-summary strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skip-link {
+  background: var(--app-primary);
+  color: white;
+  left: 1rem;
+  padding: 0.75rem 1rem;
+  position: fixed;
+  top: -5rem;
+  z-index: 3000;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+@media (max-width: 680px) {
+  .app-toolbar {
+    gap: 0.5rem;
+    grid-template-columns: 1fr auto;
+    height: auto;
+    padding: 0.55rem 0.75rem 0;
+  }
+
+  .primary-navigation {
+    border-top: 1px solid var(--app-border);
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin-inline: -0.75rem;
+  }
+
+  .primary-navigation a {
+    border-radius: 0;
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 0.25rem;
+  }
+
+  .primary-navigation a mat-icon {
+    margin-right: 0.2rem;
+  }
+
+  .app-main {
+    min-height: calc(100dvh - 112px);
+  }
+}
+
+@media (max-width: 380px) {
+  .primary-navigation a {
+    font-size: 0.78rem;
+  }
 }

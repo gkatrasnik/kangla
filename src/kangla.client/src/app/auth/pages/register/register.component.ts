@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -28,6 +29,7 @@ import { CommonModule } from '@angular/common';
 
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -50,12 +52,14 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
+    if (this.registerForm.valid && !this.isSubmitting) {
       const { email, password } = this.registerForm.value;
-      this.authService.register(email, password).subscribe({
-        next: (response) => {
-          console.log('User registered successfully', response);
-          this.notificationService.showNonErrorSnackBar('Registration successfull.');
+      this.isSubmitting = true;
+      this.authService.register(email, password).pipe(
+        finalize(() => this.isSubmitting = false)
+      ).subscribe({
+        next: () => {
+          this.notificationService.showNonErrorSnackBar('Registration successful.');
           this.router.navigate(['/registration-confirmation'], { replaceUrl: true });
         },
         error: (error) => {

@@ -4,24 +4,27 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { Plant } from '../../plant';
 import { ImageSrcDirective } from '../../../core/directives/imagesrc.directive';
-import { WateringEventCreateRequestDto } from '../../../watering-events/dto/watering-event-create-request-dto';
-import { WateringEventService } from '../../../watering-events/watering-event.service';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { PlantService } from '../../plant.service';
-import { WateringOverdueIndicatorComponent } from '../../../shared/components/watering-overdue-indicator/watering-overdue-indicator.component';
+import { PlantWateringActionService } from '../../plant-watering-action.service';
 import { MatIconModule } from '@angular/material/icon';
+import { finalize } from 'rxjs';
+import { WateringDevice } from '../../../watering-devices/watering-device';
+import { DeviceWateringActionService } from '../../../watering-commands/device-watering-action.service';
 
 @Component({
   selector: 'app-plant-card',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective, WateringOverdueIndicatorComponent],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective],
   templateUrl: './plant-card.component.html',
   styleUrl: './plant-card.component.scss'
 })
 export class PlantCardComponent {
   @Input() plant!: Plant;
   @Input() imageUrl!: string | undefined;
-  @Input() hasWateringDevice = false;
+  @Input() wateringDevice: WateringDevice | null = null;
+  watering = false;
+  sendingDeviceCommand = false;
 /**
  * Initializes a new instance of the PlantCardComponent class.
  * @param wateringEventService - Service to handle watering events.
@@ -29,30 +32,34 @@ export class PlantCardComponent {
  * @param plantService - Service to manage plant data.
  */
   constructor ( 
-    private wateringEventService: WateringEventService,
+    private wateringActionService: PlantWateringActionService,
+    private deviceWateringActionService: DeviceWateringActionService,
     private notificationService: NotificationService,
     public plantService:  PlantService
   ) {}
 
   triggerWatering() {
-    const start = new Date();
-    const end = new Date(start.getTime() + 10000); // End time 10 seconds after start
+    if (this.watering) {
+      return;
+    }
 
-    const wateringEvent: WateringEventCreateRequestDto = {
-      plantId: this.plant.id,
-      start: start,
-      end: end
-    };
-
-    this.wateringEventService.addWateringEvent(wateringEvent).subscribe({
-      next: (response) => {
-        console.log('Watering event created:', response);
-        this.notificationService.showNonErrorSnackBar('Watering event added');
-        this.plant.lastWateringDateTime = new Date();
-      },
-      error: (error) => {
-        console.error('Error creating watering event', error);
-      }
+    this.watering = true;
+    this.wateringActionService.markAsWatered(this.plant).pipe(
+      finalize(() => this.watering = false)
+    ).subscribe({
+      next: () => {},
+      error: () => this.notificationService.showClientError(`Could not update ${this.plant.name}`)
     });
+  }
+
+  sendWateringCommand(): void {
+    if (!this.wateringDevice || this.sendingDeviceCommand) {
+      return;
+    }
+
+    this.sendingDeviceCommand = true;
+    this.deviceWateringActionService.send(this.wateringDevice, this.plant.name).pipe(
+      finalize(() => this.sendingDeviceCommand = false)
+    ).subscribe();
   }
 }

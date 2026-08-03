@@ -1,5 +1,44 @@
 .file-name {
   display: inline-block;
   max-width: 100%;
-  overflow-x: scroll;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dialog-intro {
+  color: var(--app-text-muted);
+  margin-top: 0;
+}
+
+.optional-details {
+  border-top: 1px solid var(--app-border);
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+}
+
+.optional-details summary {
+  color: var(--app-primary);
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.optional-fields {
+  display: grid;
+}
+
+.image-editor {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.image-editor img {
+  border-radius: var(--app-radius-medium);
+  max-height: 14rem;
+  max-width: 100%;
+  object-fit: cover;
 }

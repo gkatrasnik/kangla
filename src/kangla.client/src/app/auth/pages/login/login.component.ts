@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { CommonModule } from '@angular/common';
 import { ErrorService } from '../../../core/errors/error.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ import { ErrorService } from '../../../core/errors/error.service';
 
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -44,11 +46,13 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
+    if (this.loginForm.valid && !this.isSubmitting) {
       const { email, password } = this.loginForm.value;
-      this.authService.login(email, password).subscribe({
-        next: (response) => {
-          console.log('User logged in successfully', response);
+      this.isSubmitting = true;
+      this.authService.login(email, password).pipe(
+        finalize(() => this.isSubmitting = false)
+      ).subscribe({
+        next: () => {
           this.router.navigate(['/home'], { replaceUrl: true });        
         },
         error: (error) => {

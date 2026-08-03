@@ -41,11 +41,13 @@
           </mat-error>
         </mat-form-field>
   
-        <button mat-flat-button class="full-width" color="primary" type="submit" [disabled]="registerForm.invalid">Register</button>
+        <button mat-flat-button class="full-width" color="primary" type="submit" [disabled]="registerForm.invalid || isSubmitting" [attr.aria-busy]="isSubmitting">
+          {{ isSubmitting ? 'Creating account…' : 'Register' }}
+        </button>
       </form>
     </mat-card-content>
     <mat-card-actions class="auth-card-actions">
-      <a mat-button routerLink="/login">Login</a>
+      <p class="auth-link-row">Already have an account? <a class="auth-link" routerLink="/login">Login</a></p>
     </mat-card-actions>
   </mat-card>
 </div>

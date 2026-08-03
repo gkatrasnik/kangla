@@ -1,21 +1,17 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { HomeComponent } from './plants/pages/home/home.component';
-import { DetailsComponent } from './plants/pages/details/details.component';
+import { Component, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule } from '@angular/material/sidenav'; 
-import { MatNavList } from '@angular/material/list';
-import { MatListItem } from '@angular/material/list';
 import { AuthService } from './core/auth/auth.service';
 import { Router, NavigationEnd } from '@angular/router';
-import { MatSidenav } from '@angular/material/sidenav';
 import { catchError, filter } from 'rxjs/operators';
 import { LoadingIndicatorComponent } from './shared/components/loading-indicator/loading-indicator.component';
 import { UserInfoDto } from './auth/user-info-dto';
-import { version } from '../../package.json';
+import packageInfo from '../../package.json';
 import { of } from 'rxjs';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-root',
@@ -23,15 +19,12 @@ import { of } from 'rxjs';
   imports: [
     RouterOutlet,
     RouterLink,
-    HomeComponent,
+    RouterLinkActive,
     MatButtonModule,
-    DetailsComponent,
     MatToolbarModule,
     MatIconModule,
-    MatSidenavModule,
-    MatNavList,
-    MatListItem,
-    MatSidenav,
+    MatMenuModule,
+    MatDividerModule,
     LoadingIndicatorComponent
   ],
   templateUrl: './app.component.html',
@@ -42,9 +35,7 @@ export class AppComponent implements OnInit{
   showToolbar: boolean = true;
   userInfo: UserInfoDto | null = null;
   private hiddenToolbarRoutes: string[] = ['/login', '/register', '/registration-confirmation', '/forgot-password', '/password-reset'];
-  public version: string = version;
-
-  @ViewChild('sidenav') sidenav!: MatSidenav;
+  public version: string = packageInfo.version;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -61,7 +52,7 @@ export class AppComponent implements OnInit{
   }
 
   isHiddenToolbarRoute(): boolean {
-    const currentUrl = this.router.url;
+    const currentUrl = this.router.url.split('?')[0].split('#')[0];
     return this.hiddenToolbarRoutes.includes(currentUrl);
   }
 
@@ -75,6 +66,5 @@ export class AppComponent implements OnInit{
       this.router.navigate(['/login']);
     });
 
-    this.sidenav.close();
   }
 }

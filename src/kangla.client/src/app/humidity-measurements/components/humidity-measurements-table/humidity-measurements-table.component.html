@@ -1,15 +1,18 @@
-<mat-card class="detail-section">
-  <mat-card-header><mat-card-title>Recent Soil Humidity</mat-card-title></mat-card-header>
+<mat-card class="detail-section" appearance="outlined">
+  <mat-card-header><mat-card-title>Recent soil moisture</mat-card-title></mat-card-header>
   <mat-card-content>
     @if (measurements.length) {
-      <table mat-table [dataSource]="measurements">
-        <ng-container matColumnDef="dateTime"><th mat-header-cell *matHeaderCellDef>Measured</th><td mat-cell *matCellDef="let measurement">{{ measurement.dateTime | date:'short' }}</td></ng-container>
-        <ng-container matColumnDef="soilHumidity"><th mat-header-cell *matHeaderCellDef>Raw value</th><td mat-cell *matCellDef="let measurement">{{ measurement.soilHumidity }}</td></ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+      <p class="measurement-help">Sensor readings use the device’s raw 0–1000 scale.</p>
+      <div class="activity-table-container">
+        <table mat-table [dataSource]="measurements">
+          <ng-container matColumnDef="dateTime"><th mat-header-cell *matHeaderCellDef>Measured</th><td mat-cell *matCellDef="let measurement">{{ measurement.dateTime | date:'short' }}</td></ng-container>
+          <ng-container matColumnDef="soilHumidity"><th mat-header-cell *matHeaderCellDef>Sensor reading</th><td mat-cell *matCellDef="let measurement">{{ measurement.soilHumidity }}</td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
     } @else {
-      <p>No humidity measurements yet. Start the simulator to record them.</p>
+      <div class="table-state"><p>No soil-moisture readings yet. Readings will appear after the device checks in.</p></div>
     }
   </mat-card-content>
 </mat-card>

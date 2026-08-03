@@ -4,17 +4,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { PlantCardComponent } from '../../components/plant-card/plant-card.component';
 import { PlantService } from '../../plant.service';
 import { Plant } from '../../plant';
-import { MatDialog } from '@angular/material/dialog';
-import { AddPlantDialogComponent } from '../../components/add-plant-dialog/add-plant-dialog.component';
-import { PagedResponse } from '../../../shared/interfaces/paged-response';
 import { ImagesService } from '../../../shared/services/images.service';
 import { MatIconModule } from '@angular/material/icon';
-import { PlantRecognizeResponseDto } from '../../dto/plant-recognize-response-dto';
-import { NotificationService } from '../../../core/notifications/notification.service';
-import { LoadingService } from '../../../core/loading/loading.service';
-import { MatMenuModule } from '@angular/material/menu';
 import { WateringDeviceService } from '../../../watering-devices/watering-device.service';
-import { forkJoin } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
+import { MatMenuModule } from '@angular/material/menu';
+import { PlantCreationService } from '../../plant-creation.service';
+import { WateringDevice } from '../../../watering-devices/watering-device';
 
 @Component({
   selector: 'app-home',
@@ -24,17 +20,17 @@ import { forkJoin } from 'rxjs';
     MatPaginatorModule,
     MatButtonModule,    
     MatIconModule,
-    MatMenuModule  
+    MatMenuModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   plantsList: Plant[] = [];
-  devicePlantIds = new Set<number>();
+  wateringDevicesByPlantId = new Map<number, WateringDevice>();
 
   plantsListLength = 0;
-  pageSize = 10;
+  pageSize = 9;
   pageIndex = 0;
   pageSizeOptions = [9, 15, 30];
 
@@ -42,14 +38,14 @@ export class HomeComponent {
   showPageSizeOptions = true;
   showFirstLastButtons = true;
   disabled = false;
+  loading = true;
+  loadError = false;
 
   constructor(
     private plantService: PlantService,
     public imagesService: ImagesService,
-    private notificationService: NotificationService,
-    private loadingService: LoadingService,
     private wateringDeviceService: WateringDeviceService,
-    public dialog: MatDialog
+    private plantCreationService: PlantCreationService
   ) {}
 
   handlePageEvent(e: PageEvent) {
@@ -64,70 +60,39 @@ export class HomeComponent {
   }
 
   loadPlants(pageIndex: number, pageSize: number): void {
+    this.loading = true;
+    this.loadError = false;
+
     forkJoin({
       plants: this.plantService.getAllPlants(pageIndex + 1, pageSize),
       devices: this.wateringDeviceService.getAll(1, 1000)
-    }).subscribe(({ plants, devices }) => {
-      this.plantsList = plants.data;
-      this.plantsListLength = plants.totalRecords;
-      this.devicePlantIds = new Set(devices.data.flatMap(device => device.plantId === null ? [] : [device.plantId]));
+    }).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: ({ plants, devices }) => {
+        this.plantsList = plants.data;
+        this.plantsListLength = plants.totalRecords;
+        this.wateringDevicesByPlantId = new Map(
+          devices.data.flatMap(device => device.plantId === null ? [] : [[device.plantId, device] as const])
+        );
+      },
+      error: () => this.loadError = true
     });
   }
 
-  async onImageSelected(event: Event): Promise<void> {
+  onImageSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
     const file = fileInput.files?.[0];
 
     if (file) {
-      this.loadingService.loadingOn('Recognizing plant...');
-
-      try {
-        const resizedFile = await this.imagesService.resizeImage(file, 512, 512);
-        const formData = new FormData();
-        formData.append('image', resizedFile);
-
-        this.plantService.recognizePlant(formData).subscribe({
-          next: (recognizedPlant: PlantRecognizeResponseDto) => {           
-            this.openAddPlantDialog(recognizedPlant);
-
-            if (recognizedPlant.error) {
-              const msg = recognizedPlant.error + " You can add this plant manually.";
-              this.notificationService.showServerError('Oops', msg);
-            }
-          },
-          error: (err) => {
-            this.loadingService.loadingOff();
-            console.error('Plant recognition failed:', err);
-            this.openAddPlantDialog();
-            throw new Error('Plant recognition failed.');
-          },
-          complete: () => {
-            this.loadingService.loadingOff();
-          }
-        });
-      } catch (error) {
-        this.loadingService.loadingOff();
-        throw new Error('Error processing image.');
-      } finally {
-        fileInput.value = '';
-      }
+      this.plantCreationService.identify(file).subscribe(() => this.reloadPlants());
     }
+
+    fileInput.value = '';
   }
 
-  openAddPlantDialog(plantData?: PlantRecognizeResponseDto): void {
-    const dialogRef = this.dialog.open(AddPlantDialogComponent, {
-      data: plantData || {}
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Plant added:', result);
-        this.plantService.addPlant(result).subscribe((newPlant: Plant) => {
-          this.plantsList.push(newPlant);
-          this.reloadPlants();
-        });
-      }
-    });
+  addPlantManually(): void {
+    this.plantCreationService.addManually().subscribe(() => this.reloadPlants());
   }
 
   reloadPlants(): void {

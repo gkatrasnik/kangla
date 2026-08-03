@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { ErrorService } from '../../../core/errors/error.service';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -10,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-registration-confirmation',
@@ -28,10 +28,10 @@ import { RouterLink } from '@angular/router';
 })
 export class RegistrationConfirmationComponent {
   resendConfirmationForm: FormGroup;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private notificationService: NotificationService,
     private authService: AuthService,
     private errorService: ErrorService
@@ -42,9 +42,12 @@ export class RegistrationConfirmationComponent {
   }
 
   resendConfirmationEmail(): void {
-    if (this.resendConfirmationForm.valid) {
+    if (this.resendConfirmationForm.valid && !this.isSubmitting) {
       const { email } = this.resendConfirmationForm.value;
-      this.authService.resendConfirmationEmail(email).subscribe({
+      this.isSubmitting = true;
+      this.authService.resendConfirmationEmail(email).pipe(
+        finalize(() => this.isSubmitting = false)
+      ).subscribe({
         next: () => {
           this.notificationService.showNonErrorSnackBar('Confirmation email resent.');
         },

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationDialogComponent } from '../../shared/components/notification-dialog/notification-dialog.component'
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +25,9 @@ export class NotificationService {
     this.snackbar.open(message, 'OK', {
       duration,
     });
+  }
+
+  showUndoSnackBar(message: string, duration = 7000): Observable<void> {
+    return this.snackbar.open(message, 'Undo', { duration }).onAction();
   }
 }

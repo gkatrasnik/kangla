@@ -1,10 +1,23 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
+import { AuthService } from './core/auth/auth.service';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthService,
+          useValue: {
+            userInfo$: of(null),
+            logout: () => of(true)
+          }
+        }
+      ]
     }).compileComponents();
   });
 
@@ -20,10 +33,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('kangla');
   });
 
-  it('should render title', () => {
+  it('should render the Kangla brand', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, kangla');
+    expect(compiled.querySelector('.logo')?.textContent).toContain('Kangla');
   });
 });

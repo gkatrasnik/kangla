@@ -1,31 +1,218 @@
-img {
-    max-width: 100%;
-    max-height: 300px;
+.details-page {
+  padding-bottom: 3rem;
 }
 
-.plant-image {
-    text-align: center;
-    margin: 1rem;
+.back-button {
+  margin-bottom: 1rem;
 }
 
-.plant-info {
-    margin: 1rem;
-} 
-
-.detail-cards-section {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+.plant-hero {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-large);
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.15fr);
+  overflow: hidden;
 }
 
-.watering-overdue-indicator-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 1rem;
+.plant-hero-image {
+  background: var(--app-surface-muted);
+  min-height: 29rem;
 }
 
-//overriden card title
-.mat-mdc-card-title-group {
-    justify-content: center;
+.plant-hero-image img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.plant-hero-content {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.plant-title-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.plant-title-row h1 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.scientific-name {
+  color: var(--app-text-muted);
+  font-style: italic;
+  margin: 0.25rem 0 0;
+}
+
+.care-summary {
+  border-block: 1px solid var(--app-border);
+  margin-block: 2rem;
+  padding-block: 1.5rem;
+}
+
+.care-summary dl {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1.25rem 0 0;
+}
+
+.care-summary dl div,
+.plant-facts div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.care-summary dt,
+.plant-facts dt {
+  color: var(--app-text-muted);
+  font-size: 0.78rem;
+}
+
+.care-summary dd,
+.plant-facts dd {
+  font-weight: 500;
+  margin: 0;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1.5rem;
+}
+
+.detail-card {
+  background: var(--app-surface);
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-large);
+}
+
+.detail-card mat-card-content > p {
+  color: var(--app-text-muted);
+  line-height: 1.6;
+}
+
+.plant-facts {
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+}
+
+.plant-facts dd {
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.device-section,
+.activity-section {
+  margin-top: 2.5rem;
+}
+
+.device-summary,
+.device-empty {
+  align-items: center;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-large);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  padding: 1.25rem;
+}
+
+.device-empty {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.device-summary h3,
+.device-empty h3,
+.device-summary p,
+.device-empty p {
+  margin: 0;
+}
+
+.device-summary p,
+.device-empty p {
+  color: var(--app-text-muted);
+  margin-top: 0.25rem;
+}
+
+.device-icon {
+  align-items: center;
+  background: var(--app-primary-soft);
+  border-radius: var(--app-radius-medium);
+  color: var(--app-primary);
+  display: flex;
+  height: 3.5rem;
+  justify-content: center;
+  width: 3.5rem;
+}
+
+.activity-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (max-width: 850px) {
+  .plant-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .plant-hero-image {
+    min-height: 20rem;
+    max-height: 28rem;
+  }
+}
+
+@media (max-width: 650px) {
+  .care-summary dl,
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .care-summary dl {
+    gap: 0.8rem;
+  }
+
+  .care-summary dl div {
+    border-bottom: 1px solid var(--app-border);
+    padding-bottom: 0.8rem;
+  }
+
+  .device-summary,
+  .device-empty {
+    align-items: start;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .device-summary .care-badge {
+    grid-column: 2;
+  }
+
+  .device-summary button,
+  .device-empty button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .hero-actions > * {
+    flex: 1 1 auto;
+  }
 }

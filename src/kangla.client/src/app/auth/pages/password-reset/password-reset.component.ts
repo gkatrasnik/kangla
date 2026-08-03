@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule,FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../core/notifications/notification.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MatCardModule } from '@angular/material/card';
@@ -10,21 +9,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { ErrorService } from '../../../core/errors/error.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-password-reset',
   templateUrl: './password-reset.component.html',
   styleUrls: ['./password-reset.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule]
+  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink]
 })
 export class PasswordResetComponent{
   resetForm: FormGroup;
-  resetCode: string | null = null; // Assume this will be set by some mechanism, e.g., query param
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private router: Router,
     private notificationService: NotificationService,
     private authService: AuthService,
@@ -42,13 +41,16 @@ export class PasswordResetComponent{
   }
 
   onSubmit(): void {
-    if (this.resetForm.valid) {
+    if (this.resetForm.valid && !this.isSubmitting) {
       const { email, resetCode, newPassword } = this.resetForm.value;
       const trimmedResetCode = resetCode.trim();
-      this.authService.resetPassword(email, trimmedResetCode, newPassword).subscribe({
+      this.isSubmitting = true;
+      this.authService.resetPassword(email, trimmedResetCode, newPassword).pipe(
+        finalize(() => this.isSubmitting = false)
+      ).subscribe({
         next: () => {
           this.notificationService.showNonErrorSnackBar('Password has been reset successfully.');
-          this.router.navigate(['/login'], { replaceUrl: true }); // Redirect to login page after successful reset
+          this.router.navigate(['/login'], { replaceUrl: true });
         },
         error: (error) => {
           const { title, errors } = this.errorService.parseErrorResponse(error);

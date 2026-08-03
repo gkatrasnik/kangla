@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ContentChild, TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoadingService } from '../../../core/loading/loading.service';
-import { Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AsyncPipe } from '@angular/common';
@@ -34,7 +34,7 @@ export class LoadingIndicatorComponent implements OnInit {
           tap(event => {
             if (event instanceof NavigationStart) {
               this.loadingService.loadingOn();
-            } else if (event instanceof NavigationEnd) {
+            } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
               this.loadingService.loadingOff();
             }
           })
