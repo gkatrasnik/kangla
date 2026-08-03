@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 import { PlantRecognizeResponseDto } from './dto/plant-recognize-response-dto';
 import { HttpContext } from '@angular/common/http';
 import { SkipLoading } from '../core/loading/loading.interceptor';
+import { PlantCreateRequestDto } from './dto/plant-create-request-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,7 @@ export class PlantService {
     );
   }
 
-  addPlant(plantData: FormData) :Observable<Plant> {
+  addPlant(plantData: PlantCreateRequestDto): Observable<Plant> {
     return this.http.post<PlantResponseDto>(`${this.apiUrl}/Plants`, plantData).pipe(
       map(this.mapPlantResponseDtoToPlant)
     );

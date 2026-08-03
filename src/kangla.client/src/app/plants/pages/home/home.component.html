@@ -6,16 +6,17 @@
             <p class="page-subtitle">See each plant’s care status, watering schedule, and history.</p>
         </div>
         <div class="plant-page-actions">
-            <button mat-flat-button (click)="fileInput.click()">
-                <mat-icon>add_a_photo</mat-icon>
-                Identify a plant
+            <button mat-flat-button [matMenuTriggerFor]="addPlantMenu">
+                <mat-icon>add</mat-icon>
+                Add plant
+                <mat-icon>arrow_drop_down</mat-icon>
             </button>
-            <button mat-stroked-button (click)="openAddPlantDialog()">
-                <mat-icon>edit</mat-icon>
-                Add manually
-            </button>
-            <input type="file" #fileInput accept="image/png, image/gif, image/jpeg, image/webp" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Choose a plant photo">
+            <input type="file" #fileInput accept="image/*" capture="environment" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Take a plant photo">
         </div>
+        <mat-menu #addPlantMenu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="fileInput.click()"><mat-icon>add_a_photo</mat-icon><span>Identify plant</span></button>
+            <button mat-menu-item (click)="addPlantManually()"><mat-icon>edit</mat-icon><span>Add manually</span></button>
+        </mat-menu>
     </header>
 
     @if (loading) {
@@ -38,7 +39,7 @@
                 <app-plant-card
                     [plant]="plant"
                     [imageUrl]="imagesService.getImageUrl(plant.imageId)"
-                    [hasWateringDevice]="devicePlantIds.has(plant.id)"
+                    [wateringDevice]="wateringDevicesByPlantId.get(plant.id) ?? null"
                 ></app-plant-card>
             }
         </div>
@@ -49,8 +50,7 @@
             <h2>Add your first plant</h2>
             <p>Use a photo for quick identification and care suggestions, or enter the details yourself.</p>
             <div class="plant-page-actions">
-                <button mat-flat-button (click)="fileInput.click()"><mat-icon>add_a_photo</mat-icon>Identify from photo</button>
-                <button mat-stroked-button (click)="openAddPlantDialog()">Add manually</button>
+                <button mat-flat-button [matMenuTriggerFor]="addPlantMenu"><mat-icon>add</mat-icon>Add plant<mat-icon>arrow_drop_down</mat-icon></button>
             </div>
         </section>
     }

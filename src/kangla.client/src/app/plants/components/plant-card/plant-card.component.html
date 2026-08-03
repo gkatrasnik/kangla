@@ -3,7 +3,7 @@
     @if (imageUrl) {
       <img [imageSrc]="imageUrl" [alt]="'Photo of ' + plant.name">
     } @else {
-      <img src="./images/plant-placeholder.jpg" alt="">
+      <img src="./images/plant-placeholder.jpg" class="plant-placeholder" alt="">
     }
   </a>
 
@@ -19,7 +19,7 @@
       </span>
     </div>
 
-    @if (hasWateringDevice) {
+    @if (wateringDevice) {
       <span class="device-attached"><mat-icon>water_drop</mat-icon>Watering device attached</span>
     }
 
@@ -33,6 +33,12 @@
     @if (plantService.isWateringOverdue(plant)) {
       <button mat-flat-button (click)="triggerWatering()" [disabled]="watering">
         @if (watering) { Saving… } @else { Mark as watered }
+      </button>
+    }
+    @if (wateringDevice) {
+      <button mat-stroked-button (click)="sendWateringCommand()" [disabled]="sendingDeviceCommand">
+        <mat-icon>water</mat-icon>
+        {{ sendingDeviceCommand ? 'Sending…' : 'Water with device' }}
       </button>
     }
   </mat-card-actions>

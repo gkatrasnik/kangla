@@ -21,3 +21,41 @@ table {
 .table-state p {
   margin: 0;
 }
+
+.command-state {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 600;
+  gap: 0.25rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.command-state mat-icon {
+  font-size: 1rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.command-state-queued {
+  background: var(--app-warning-surface);
+  color: var(--app-warning);
+}
+
+.command-state-watering,
+.command-state-completed {
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+}
+
+.command-state-failed {
+  background: var(--app-danger-surface);
+  color: var(--app-danger);
+}
+
+.command-detail {
+  color: var(--app-text-muted);
+  display: block;
+  margin-top: 0.2rem;
+}

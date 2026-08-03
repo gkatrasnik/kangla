@@ -8,20 +8,25 @@ import { PlantService } from '../../plant.service';
 import { ImagesService } from '../../../shared/services/images.service';
 import { ImageSrcDirective } from '../../../core/directives/imagesrc.directive';
 import { WateringDeviceService } from '../../../watering-devices/watering-device.service';
-import { WateringEventService } from '../../../watering-events/watering-event.service';
 import { NotificationService } from '../../../core/notifications/notification.service';
+import { PlantWateringActionService } from '../../plant-watering-action.service';
+import { MatMenuModule } from '@angular/material/menu';
+import { PlantCreationService } from '../../plant-creation.service';
+import { WateringDevice } from '../../../watering-devices/watering-device';
+import { DeviceWateringActionService } from '../../../watering-commands/device-watering-action.service';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [RouterLink, MatButtonModule, MatIconModule, ImageSrcDirective],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, ImageSrcDirective],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss'
 })
 export class OverviewComponent implements OnInit {
   plants: Plant[] = [];
-  devicePlantIds = new Set<number>();
+  wateringDevicesByPlantId = new Map<number, WateringDevice>();
   wateringPlantIds = new Set<number>();
+  deviceCommandPlantIds = new Set<number>();
   loading = true;
   loadError = false;
 
@@ -29,8 +34,10 @@ export class OverviewComponent implements OnInit {
     public plantService: PlantService,
     public imagesService: ImagesService,
     private wateringDeviceService: WateringDeviceService,
-    private wateringEventService: WateringEventService,
-    private notificationService: NotificationService
+    private wateringActionService: PlantWateringActionService,
+    private deviceWateringActionService: DeviceWateringActionService,
+    private plantCreationService: PlantCreationService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -62,8 +69,8 @@ export class OverviewComponent implements OnInit {
     ).subscribe({
       next: ({ plants, devices }) => {
         this.plants = plants.data;
-        this.devicePlantIds = new Set(
-          devices.data.flatMap(device => device.plantId === null ? [] : [device.plantId])
+        this.wateringDevicesByPlantId = new Map(
+          devices.data.flatMap(device => device.plantId === null ? [] : [[device.plantId, device] as const])
         );
       },
       error: () => this.loadError = true
@@ -75,21 +82,40 @@ export class OverviewComponent implements OnInit {
       return;
     }
 
-    const start = new Date();
     this.wateringPlantIds.add(plant.id);
-    this.wateringEventService.addWateringEvent({
-      plantId: plant.id,
-      start,
-      end: new Date(start.getTime() + 10000)
-    }).pipe(
+    this.wateringActionService.markAsWatered(plant).pipe(
       finalize(() => this.wateringPlantIds.delete(plant.id))
     ).subscribe({
-      next: () => {
-        plant.lastWateringDateTime = new Date();
-        this.notificationService.showNonErrorSnackBar(`${plant.name} marked as watered`);
-      },
+      next: () => {},
       error: () => this.notificationService.showClientError(`Could not update ${plant.name}`)
     });
+  }
+
+  onImageSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    const file = fileInput.files?.[0];
+
+    if (file) {
+      this.plantCreationService.identify(file).subscribe(plant => this.plants.push(plant));
+    }
+
+    fileInput.value = '';
+  }
+
+  addPlantManually(): void {
+    this.plantCreationService.addManually().subscribe(plant => this.plants.push(plant));
+  }
+
+  sendWateringCommand(plant: Plant): void {
+    const device = this.wateringDevicesByPlantId.get(plant.id);
+    if (!device || this.deviceCommandPlantIds.has(plant.id)) {
+      return;
+    }
+
+    this.deviceCommandPlantIds.add(plant.id);
+    this.deviceWateringActionService.send(device, plant.name).pipe(
+      finalize(() => this.deviceCommandPlantIds.delete(plant.id))
+    ).subscribe();
   }
 
   private nextWateringTime(plant: Plant): number {

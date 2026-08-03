@@ -65,14 +65,29 @@
 
 .attention-item {
   align-items: center;
+  cursor: pointer;
   display: grid;
   gap: 1rem;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
   padding: 1rem;
+  position: relative;
+  transition: background-color 120ms ease;
 }
 
 .attention-item + .attention-item {
   border-top: 1px solid var(--app-border);
+}
+
+.attention-item:hover {
+  background: var(--app-surface-muted);
+}
+
+.attention-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
 }
 
 .plant-thumbnail {
@@ -94,6 +109,22 @@
   font-size: 1.05rem;
   font-weight: 600;
   text-decoration: none;
+}
+
+.plant-name::after {
+  border-radius: var(--app-radius-large);
+  content: '';
+  inset: 0;
+  position: absolute;
+}
+
+.plant-name:focus-visible {
+  outline: none;
+}
+
+.plant-name:focus-visible::after {
+  outline: 3px solid color-mix(in srgb, var(--app-primary) 55%, transparent);
+  outline-offset: -3px;
 }
 
 .plant-name:hover {
@@ -219,8 +250,11 @@
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .attention-item > button {
+  .attention-actions {
     grid-column: 1 / -1;
+  }
+
+  .attention-actions > button {
     width: 100%;
   }
 

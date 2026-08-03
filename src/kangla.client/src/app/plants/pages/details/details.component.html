@@ -50,18 +50,15 @@
         <div class="hero-actions">
           <button mat-flat-button (click)="triggerWatering()" [disabled]="wateringButtonDisabled">
             <mat-icon>check</mat-icon>
-            {{ wateringButtonDisabled ? 'Watered' : 'Mark as watered' }}
+            {{ wateringButtonDisabled ? 'Saving…' : 'Mark as watered' }}
           </button>
           @if (wateringDevice) {
             <button mat-stroked-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">
               <mat-icon>water</mat-icon>
-              {{ deviceWateringButtonDisabled ? 'Waiting for device…' : 'Water with device' }}
+              {{ deviceWateringButtonDisabled ? 'Sending…' : 'Water with device' }}
             </button>
           }
         </div>
-        @if (deviceWateringStatus) {
-          <p class="command-status" role="status"><mat-icon>sync</mat-icon>Device command: {{ deviceWateringStatus }}</p>
-        }
       </div>
     </header>
 
