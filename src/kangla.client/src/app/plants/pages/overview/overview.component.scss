@@ -152,6 +152,11 @@
   width: 1rem;
 }
 
+.attention-copy app-watering-command-status-badge,
+.upcoming-item app-watering-command-status-badge {
+  margin-top: 0.45rem;
+}
+
 .all-cared-for,
 .quiet-state {
   background: var(--app-surface);

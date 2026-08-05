@@ -33,14 +33,6 @@ export class PlantCreationService {
         formData.append('image', resizedFile);
         return this.plantService.recognizePlant(formData);
       }),
-      tap(result => {
-        if (result.error) {
-          this.notificationService.showServerError(
-            'Identification incomplete',
-            `${result.error} You can complete the plant details manually.`
-          );
-        }
-      }),
       catchError(() => {
         this.notificationService.showClientError('The plant could not be identified. You can add it manually.');
         return of({} as PlantRecognizeResponseDto);
@@ -48,7 +40,18 @@ export class PlantCreationService {
       finalize(() => this.loadingService.loadingOff())
     );
 
-    return recognition$.pipe(switchMap(result => this.openDialog(result)));
+    return recognition$.pipe(switchMap(result => {
+      if (!result.error) {
+        return this.openDialog(result);
+      }
+
+      return this.notificationService.showServerError(
+        'Identification incomplete',
+        `${result.error} You can complete the plant details manually.`
+      ).afterClosed().pipe(
+        switchMap(() => this.openDialog(result))
+      );
+    }));
   }
 
   private openDialog(data: PlantRecognizeResponseDto): Observable<Plant> {

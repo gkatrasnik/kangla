@@ -9,7 +9,6 @@
             <button mat-flat-button [matMenuTriggerFor]="addPlantMenu">
                 <mat-icon>add</mat-icon>
                 Add plant
-                <mat-icon>arrow_drop_down</mat-icon>
             </button>
             <input type="file" #fileInput accept="image/*" capture="environment" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Take a plant photo">
         </div>
@@ -40,6 +39,7 @@
                     [plant]="plant"
                     [imageUrl]="imagesService.getImageUrl(plant.imageId)"
                     [wateringDevice]="wateringDevicesByPlantId.get(plant.id) ?? null"
+                    (wateringCommandCreated)="onWateringCommandCreated($event)"
                 ></app-plant-card>
             }
         </div>
@@ -50,7 +50,7 @@
             <h2>Add your first plant</h2>
             <p>Use a photo for quick identification and care suggestions, or enter the details yourself.</p>
             <div class="plant-page-actions">
-                <button mat-flat-button [matMenuTriggerFor]="addPlantMenu"><mat-icon>add</mat-icon>Add plant<mat-icon>arrow_drop_down</mat-icon></button>
+                <button mat-flat-button [matMenuTriggerFor]="addPlantMenu"><mat-icon>add</mat-icon>Add plant</button>
             </div>
         </section>
     }

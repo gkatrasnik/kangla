@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { PlantService } from '../../plant.service';
 import { ActivatedRoute } from '@angular/router';
 import { Plant } from '../../plant';
@@ -26,6 +26,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { DatePipe } from '@angular/common';
 import { PlantWateringActionService } from '../../plant-watering-action.service';
 import { DeviceWateringActionService } from '../../../watering-commands/device-watering-action.service';
+import { RealtimeUpdatesService } from '../../../core/realtime/realtime-updates.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  getActiveWateringCommandLabel,
+  isActiveWateringCommandStatus
+} from '../../../watering-commands/watering-command';
+import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/components/watering-command-status-badge/watering-command-status-badge.component';
 
 @Component({
   selector: 'app-details',
@@ -40,13 +47,15 @@ import { DeviceWateringActionService } from '../../../watering-commands/device-w
     WateringEventsTableComponent, 
     MatCardModule,
     WateringCommandsTableComponent,
-    HumidityMeasurementsTableComponent
+    HumidityMeasurementsTableComponent,
+    WateringCommandStatusBadgeComponent
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
 })
 
 export class DetailsComponent {
+  private readonly destroyRef = inject(DestroyRef);
   route: ActivatedRoute = inject(ActivatedRoute);
   plantId = -1;
   plant: Plant | undefined;
@@ -54,7 +63,8 @@ export class DetailsComponent {
   deviceWateringButtonDisabled = false;
   wateringDevice: WateringDevice | null = null;
   reloadTrigger = 0;
-  deviceActivityReloadTrigger = 0;
+  wateringCommandsReloadTrigger = 0;
+  humidityMeasurementsReloadTrigger = 0;
   loading = true;
   loadError = false;
 
@@ -66,6 +76,7 @@ export class DetailsComponent {
     private wateringActionService: PlantWateringActionService,
     private wateringDeviceService: WateringDeviceService,
     private deviceWateringActionService: DeviceWateringActionService,
+    private realtimeUpdatesService: RealtimeUpdatesService,
     private notificationService: NotificationService,
     public dialog: MatDialog
   ) {
@@ -74,6 +85,39 @@ export class DetailsComponent {
 
   ngOnInit(): void {
     this.loadPlant();
+    this.realtimeUpdatesService.changes$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(change => {
+      const matchesPlant = change.plantId === this.plantId;
+      const matchesDevice = change.deviceId !== null && change.deviceId === this.wateringDevice?.id;
+      if (!matchesPlant && !matchesDevice) {
+        return;
+      }
+
+      if (matchesPlant && change.resources.includes('plant')) {
+        this.refreshPlant();
+      }
+      if (matchesPlant && change.resources.includes('wateringEvents')) {
+        this.reloadTrigger++;
+      }
+      if ((matchesPlant || matchesDevice) && change.resources.includes('wateringCommands')) {
+        this.wateringCommandsReloadTrigger++;
+        if (change.deviceId !== null) {
+          this.refreshWateringDevice(change.deviceId);
+        }
+      }
+      if ((matchesPlant || matchesDevice) && change.resources.includes('humidityMeasurements')) {
+        this.humidityMeasurementsReloadTrigger++;
+      }
+    });
+    this.realtimeUpdatesService.resync$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.loadPlant();
+      this.reloadTrigger++;
+      this.wateringCommandsReloadTrigger++;
+      this.humidityMeasurementsReloadTrigger++;
+    });
   }
 
   loadPlant(): void {
@@ -148,14 +192,32 @@ export class DetailsComponent {
   }
 
   triggerDeviceWatering(): void {
-    if (!this.wateringDevice || !this.plant || this.deviceWateringButtonDisabled) {
+    if (!this.wateringDevice || !this.plant || this.deviceWateringButtonDisabled || this.hasActiveWateringCommand) {
       return;
     }
 
     this.deviceWateringButtonDisabled = true;
     this.deviceWateringActionService.send(this.wateringDevice, this.plant.name).pipe(
       finalize(() => this.deviceWateringButtonDisabled = false)
-    ).subscribe(() => this.deviceActivityReloadTrigger++);
+    ).subscribe(command => {
+      if (isActiveWateringCommandStatus(command.status)) {
+        this.wateringDevice = { ...this.wateringDevice!, activeWateringCommandStatus: command.status };
+      }
+      this.wateringCommandsReloadTrigger++;
+    });
+  }
+
+  get hasActiveWateringCommand(): boolean {
+    return isActiveWateringCommandStatus(this.wateringDevice?.activeWateringCommandStatus);
+  }
+
+  get deviceWateringActionLabel(): string {
+    const status = this.wateringDevice?.activeWateringCommandStatus;
+    if (isActiveWateringCommandStatus(status)) {
+      return getActiveWateringCommandLabel(status);
+    }
+
+    return this.deviceWateringButtonDisabled ? 'Sending…' : 'Water with device';
   }
 
   attachWateringDevice(): void {
@@ -220,6 +282,24 @@ export class DetailsComponent {
       return true;
     }
     return this.plantService.isWateringOverdue(this.plant);
+  }
+
+  private refreshPlant(): void {
+    this.plantService.getPlantById(this.plantId).subscribe({
+      next: plant => this.plant = plant,
+      error: () => {}
+    });
+  }
+
+  private refreshWateringDevice(deviceId: number): void {
+    if (this.wateringDevice?.id !== deviceId) {
+      return;
+    }
+
+    this.wateringDeviceService.get(deviceId).subscribe({
+      next: device => this.wateringDevice = device,
+      error: () => {}
+    });
   }
 
 }

@@ -36,19 +36,20 @@ namespace kangla.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteWateringEventAsync(int wateringEventId, string userId)
+        public async Task<int?> DeleteWateringEventAsync(int wateringEventId, string userId)
         {
             var wateringEvent = await _context.WateringEvents
                 .Include(e => e.Plant)
                 .FirstOrDefaultAsync(e => e.Id == wateringEventId && e.Plant.UserId == userId);
             if (wateringEvent != null)
             {
+                var plantId = wateringEvent.PlantId;
                 _context.WateringEvents.Remove(wateringEvent);
                 await _context.SaveChangesAsync();
-                return true;
+                return plantId;
             }
 
-            return false;
+            return null;
         }
 
         public async Task<DateTime?> GetLastWateringEventDateAsync(int plantId)

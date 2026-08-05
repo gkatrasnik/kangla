@@ -21,7 +21,7 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
 
   constructor(private wateringCommandService: WateringCommandService) {}
 
-  getProgress(command: WateringCommand): 'queued' | 'watering' | 'completed' | 'failed' {
+  getProgress(command: WateringCommand): 'queued' | 'watering' | 'completed' | 'failed' | 'timedOut' {
     if (command.status === 'pending') {
       return 'queued';
     }
@@ -30,11 +30,19 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
       return 'watering';
     }
 
-    return command.status === 'completed' ? 'completed' : 'failed';
+    if (command.status === 'completed') {
+      return 'completed';
+    }
+
+    return command.status === 'timedOut' ? 'timedOut' : 'failed';
   }
 
   getProgressLabel(command: WateringCommand): string {
     const progress = this.getProgress(command);
+    if (progress === 'timedOut') {
+      return 'Result not reported';
+    }
+
     return progress.charAt(0).toUpperCase() + progress.slice(1);
   }
 
@@ -44,6 +52,7 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
       case 'watering': return 'water_drop';
       case 'completed': return 'check_circle';
       case 'failed': return 'error';
+      case 'timedOut': return 'help';
     }
   }
 
@@ -62,6 +71,10 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
 
     if (command.status === 'expired') {
       return 'Device did not respond';
+    }
+
+    if (command.status === 'timedOut') {
+      return 'Device did not report completion';
     }
 
     return command.failureReason;

@@ -7,7 +7,7 @@ namespace kangla.Domain.Interfaces
     {
         Task<PagedResponse<WateringEvent>> GetWateringEventsByPlantIdAsync(int plantId, string userId, int pageNumber, int pageSize);
         Task AddWateringEventAsync(WateringEvent wateringEvent);
-        Task<bool> DeleteWateringEventAsync(int wateringEventId, string userId);
+        Task<int?> DeleteWateringEventAsync(int wateringEventId, string userId);
         Task<DateTime?> GetLastWateringEventDateAsync(int plantId);
     }
 }

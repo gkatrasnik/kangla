@@ -5,6 +5,7 @@ using kangla.Infrastructure;
 using kangla.WebApi.Extensions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using kangla.WebApi.ClientUpdates;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -23,6 +24,7 @@ try
         .AddCustomSwagger(env)
         .AddSecurityRateLimiting()
         .AddCustomServices(builder.Configuration)
+        .AddClientUpdates()
         .AddIdentityServices()
         .AddCors(options =>
         {
@@ -88,6 +90,7 @@ try
     }
 
     app.MapControllers();
+    app.MapHub<ClientUpdatesHub>("/hubs/client-updates");
 
     app.MapFallbackToFile("/index.html");
 

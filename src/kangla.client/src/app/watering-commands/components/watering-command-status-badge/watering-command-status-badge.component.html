@@ -1,0 +1,9 @@
+<span
+  class="care-badge"
+  [class.care-badge-warning]="status === 'pending'"
+  [class.care-badge-calm]="status === 'acknowledged'"
+  [attr.aria-label]="label"
+>
+  <mat-icon>{{ icon }}</mat-icon>
+  {{ label }}
+</span>

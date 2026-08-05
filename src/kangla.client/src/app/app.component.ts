@@ -12,6 +12,7 @@ import packageInfo from '../../package.json';
 import { of } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { RealtimeUpdatesService } from './core/realtime/realtime-updates.service';
 
 @Component({
   selector: 'app-root',
@@ -37,9 +38,14 @@ export class AppComponent implements OnInit{
   private hiddenToolbarRoutes: string[] = ['/login', '/register', '/registration-confirmation', '/forgot-password', '/password-reset'];
   public version: string = packageInfo.version;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private realtimeUpdatesService: RealtimeUpdatesService
+  ) {}
 
   ngOnInit(): void {
+    this.realtimeUpdatesService.initialize();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {

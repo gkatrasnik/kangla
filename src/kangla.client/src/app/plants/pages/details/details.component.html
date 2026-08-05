@@ -36,10 +36,15 @@
         </div>
 
         <div class="care-summary">
-          <span class="care-badge" [class.care-badge-warning]="plantService.isWateringOverdue(plant)" [class.care-badge-calm]="!plantService.isWateringOverdue(plant)">
-            <mat-icon>{{ plantService.isWateringOverdue(plant) ? 'water_drop' : 'event' }}</mat-icon>
-            {{ plantService.getCareStatusLabel(plant) }}
-          </span>
+          <div class="care-badges">
+            <span class="care-badge" [class.care-badge-warning]="plantService.isWateringOverdue(plant)" [class.care-badge-calm]="!plantService.isWateringOverdue(plant)">
+              <mat-icon>{{ plantService.isWateringOverdue(plant) ? 'water_drop' : 'event' }}</mat-icon>
+              {{ plantService.getCareStatusLabel(plant) }}
+            </span>
+            @if (wateringDevice?.activeWateringCommandStatus; as commandStatus) {
+              <app-watering-command-status-badge [status]="commandStatus" />
+            }
+          </div>
           <dl>
             <div><dt>Last watered</dt><dd>{{ plant.lastWateringDateTime ? (plant.lastWateringDateTime | date:'mediumDate') : 'Not recorded yet' }}</dd></div>
             <div><dt>Schedule</dt><dd>Every {{ plant.wateringInterval }} {{ plant.wateringInterval === 1 ? 'day' : 'days' }}</dd></div>
@@ -53,9 +58,9 @@
             {{ wateringButtonDisabled ? 'Saving…' : 'Mark as watered' }}
           </button>
           @if (wateringDevice) {
-            <button mat-stroked-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled">
+            <button mat-stroked-button (click)="triggerDeviceWatering()" [disabled]="deviceWateringButtonDisabled || hasActiveWateringCommand">
               <mat-icon>water</mat-icon>
-              {{ deviceWateringButtonDisabled ? 'Sending…' : 'Water with device' }}
+              {{ deviceWateringActionLabel }}
             </button>
           }
         </div>
@@ -108,8 +113,8 @@
       <div class="activity-stack">
         <app-watering-events-table [plantId]="plantId" [reloadTrigger]="reloadTrigger" />
         @if (wateringDevice) {
-          <app-watering-commands-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
-          <app-humidity-measurements-table [deviceId]="wateringDevice.id" [reloadTrigger]="deviceActivityReloadTrigger" />
+          <app-watering-commands-table [deviceId]="wateringDevice.id" [reloadTrigger]="wateringCommandsReloadTrigger" />
+          <app-humidity-measurements-table [deviceId]="wateringDevice.id" [reloadTrigger]="humidityMeasurementsReloadTrigger" />
         }
       </div>
     </section>

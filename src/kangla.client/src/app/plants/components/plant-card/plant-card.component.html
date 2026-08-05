@@ -21,6 +21,9 @@
 
     @if (wateringDevice) {
       <span class="device-attached"><mat-icon>water_drop</mat-icon>Watering device attached</span>
+      @if (wateringDevice.activeWateringCommandStatus) {
+        <app-watering-command-status-badge [status]="wateringDevice.activeWateringCommandStatus" />
+      }
     }
 
     @if (plant.description) {
@@ -36,9 +39,9 @@
       </button>
     }
     @if (wateringDevice) {
-      <button mat-stroked-button (click)="sendWateringCommand()" [disabled]="sendingDeviceCommand">
+      <button mat-stroked-button (click)="sendWateringCommand()" [disabled]="sendingDeviceCommand || hasActiveWateringCommand">
         <mat-icon>water</mat-icon>
-        {{ sendingDeviceCommand ? 'Sending…' : 'Water with device' }}
+        {{ deviceWateringActionLabel }}
       </button>
     }
   </mat-card-actions>

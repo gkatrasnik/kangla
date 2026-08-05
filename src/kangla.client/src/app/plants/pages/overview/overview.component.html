@@ -18,7 +18,6 @@
     <button mat-flat-button type="button" class="page-primary-action" [matMenuTriggerFor]="addPlantMenu">
       <mat-icon>add</mat-icon>
       Add plant
-      <mat-icon>arrow_drop_down</mat-icon>
     </button>
     <input type="file" #fileInput accept="image/*" capture="environment" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Take a plant photo">
     <mat-menu #addPlantMenu="matMenu" xPosition="before">
@@ -50,7 +49,7 @@
       <p class="eyebrow">Start your collection</p>
       <h2>Add your first plant</h2>
       <p>Kangla will help you identify it, build a watering schedule, and keep its care history in one place.</p>
-      <button mat-flat-button type="button" [matMenuTriggerFor]="addPlantMenu"><mat-icon>add</mat-icon>Add plant<mat-icon>arrow_drop_down</mat-icon></button>
+      <button mat-flat-button type="button" [matMenuTriggerFor]="addPlantMenu"><mat-icon>add</mat-icon>Add plant</button>
     </section>
   } @else {
     <section class="overview-section" aria-labelledby="attention-heading">
@@ -79,6 +78,9 @@
                 @if (wateringDevicesByPlantId.has(plant.id)) {
                   <span class="device-label"><mat-icon>water_drop</mat-icon>Watering device attached</span>
                 }
+                @if (getActiveWateringCommandStatus(plant.id); as commandStatus) {
+                  <app-watering-command-status-badge [status]="commandStatus" />
+                }
               </div>
               <span class="care-badge care-badge-warning"><mat-icon>water_drop</mat-icon>Needs water</span>
               <div class="attention-actions">
@@ -86,9 +88,9 @@
                   @if (wateringPlantIds.has(plant.id)) { Saving… } @else { Mark as watered }
                 </button>
                 @if (wateringDevicesByPlantId.has(plant.id)) {
-                  <button mat-stroked-button (click)="sendWateringCommand(plant)" [disabled]="deviceCommandPlantIds.has(plant.id)">
+                  <button mat-stroked-button (click)="sendWateringCommand(plant)" [disabled]="deviceCommandPlantIds.has(plant.id) || hasActiveWateringCommand(plant.id)">
                     <mat-icon>water</mat-icon>
-                    {{ deviceCommandPlantIds.has(plant.id) ? 'Sending…' : 'Water with device' }}
+                    {{ getDeviceWateringActionLabel(plant.id) }}
                   </button>
                 }
               </div>
@@ -121,6 +123,9 @@
                 <span class="upcoming-date">{{ plantService.getCareStatusLabel(plant) }}</span>
                 <h3>{{ plant.name }}</h3>
                 <p>{{ plant.location || 'Location not set' }}</p>
+                @if (getActiveWateringCommandStatus(plant.id); as commandStatus) {
+                  <app-watering-command-status-badge [status]="commandStatus" />
+                }
               </div>
               <mat-icon class="upcoming-arrow">chevron_right</mat-icon>
             </a>

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,11 +11,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs';
 import { WateringDevice } from '../../../watering-devices/watering-device';
 import { DeviceWateringActionService } from '../../../watering-commands/device-watering-action.service';
+import {
+  getActiveWateringCommandLabel,
+  isActiveWateringCommandStatus,
+  WateringCommand
+} from '../../../watering-commands/watering-command';
+import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/components/watering-command-status-badge/watering-command-status-badge.component';
 
 @Component({
   selector: 'app-plant-card',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective, WateringCommandStatusBadgeComponent],
   templateUrl: './plant-card.component.html',
   styleUrl: './plant-card.component.scss'
 })
@@ -23,6 +29,7 @@ export class PlantCardComponent {
   @Input() plant!: Plant;
   @Input() imageUrl!: string | undefined;
   @Input() wateringDevice: WateringDevice | null = null;
+  @Output() wateringCommandCreated = new EventEmitter<WateringCommand>();
   watering = false;
   sendingDeviceCommand = false;
 /**
@@ -53,13 +60,26 @@ export class PlantCardComponent {
   }
 
   sendWateringCommand(): void {
-    if (!this.wateringDevice || this.sendingDeviceCommand) {
+    if (!this.wateringDevice || this.sendingDeviceCommand || this.hasActiveWateringCommand) {
       return;
     }
 
     this.sendingDeviceCommand = true;
     this.deviceWateringActionService.send(this.wateringDevice, this.plant.name).pipe(
       finalize(() => this.sendingDeviceCommand = false)
-    ).subscribe();
+    ).subscribe(command => this.wateringCommandCreated.emit(command));
+  }
+
+  get hasActiveWateringCommand(): boolean {
+    return isActiveWateringCommandStatus(this.wateringDevice?.activeWateringCommandStatus);
+  }
+
+  get deviceWateringActionLabel(): string {
+    const status = this.wateringDevice?.activeWateringCommandStatus;
+    if (isActiveWateringCommandStatus(status)) {
+      return getActiveWateringCommandLabel(status);
+    }
+
+    return this.sendingDeviceCommand ? 'Sending…' : 'Water with device';
   }
 }

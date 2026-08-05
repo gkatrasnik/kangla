@@ -7,6 +7,7 @@ namespace kangla.Domain.Entities
         Completed,
         Failed,
         Cancelled,
-        Expired
+        Expired,
+        TimedOut
     }
 }

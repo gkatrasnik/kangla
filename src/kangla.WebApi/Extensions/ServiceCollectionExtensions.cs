@@ -10,6 +10,10 @@ using System.Text;
 using kangla.Infrastructure;
 using kangla.WebApi.ExceptionHandlers;
 using kangla.Application;
+using kangla.Application.ClientUpdates;
+using kangla.WebApi.ClientUpdates;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace kangla.WebApi.Extensions
 {
@@ -19,6 +23,15 @@ namespace kangla.WebApi.Extensions
         {
             services.AddInfrastructureServices(configuration);
             services.AddApplicationServices();
+            services.AddSingleton<IClientStateChangeNotifier, SignalRClientStateChangeNotifier>();
+            return services;
+        }
+
+        public static IServiceCollection AddClientUpdates(this IServiceCollection services)
+        {
+            services.AddSignalR()
+                .AddJsonProtocol(options => options.PayloadSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
             return services;
         }
 

@@ -1,4 +1,5 @@
 using kangla.Application.HumidityMeasurements;
+using kangla.Application.ClientUpdates;
 using kangla.Application.Shared;
 using kangla.Application.WateringDevices;
 using kangla.Domain.Entities;
@@ -17,15 +18,21 @@ namespace kangla.Application.WateringCommands
         private readonly IWateringCommandRepository _wateringCommandRepository;
         private readonly IWateringDeviceRepository _wateringDeviceRepository;
         private readonly IHumidityMeasurementRepository _humidityMeasurementRepository;
+        private readonly IClientStateChangeNotifier _clientStateChangeNotifier;
+        private readonly TimeProvider _timeProvider;
 
         public WateringCommandService(
             IWateringCommandRepository wateringCommandRepository,
             IWateringDeviceRepository wateringDeviceRepository,
-            IHumidityMeasurementRepository humidityMeasurementRepository)
+            IHumidityMeasurementRepository humidityMeasurementRepository,
+            IClientStateChangeNotifier clientStateChangeNotifier,
+            TimeProvider timeProvider)
         {
             _wateringCommandRepository = wateringCommandRepository;
             _wateringDeviceRepository = wateringDeviceRepository;
             _humidityMeasurementRepository = humidityMeasurementRepository;
+            _clientStateChangeNotifier = clientStateChangeNotifier;
+            _timeProvider = timeProvider;
         }
 
         /// <summary>
@@ -36,7 +43,7 @@ namespace kangla.Application.WateringCommands
             var device = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId)
                 ?? throw new KeyNotFoundException($"Watering device with ID {deviceId} was not found.");
 
-            var nowUtc = DateTime.UtcNow;
+            var nowUtc = GetUtcNow();
             var activeCommand = await _wateringCommandRepository.GetActiveForDeviceAsync(deviceId, nowUtc);
             if (activeCommand is not null)
             {
@@ -52,6 +59,11 @@ namespace kangla.Application.WateringCommands
             };
 
             var (storedCommand, created) = await _wateringCommandRepository.CreateOrGetActiveAsync(command, nowUtc);
+            if (created)
+            {
+                await NotifyAsync(userId, device.PlantId, device.Id, ClientStateResource.WateringCommands);
+            }
+
             return (ToResponse(storedCommand), created);
         }
 
@@ -60,7 +72,7 @@ namespace kangla.Application.WateringCommands
             var command = await _wateringCommandRepository.GetByIdForUserAsync(commandId, deviceId, userId)
                 ?? throw new KeyNotFoundException($"Watering command with ID {commandId} was not found.");
 
-            await ExpireIfNeededAsync(command);
+            command = await ReconcileInactiveCommandAsync(command);
             return ToResponse(command);
         }
 
@@ -73,6 +85,7 @@ namespace kangla.Application.WateringCommands
 
             var device = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId)
                 ?? throw new KeyNotFoundException($"Watering device with ID {deviceId} was not found.");
+            await _wateringCommandRepository.GetActiveForDeviceAsync(device.Id, GetUtcNow());
             var commands = await _wateringCommandRepository.GetForDeviceForUserAsync(device.Id, userId, pageNumber, pageSize);
 
             return new PagedResponseDto<WateringCommandResponseDto>
@@ -90,14 +103,22 @@ namespace kangla.Application.WateringCommands
             var command = await _wateringCommandRepository.GetByIdForUserAsync(commandId, deviceId, userId)
                 ?? throw new KeyNotFoundException($"Watering command with ID {commandId} was not found.");
 
-            await ExpireIfNeededAsync(command);
+            command = await ReconcileInactiveCommandAsync(command);
             if (command.Status != WateringCommandStatus.Pending)
             {
                 throw new InvalidOperationException("Only a pending watering command can be cancelled.");
             }
 
-            command.Status = WateringCommandStatus.Cancelled;
-            await _wateringCommandRepository.UpdateAsync(command);
+            var cancelled = await _wateringCommandRepository.TrySetStatusAsync(
+                command.Id,
+                WateringCommandStatus.Pending,
+                WateringCommandStatus.Cancelled);
+            if (!cancelled)
+            {
+                throw new InvalidOperationException("Only a pending watering command can be cancelled.");
+            }
+
+            await NotifyAsync(userId, command.WateringDevice?.PlantId, deviceId, ClientStateResource.WateringCommands);
         }
 
         /// <summary>
@@ -107,7 +128,7 @@ namespace kangla.Application.WateringCommands
         public async Task<DeviceCheckInResponseDto> CheckInAsync(DeviceCheckInRequestDto request, string deviceAccessKey)
         {
             var device = await GetDeviceForAccessKeyAsync(deviceAccessKey);
-            var nowUtc = DateTime.UtcNow;
+            var nowUtc = GetUtcNow();
 
             if (request.SoilHumidity.HasValue)
             {
@@ -117,6 +138,11 @@ namespace kangla.Application.WateringCommands
                     SoilHumidity = request.SoilHumidity.Value,
                     WateringDeviceId = device.Id
                 });
+                await NotifyAsync(
+                    device.UserId!,
+                    device.PlantId,
+                    device.Id,
+                    ClientStateResource.HumidityMeasurements);
             }
 
             var activeCommand = await _wateringCommandRepository.GetActiveForDeviceAsync(device.Id, nowUtc);
@@ -135,7 +161,7 @@ namespace kangla.Application.WateringCommands
             var command = await _wateringCommandRepository.GetByIdForDeviceAsync(commandId, device.Id)
                 ?? throw new KeyNotFoundException($"Watering command with ID {commandId} was not found.");
 
-            await ExpireIfNeededAsync(command);
+            command = await ReconcileInactiveCommandAsync(command);
             if (command.Status == WateringCommandStatus.Acknowledged)
             {
                 return ToResponse(command);
@@ -146,9 +172,27 @@ namespace kangla.Application.WateringCommands
                 throw new InvalidOperationException("Only a pending watering command can be acknowledged.");
             }
 
+            var acknowledgedAtUtc = GetUtcNow();
+            var acknowledged = await _wateringCommandRepository.TryAcknowledgeAsync(command.Id, acknowledgedAtUtc);
+            if (!acknowledged)
+            {
+                var currentCommand = await _wateringCommandRepository.GetByIdForDeviceAsync(command.Id, device.Id)
+                    ?? throw new KeyNotFoundException($"Watering command with ID {command.Id} was not found.");
+                if (currentCommand.Status == WateringCommandStatus.Acknowledged)
+                {
+                    return ToResponse(currentCommand);
+                }
+
+                throw new InvalidOperationException("Only a pending watering command can be acknowledged.");
+            }
+
             command.Status = WateringCommandStatus.Acknowledged;
-            command.AcknowledgedAtUtc = DateTime.UtcNow;
-            await _wateringCommandRepository.UpdateAsync(command);
+            command.AcknowledgedAtUtc = acknowledgedAtUtc;
+            await NotifyAsync(
+                device.UserId!,
+                device.PlantId,
+                device.Id,
+                ClientStateResource.WateringCommands);
             return ToResponse(command);
         }
 
@@ -166,9 +210,9 @@ namespace kangla.Application.WateringCommands
                 return ToResponse(command);
             }
 
-            if (command.Status != WateringCommandStatus.Acknowledged)
+            if (command.Status != WateringCommandStatus.Acknowledged && command.Status != WateringCommandStatus.TimedOut)
             {
-                throw new InvalidOperationException("Only an acknowledged watering command can report a result.");
+                throw new InvalidOperationException("Only an acknowledged or timed-out watering command can report a result.");
             }
 
             if (request.Outcome == WateringCommandOutcome.Completed)
@@ -190,8 +234,19 @@ namespace kangla.Application.WateringCommands
                     End = request.FinishedAtUtc.Value
                 };
 
-                await _wateringCommandRepository.CompleteAsync(command, wateringEvent);
-                command.WateringEventId = wateringEvent.Id;
+                var completed = await _wateringCommandRepository.TryCompleteAsync(command, wateringEvent);
+                if (!completed)
+                {
+                    return ToResponse(await GetResultAfterConcurrentUpdateAsync(command.Id, device.Id));
+                }
+
+                await NotifyAsync(
+                    device.UserId!,
+                    device.PlantId,
+                    device.Id,
+                    ClientStateResource.WateringCommands,
+                    ClientStateResource.Plant,
+                    ClientStateResource.WateringEvents);
                 return ToResponse(command);
             }
 
@@ -206,7 +261,17 @@ namespace kangla.Application.WateringCommands
                 command.FailureReason = request.FailureReason;
                 command.StartedAtUtc = request.StartedAtUtc;
                 command.FinishedAtUtc = request.FinishedAtUtc;
-                await _wateringCommandRepository.UpdateAsync(command);
+                var failed = await _wateringCommandRepository.TryFailAsync(command);
+                if (!failed)
+                {
+                    return ToResponse(await GetResultAfterConcurrentUpdateAsync(command.Id, device.Id));
+                }
+
+                await NotifyAsync(
+                    device.UserId!,
+                    device.PlantId,
+                    device.Id,
+                    ClientStateResource.WateringCommands);
                 return ToResponse(command);
             }
 
@@ -232,13 +297,67 @@ namespace kangla.Application.WateringCommands
             return device;
         }
 
-        private async Task ExpireIfNeededAsync(WateringCommand command)
+        private async Task<WateringCommand> ReconcileInactiveCommandAsync(WateringCommand command)
         {
-            if (command.Status == WateringCommandStatus.Pending && command.ExpiresAtUtc <= DateTime.UtcNow)
+            WateringCommandStatus? newStatus = null;
+            if (command.Status == WateringCommandStatus.Pending && command.ExpiresAtUtc <= GetUtcNow())
             {
-                command.Status = WateringCommandStatus.Expired;
-                await _wateringCommandRepository.UpdateAsync(command);
+                newStatus = WateringCommandStatus.Expired;
             }
+
+            if (command.Status == WateringCommandStatus.Acknowledged
+                && command.AcknowledgedAtUtc.HasValue
+                && command.AcknowledgedAtUtc.Value.AddSeconds(command.DurationSeconds).AddMinutes(2) <= GetUtcNow())
+            {
+                newStatus = WateringCommandStatus.TimedOut;
+            }
+
+            if (!newStatus.HasValue)
+            {
+                return command;
+            }
+
+            var updated = await _wateringCommandRepository.TrySetStatusAsync(command.Id, command.Status, newStatus.Value);
+            if (updated)
+            {
+                command.Status = newStatus.Value;
+                return command;
+            }
+
+            return await _wateringCommandRepository.GetByIdForDeviceAsync(command.Id, command.WateringDeviceId)
+                ?? throw new KeyNotFoundException($"Watering command with ID {command.Id} was not found.");
+        }
+
+        private async Task<WateringCommand> GetResultAfterConcurrentUpdateAsync(int commandId, int deviceId)
+        {
+            var command = await _wateringCommandRepository.GetByIdForDeviceAsync(commandId, deviceId)
+                ?? throw new KeyNotFoundException($"Watering command with ID {commandId} was not found.");
+            if (command.Status == WateringCommandStatus.Completed || command.Status == WateringCommandStatus.Failed)
+            {
+                return command;
+            }
+
+            throw new InvalidOperationException("The watering command changed before its result could be recorded.");
+        }
+
+        private Task NotifyAsync(
+            string userId,
+            int? plantId,
+            int deviceId,
+            params ClientStateResource[] resources)
+        {
+            return _clientStateChangeNotifier.NotifyAsync(userId, new ClientStateChangedDto
+            {
+                PlantId = plantId,
+                DeviceId = deviceId,
+                Resources = resources,
+                OccurredAtUtc = GetUtcNow()
+            });
+        }
+
+        private DateTime GetUtcNow()
+        {
+            return _timeProvider.GetUtcNow().UtcDateTime;
         }
 
         private static WateringCommandResponseDto ToResponse(WateringCommand command)
