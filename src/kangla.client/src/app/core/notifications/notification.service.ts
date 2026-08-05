@@ -11,7 +11,7 @@ export class NotificationService {
   constructor(private dialog: MatDialog, private snackbar: MatSnackBar) {}
 
   showServerError(title: string, message: string) {
-    this.dialog.open(NotificationDialogComponent, {
+    return this.dialog.open(NotificationDialogComponent, {
       data: { title, message }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,15 +14,25 @@ import { MatMenuModule } from '@angular/material/menu';
 import { PlantCreationService } from '../../plant-creation.service';
 import { WateringDevice } from '../../../watering-devices/watering-device';
 import { DeviceWateringActionService } from '../../../watering-commands/device-watering-action.service';
+import { RealtimeUpdatesService } from '../../../core/realtime/realtime-updates.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ActiveWateringCommandStatus,
+  getActiveWateringCommandLabel,
+  isActiveWateringCommandStatus,
+  WateringCommand
+} from '../../../watering-commands/watering-command';
+import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/components/watering-command-status-badge/watering-command-status-badge.component';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, ImageSrcDirective],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, ImageSrcDirective, WateringCommandStatusBadgeComponent],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss'
 })
 export class OverviewComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   plants: Plant[] = [];
   wateringDevicesByPlantId = new Map<number, WateringDevice>();
   wateringPlantIds = new Set<number>();
@@ -38,10 +48,24 @@ export class OverviewComponent implements OnInit {
     private deviceWateringActionService: DeviceWateringActionService,
     private plantCreationService: PlantCreationService,
     private notificationService: NotificationService,
+    private realtimeUpdatesService: RealtimeUpdatesService,
   ) {}
 
   ngOnInit(): void {
     this.loadOverview();
+    this.realtimeUpdatesService.changes$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(change => {
+      if (change.plantId !== null && change.resources.includes('plant')) {
+        this.refreshPlant(change.plantId);
+      }
+      if (change.deviceId !== null && change.resources.includes('wateringCommands')) {
+        this.refreshWateringDevice(change.deviceId);
+      }
+    });
+    this.realtimeUpdatesService.resync$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.loadOverview());
   }
 
   get overduePlants(): Plant[] {
@@ -108,17 +132,80 @@ export class OverviewComponent implements OnInit {
 
   sendWateringCommand(plant: Plant): void {
     const device = this.wateringDevicesByPlantId.get(plant.id);
-    if (!device || this.deviceCommandPlantIds.has(plant.id)) {
+    if (!device || this.deviceCommandPlantIds.has(plant.id) || isActiveWateringCommandStatus(device.activeWateringCommandStatus)) {
       return;
     }
 
     this.deviceCommandPlantIds.add(plant.id);
     this.deviceWateringActionService.send(device, plant.name).pipe(
       finalize(() => this.deviceCommandPlantIds.delete(plant.id))
-    ).subscribe();
+    ).subscribe(command => this.setActiveWateringCommand(command));
+  }
+
+  getActiveWateringCommandStatus(plantId: number): ActiveWateringCommandStatus | null {
+    return this.wateringDevicesByPlantId.get(plantId)?.activeWateringCommandStatus ?? null;
+  }
+
+  hasActiveWateringCommand(plantId: number): boolean {
+    return isActiveWateringCommandStatus(this.getActiveWateringCommandStatus(plantId));
+  }
+
+  getDeviceWateringActionLabel(plantId: number): string {
+    const status = this.getActiveWateringCommandStatus(plantId);
+    if (status) {
+      return getActiveWateringCommandLabel(status);
+    }
+
+    return this.deviceCommandPlantIds.has(plantId) ? 'Sending…' : 'Water with device';
   }
 
   private nextWateringTime(plant: Plant): number {
     return this.plantService.getNextWateringDate(plant)?.getTime() ?? Number.NEGATIVE_INFINITY;
+  }
+
+  private refreshPlant(plantId: number): void {
+    if (!this.plants.some(plant => plant.id === plantId)) {
+      return;
+    }
+
+    this.plantService.getPlantById(plantId).subscribe({
+      next: updatedPlant => {
+        this.plants = this.plants.map(plant => plant.id === plantId ? updatedPlant : plant);
+      },
+      error: () => {}
+    });
+  }
+
+  private refreshWateringDevice(deviceId: number): void {
+    if (![...this.wateringDevicesByPlantId.values()].some(device => device.id === deviceId)) {
+      return;
+    }
+
+    this.wateringDeviceService.get(deviceId).subscribe({
+      next: device => this.replaceWateringDevice(device),
+      error: () => {}
+    });
+  }
+
+  private setActiveWateringCommand(command: WateringCommand): void {
+    const device = [...this.wateringDevicesByPlantId.values()].find(candidate => candidate.id === command.deviceId);
+    if (!device || !isActiveWateringCommandStatus(command.status)) {
+      return;
+    }
+
+    this.replaceWateringDevice({ ...device, activeWateringCommandStatus: command.status });
+  }
+
+  private replaceWateringDevice(device: WateringDevice): void {
+    const devices = new Map(this.wateringDevicesByPlantId);
+    for (const [plantId, currentDevice] of devices) {
+      if (currentDevice.id === device.id) {
+        devices.delete(plantId);
+      }
+    }
+    if (device.plantId !== null) {
+      devices.set(device.plantId, device);
+    }
+    this.wateringDevicesByPlantId = devices;
   }
 }

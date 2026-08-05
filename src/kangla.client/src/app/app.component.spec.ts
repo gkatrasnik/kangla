@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AuthService } from './core/auth/auth.service';
+import { RealtimeUpdatesService } from './core/realtime/realtime-updates.service';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -16,6 +17,10 @@ describe('AppComponent', () => {
             userInfo$: of(null),
             logout: () => of(true)
           }
+        },
+        {
+          provide: RealtimeUpdatesService,
+          useValue: { initialize: () => {} }
         }
       ]
     }).compileComponents();

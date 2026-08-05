@@ -12,7 +12,8 @@
                     [class.command-state-queued]="getProgress(command) === 'queued'"
                     [class.command-state-watering]="getProgress(command) === 'watering'"
                     [class.command-state-completed]="getProgress(command) === 'completed'"
-                    [class.command-state-failed]="getProgress(command) === 'failed'">
+                    [class.command-state-failed]="getProgress(command) === 'failed'"
+                    [class.command-state-timed-out]="getProgress(command) === 'timedOut'">
                 <mat-icon>{{ getProgressIcon(command) }}</mat-icon>
                 {{ getProgressLabel(command) }}
               </span>

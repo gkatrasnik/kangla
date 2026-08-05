@@ -1,3 +1,5 @@
+import { ActiveWateringCommandStatus } from '../watering-commands/watering-command';
+
 export interface WateringDevice {
   id: number;
   active: boolean;
@@ -6,4 +8,5 @@ export interface WateringDevice {
   wateringIntervalSetting: number;
   wateringDurationSetting: number;
   plantId: number | null;
+  activeWateringCommandStatus: ActiveWateringCommandStatus | null;
 }

@@ -54,6 +54,11 @@ table {
   color: var(--app-danger);
 }
 
+.command-state-timed-out {
+  background: var(--app-warning-surface);
+  color: var(--app-warning);
+}
+
 .command-detail {
   color: var(--app-text-muted);
   display: block;

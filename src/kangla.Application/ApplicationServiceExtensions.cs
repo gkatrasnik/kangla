@@ -15,6 +15,7 @@ namespace kangla.Application
           this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfile));
+            services.AddSingleton(TimeProvider.System);
             services.AddScoped<IWateringDeviceService, WateringDeviceService>();
             services.AddScoped<IWateringEventService, WateringEventService>();
             services.AddScoped<IWateringCommandService, WateringCommandService>();

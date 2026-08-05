@@ -16,34 +16,62 @@ namespace kangla.Infrastructure.Repositories
 
         public async Task<WateringCommand?> GetActiveForDeviceAsync(int deviceId, DateTime nowUtc)
         {
-            var expiredCommands = await _context.WateringCommands
-                .Where(c => c.WateringDeviceId == deviceId
-                    && c.Status == WateringCommandStatus.Pending
-                    && c.ExpiresAtUtc <= nowUtc)
+            var activeCommands = await GetActiveForDevicesAsync(new[] { deviceId }, nowUtc);
+            return activeCommands.FirstOrDefault();
+        }
+
+        public async Task<IReadOnlyCollection<WateringCommand>> GetActiveForDevicesAsync(
+            IReadOnlyCollection<int> deviceIds,
+            DateTime nowUtc)
+        {
+            if (deviceIds.Count == 0)
+            {
+                return Array.Empty<WateringCommand>();
+            }
+
+            var distinctDeviceIds = deviceIds.Distinct().ToArray();
+            var candidates = await _context.WateringCommands
+                .AsNoTracking()
+                .Where(c => distinctDeviceIds.Contains(c.WateringDeviceId)
+                    && (c.Status == WateringCommandStatus.Pending || c.Status == WateringCommandStatus.Acknowledged))
                 .ToListAsync();
 
-            if (expiredCommands.Count > 0)
+            var expiredCommandIds = candidates
+                .Where(c => c.Status == WateringCommandStatus.Pending && c.ExpiresAtUtc <= nowUtc)
+                .Select(c => c.Id)
+                .ToArray();
+            if (expiredCommandIds.Length > 0)
             {
-                foreach (var command in expiredCommands)
-                {
-                    command.Status = WateringCommandStatus.Expired;
-                }
+                await _context.WateringCommands
+                    .Where(c => expiredCommandIds.Contains(c.Id) && c.Status == WateringCommandStatus.Pending)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(c => c.Status, WateringCommandStatus.Expired));
+            }
 
-                await _context.SaveChangesAsync();
+            var timedOutCommandIds = candidates
+                .Where(c => c.Status == WateringCommandStatus.Acknowledged && HasAcknowledgementTimedOut(c, nowUtc))
+                .Select(c => c.Id)
+                .ToArray();
+            if (timedOutCommandIds.Length > 0)
+            {
+                await _context.WateringCommands
+                    .Where(c => timedOutCommandIds.Contains(c.Id) && c.Status == WateringCommandStatus.Acknowledged)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(c => c.Status, WateringCommandStatus.TimedOut));
             }
 
             return await _context.WateringCommands
                 .AsNoTracking()
-                .Where(c => c.WateringDeviceId == deviceId
+                .Where(c => distinctDeviceIds.Contains(c.WateringDeviceId)
                     && (c.Status == WateringCommandStatus.Pending || c.Status == WateringCommandStatus.Acknowledged))
-                .OrderBy(c => c.RequestedAtUtc)
-                .FirstOrDefaultAsync();
+                .OrderBy(c => c.WateringDeviceId)
+                .ThenBy(c => c.RequestedAtUtc)
+                .ToListAsync();
         }
 
         public async Task<WateringCommand?> GetByIdForDeviceAsync(int commandId, int deviceId)
         {
             return await _context.WateringCommands
                 .AsNoTracking()
+                .Include(c => c.WateringDevice)
                 .FirstOrDefaultAsync(c => c.Id == commandId && c.WateringDeviceId == deviceId);
         }
 
@@ -51,6 +79,7 @@ namespace kangla.Infrastructure.Repositories
         {
             return await _context.WateringCommands
                 .AsNoTracking()
+                .Include(c => c.WateringDevice)
                 .FirstOrDefaultAsync(c => c.Id == commandId && c.WateringDeviceId == deviceId && c.WateringDevice.UserId == userId);
         }
 
@@ -99,19 +128,72 @@ namespace kangla.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task CompleteAsync(WateringCommand command, WateringEvent wateringEvent)
+        public async Task<bool> TrySetStatusAsync(int commandId, WateringCommandStatus expectedStatus, WateringCommandStatus newStatus)
+        {
+            var affectedRows = await _context.WateringCommands
+                .Where(c => c.Id == commandId && c.Status == expectedStatus)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(c => c.Status, newStatus));
+
+            return affectedRows == 1;
+        }
+
+        public async Task<bool> TryAcknowledgeAsync(int commandId, DateTime acknowledgedAtUtc)
+        {
+            var affectedRows = await _context.WateringCommands
+                .Where(c => c.Id == commandId && c.Status == WateringCommandStatus.Pending)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(c => c.Status, WateringCommandStatus.Acknowledged)
+                    .SetProperty(c => c.AcknowledgedAtUtc, acknowledgedAtUtc));
+
+            return affectedRows == 1;
+        }
+
+        public async Task<bool> TryFailAsync(WateringCommand command)
+        {
+            var affectedRows = await _context.WateringCommands
+                .Where(c => c.Id == command.Id
+                    && (c.Status == WateringCommandStatus.Acknowledged || c.Status == WateringCommandStatus.TimedOut))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(c => c.Status, WateringCommandStatus.Failed)
+                    .SetProperty(c => c.StartedAtUtc, command.StartedAtUtc)
+                    .SetProperty(c => c.FinishedAtUtc, command.FinishedAtUtc)
+                    .SetProperty(c => c.FailureReason, command.FailureReason));
+
+            return affectedRows == 1;
+        }
+
+        public async Task<bool> TryCompleteAsync(WateringCommand command, WateringEvent wateringEvent)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            var existingCommand = await _context.WateringCommands.FirstOrDefaultAsync(c => c.Id == command.Id)
-                ?? throw new KeyNotFoundException($"Watering command with ID {command.Id} was not found.");
-
-            _context.Entry(existingCommand).CurrentValues.SetValues(command);
             _context.WateringEvents.Add(wateringEvent);
             await _context.SaveChangesAsync();
 
-            existingCommand.WateringEventId = wateringEvent.Id;
-            await _context.SaveChangesAsync();
+            var affectedRows = await _context.WateringCommands
+                .Where(c => c.Id == command.Id
+                    && (c.Status == WateringCommandStatus.Acknowledged || c.Status == WateringCommandStatus.TimedOut))
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(c => c.Status, WateringCommandStatus.Completed)
+                    .SetProperty(c => c.StartedAtUtc, command.StartedAtUtc)
+                    .SetProperty(c => c.FinishedAtUtc, command.FinishedAtUtc)
+                    .SetProperty(c => c.FailureReason, (string?)null)
+                    .SetProperty(c => c.WateringEventId, wateringEvent.Id));
+
+            if (affectedRows != 1)
+            {
+                await transaction.RollbackAsync();
+                _context.Entry(wateringEvent).State = EntityState.Detached;
+                return false;
+            }
+
             await transaction.CommitAsync();
+            command.WateringEventId = wateringEvent.Id;
+            return true;
+        }
+
+        private static bool HasAcknowledgementTimedOut(WateringCommand command, DateTime nowUtc)
+        {
+            return command.AcknowledgedAtUtc.HasValue
+                && command.AcknowledgedAtUtc.Value.AddSeconds(command.DurationSeconds).AddMinutes(2) <= nowUtc;
         }
     }
 }

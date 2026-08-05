@@ -1,4 +1,6 @@
-﻿namespace kangla.Application.WateringDevices
+﻿using kangla.Domain.Entities;
+
+namespace kangla.Application.WateringDevices
 {
     public class WateringDeviceResponseDto
     {
@@ -11,5 +13,6 @@
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? PlantId { get; set; }
+        public WateringCommandStatus? ActiveWateringCommandStatus { get; set; }
     }
 }

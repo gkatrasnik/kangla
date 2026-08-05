@@ -58,6 +58,12 @@
   padding-block: 1.5rem;
 }
 
+.care-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .care-summary dl {
   display: grid;
   gap: 1rem;

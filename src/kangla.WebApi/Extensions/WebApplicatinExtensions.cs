@@ -9,6 +9,17 @@ namespace kangla.WebApi.Extensions
         {
             app.UseExceptionHandler();
             //app.UseStatusCodePages();
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path.StartsWithSegments("/hubs/client-updates")
+                    && context.Request.Query.TryGetValue("access_token", out var accessToken)
+                    && !string.IsNullOrWhiteSpace(accessToken))
+                {
+                    context.Request.Headers.Authorization = $"Bearer {accessToken}";
+                }
+
+                await next();
+            });
             app.UseMiddleware<SerilogEnrichmentMiddleware>();
             app.UseSerilogRequestLogging();
             if (env.IsDevelopment())

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using kangla.Application.ClientUpdates;
 using kangla.Application.Images;
 using kangla.Application.Shared;
 using kangla.Domain.Entities;
@@ -15,8 +16,18 @@ namespace kangla.Application.WateringDevices
         private readonly IMapper _mapper;
         private readonly IImageProcessingService _imageProcessingService;
         private readonly IImageService _imageService;
+        private readonly IClientStateChangeNotifier _clientStateChangeNotifier;
+        private readonly TimeProvider _timeProvider;
 
-        public WateringDeviceService(IWateringDeviceRepository wateringDeviceRepository, IWateringCommandRepository wateringCommandRepository, IPlantsRepository plantsRepository, IMapper mapper, IImageProcessingService imageProcessingService, IImageService imageService)
+        public WateringDeviceService(
+            IWateringDeviceRepository wateringDeviceRepository,
+            IWateringCommandRepository wateringCommandRepository,
+            IPlantsRepository plantsRepository,
+            IMapper mapper,
+            IImageProcessingService imageProcessingService,
+            IImageService imageService,
+            IClientStateChangeNotifier clientStateChangeNotifier,
+            TimeProvider timeProvider)
         {
             _wateringDeviceRepository = wateringDeviceRepository;
             _wateringCommandRepository = wateringCommandRepository;
@@ -24,24 +35,38 @@ namespace kangla.Application.WateringDevices
             _mapper = mapper;
             _imageProcessingService = imageProcessingService;
             _imageService = imageService;
+            _clientStateChangeNotifier = clientStateChangeNotifier;
+            _timeProvider = timeProvider;
         }
 
         public async Task<PagedResponseDto<WateringDeviceResponseDto>> GetWateringDevicesAsync(string userId, int pageNumber, int pageSize)
         {
             var wateringDevices = await _wateringDeviceRepository.GetWateringDevicesAsync(userId, pageNumber, pageSize);
-            return _mapper.Map<PagedResponseDto<WateringDeviceResponseDto>>(wateringDevices);
+            var response = _mapper.Map<PagedResponseDto<WateringDeviceResponseDto>>(wateringDevices);
+            var activeCommands = await _wateringCommandRepository.GetActiveForDevicesAsync(
+                wateringDevices.Data.Select(device => device.Id).ToArray(),
+                _timeProvider.GetUtcNow().UtcDateTime);
+            var statusesByDeviceId = activeCommands.ToDictionary(command => command.WateringDeviceId, command => command.Status);
+            foreach (var device in response.Data)
+            {
+                device.ActiveWateringCommandStatus = statusesByDeviceId.TryGetValue(device.Id, out var status)
+                    ? status
+                    : null;
+            }
+
+            return response;
         }
 
         public async Task<WateringDeviceResponseDto> GetWateringDeviceAsync(int deviceId, string userId)
         {
             var wateringDevice = await _wateringDeviceRepository.GetWateringDeviceByIdAsync(deviceId, userId) ?? throw new KeyNotFoundException($"Watering device with ID {deviceId} not found for current user.");
-            return _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
+            return await ToResponseAsync(wateringDevice);
         }
 
         public async Task<WateringDeviceResponseDto?> GetWateringDeviceByPlantIdAsync(int plantId, string userId)
         {
             var wateringDevice = await _wateringDeviceRepository.GetWateringDeviceByPlantIdAsync(plantId, userId);
-            return wateringDevice is null ? null : _mapper.Map<WateringDeviceResponseDto>(wateringDevice);
+            return wateringDevice is null ? null : await ToResponseAsync(wateringDevice);
         }
 
         public async Task<WateringDeviceResponseDto> ClaimWateringDeviceAsync(WateringDeviceCreateRequestDto wateringDeviceDto, string userId)
@@ -103,7 +128,7 @@ namespace kangla.Application.WateringDevices
 
             await _wateringDeviceRepository.UpdateWateringDeviceAsync(existingEntity, userId);
 
-            return _mapper.Map<WateringDeviceResponseDto>(existingEntity);
+            return await ToResponseAsync(existingEntity);
         }
 
 
@@ -133,7 +158,9 @@ namespace kangla.Application.WateringDevices
 
         private async Task CancelPendingCommandOrBlockInProgressCommandAsync(WateringDevice device)
         {
-            var activeCommand = await _wateringCommandRepository.GetActiveForDeviceAsync(device.Id, DateTime.UtcNow);
+            var activeCommand = await _wateringCommandRepository.GetActiveForDeviceAsync(
+                device.Id,
+                _timeProvider.GetUtcNow().UtcDateTime);
             if (activeCommand is null)
             {
                 return;
@@ -144,8 +171,41 @@ namespace kangla.Application.WateringDevices
                 throw new InvalidOperationException("The device cannot be detached, moved, or removed while it is watering. Wait for the command to complete or fail.");
             }
 
-            activeCommand.Status = WateringCommandStatus.Cancelled;
-            await _wateringCommandRepository.UpdateAsync(activeCommand);
+            var cancelled = await _wateringCommandRepository.TrySetStatusAsync(
+                activeCommand.Id,
+                WateringCommandStatus.Pending,
+                WateringCommandStatus.Cancelled);
+            if (!cancelled)
+            {
+                var currentCommand = await _wateringCommandRepository.GetByIdForDeviceAsync(activeCommand.Id, device.Id);
+                if (currentCommand?.Status == WateringCommandStatus.Acknowledged)
+                {
+                    throw new InvalidOperationException("The device cannot be detached, moved, or removed while it is watering. Wait for the command to complete or fail.");
+                }
+
+                return;
+            }
+
+            if (device.UserId is not null)
+            {
+                await _clientStateChangeNotifier.NotifyAsync(device.UserId, new ClientStateChangedDto
+                {
+                    PlantId = device.PlantId,
+                    DeviceId = device.Id,
+                    Resources = new[] { ClientStateResource.WateringCommands },
+                    OccurredAtUtc = _timeProvider.GetUtcNow().UtcDateTime
+                });
+            }
+        }
+
+        private async Task<WateringDeviceResponseDto> ToResponseAsync(WateringDevice device)
+        {
+            var response = _mapper.Map<WateringDeviceResponseDto>(device);
+            var activeCommand = await _wateringCommandRepository.GetActiveForDeviceAsync(
+                device.Id,
+                _timeProvider.GetUtcNow().UtcDateTime);
+            response.ActiveWateringCommandStatus = activeCommand?.Status;
+            return response;
         }
 
         public static string HashDeviceAccessKey(string accessKey)

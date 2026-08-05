@@ -30,6 +30,10 @@ export class WateringDeviceService {
     return this.http.get<WateringDevice>(`${this.apiUrl}/WateringDevices/plant/${plantId}`);
   }
 
+  get(deviceId: number): Observable<WateringDevice> {
+    return this.http.get<WateringDevice>(`${this.apiUrl}/WateringDevices/device/${deviceId}`);
+  }
+
   getAll(pageNumber: number, pageSize: number): Observable<PagedResponse<WateringDevice>> {
     return this.http.get<PagedResponse<WateringDevice>>(`${this.apiUrl}/WateringDevices?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
