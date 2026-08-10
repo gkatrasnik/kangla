@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { RealtimeUpdatesService } from './core/realtime/realtime-updates.service';
+import { PwaInstallPromptComponent } from './shared/components/pwa-install-prompt/pwa-install-prompt.component';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,8 @@ import { RealtimeUpdatesService } from './core/realtime/realtime-updates.service
     MatIconModule,
     MatMenuModule,
     MatDividerModule,
-    LoadingIndicatorComponent
+    LoadingIndicatorComponent,
+    PwaInstallPromptComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

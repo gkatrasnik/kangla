@@ -10,10 +10,12 @@
                 <mat-icon>add</mat-icon>
                 Add plant
             </button>
-            <input type="file" #fileInput accept="image/*" capture="environment" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Take a plant photo">
+            <input type="file" #cameraInput accept="image/*" capture="environment" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Take a plant photo">
+            <input type="file" #galleryInput accept="image/*" class="visually-hidden" (change)="onImageSelected($event)" aria-label="Choose a plant photo from the gallery">
         </div>
         <mat-menu #addPlantMenu="matMenu" xPosition="before">
-            <button mat-menu-item (click)="fileInput.click()"><mat-icon>add_a_photo</mat-icon><span>Identify plant</span></button>
+            <button mat-menu-item (click)="cameraInput.click()"><mat-icon>photo_camera</mat-icon><span>Take a photo</span></button>
+            <button mat-menu-item (click)="galleryInput.click()"><mat-icon>photo_library</mat-icon><span>Choose from gallery</span></button>
             <button mat-menu-item (click)="addPlantManually()"><mat-icon>edit</mat-icon><span>Add manually</span></button>
         </mat-menu>
     </header>
