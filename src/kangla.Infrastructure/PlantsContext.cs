@@ -20,6 +20,7 @@ namespace kangla.Infrastructure
         public DbSet<HumidityMeasurement> HumidityMeasurements { get; set; }
         public DbSet<Plant> Plants { get; set; }
         public DbSet<MediaImage> Images { get; set; }
+        public DbSet<UserNotificationPreference> UserNotificationPreferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,6 +75,12 @@ namespace kangla.Infrastructure
             modelBuilder.Entity<WateringDevice>()
                 .HasIndex(d => d.DeviceAccessKeyHash)
                 .IsUnique();
+
+            modelBuilder.Entity<UserNotificationPreference>()
+                .HasOne<IdentityUser>()
+                .WithOne()
+                .HasForeignKey<UserNotificationPreference>(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public Task<int> SaveChangesAsync()

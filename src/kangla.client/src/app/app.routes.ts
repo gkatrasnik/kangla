@@ -9,6 +9,7 @@ import { PasswordResetComponent } from './auth/pages/password-reset/password-res
 import { ForgotPasswordComponent } from './auth/pages/forgot-password/forgot-password.component';
 import { WateringDevicesPageComponent } from './watering-devices/pages/watering-devices-page/watering-devices-page.component';
 import { OverviewComponent } from './plants/pages/overview/overview.component';
+import { SettingsComponent } from './settings/pages/settings/settings.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full'},
@@ -21,5 +22,6 @@ export const routes: Routes = [
     { path: 'plants', component: HomeComponent, canActivate: mapToCanActivate([AuthGuard])  },
     { path: 'details/:id', component: DetailsComponent, canActivate: mapToCanActivate([AuthGuard])  },
     { path: 'watering-devices', component: WateringDevicesPageComponent, canActivate: mapToCanActivate([AuthGuard]) },
+    { path: 'settings', component: SettingsComponent, canActivate: mapToCanActivate([AuthGuard]) },
     { path: '**', redirectTo: '/home' },
 ];
