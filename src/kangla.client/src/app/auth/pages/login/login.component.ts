@@ -30,6 +30,7 @@ import { finalize } from 'rxjs';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isSubmitting = false;
+  private isErrorDialogOpen = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -46,7 +47,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void { }
 
   onSubmit(): void {
-    if (this.loginForm.valid && !this.isSubmitting) {
+    if (this.loginForm.valid && !this.isSubmitting && !this.isErrorDialogOpen) {
       const { email, password } = this.loginForm.value;
       this.isSubmitting = true;
       this.authService.login(email, password).pipe(
@@ -58,7 +59,10 @@ export class LoginComponent implements OnInit {
         error: (error) => {
           const { title, errors } = this.errorService.parseErrorResponse(error);
           const errorMessage = `${errors.join(', ')}`;
-          this.notificationService.showServerError(title, errorMessage);
+          this.isErrorDialogOpen = true;
+          this.notificationService.showServerError(title, errorMessage)
+            .afterClosed()
+            .subscribe(() => this.isErrorDialogOpen = false);
         }
       });
     }
