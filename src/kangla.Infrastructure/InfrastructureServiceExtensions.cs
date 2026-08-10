@@ -29,6 +29,8 @@ namespace kangla.Infrastructure
             services.AddResendEmail(configuration);
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<INotificationPreferenceService, NotificationPreferenceService>();
+            services.AddScoped<IWateringReminderService, WateringReminderService>();
             services.AddScoped<IImageProcessingService, ImageProcessingService>();
             services.AddScoped<IPlantRecognitionService, PlantRecognitionService>();
             return services;

@@ -1,0 +1,22 @@
+.settings-page {
+    max-width: 760px;
+}
+.settings-page mat-card {
+    padding: .5rem;
+}
+.settings-page mat-card-content {
+    padding-top: 1.5rem;
+}
+.help-text {
+    color: rgba(0, 0, 0, .65);
+    margin: 1rem 0 0;
+}
+.settings-state {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 0;
+}
+.settings-error {
+    color: #b3261e;
+}

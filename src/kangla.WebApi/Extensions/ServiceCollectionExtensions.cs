@@ -14,6 +14,7 @@ using kangla.Application.ClientUpdates;
 using kangla.WebApi.ClientUpdates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using kangla.WebApi.Services;
 
 namespace kangla.WebApi.Extensions
 {
@@ -24,6 +25,7 @@ namespace kangla.WebApi.Extensions
             services.AddInfrastructureServices(configuration);
             services.AddApplicationServices();
             services.AddSingleton<IClientStateChangeNotifier, SignalRClientStateChangeNotifier>();
+            services.AddHostedService<WateringReminderBackgroundService>();
             return services;
         }
 
