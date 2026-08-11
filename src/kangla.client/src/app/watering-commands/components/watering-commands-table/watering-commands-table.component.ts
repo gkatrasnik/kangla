@@ -5,11 +5,12 @@ import { MatTableModule } from '@angular/material/table';
 import { WateringCommandService } from '../../watering-command.service';
 import { WateringCommand } from '../../watering-command';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-watering-commands-table',
   standalone: true,
-  imports: [DatePipe, MatCardModule, MatTableModule, MatIconModule],
+  imports: [DatePipe, MatCardModule, MatTableModule, MatIconModule, MatPaginatorModule],
   templateUrl: './watering-commands-table.component.html',
   styleUrl: './watering-commands-table.component.scss'
 })
@@ -18,6 +19,10 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
   @Input() reloadTrigger = 0;
   commands: WateringCommand[] = [];
   displayedColumns = ['requestedAtUtc', 'status', 'durationSeconds', 'finishedAtUtc'];
+  totalRecords = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  readonly pageSizeOptions = [10, 20, 50];
 
   constructor(private wateringCommandService: WateringCommandService) {}
 
@@ -85,9 +90,18 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['reloadTrigger'] && !changes['reloadTrigger'].firstChange) {
+    if (changes['deviceId'] && !changes['deviceId'].firstChange) {
+      this.pageIndex = 0;
+      this.load();
+    } else if (changes['reloadTrigger'] && !changes['reloadTrigger'].firstChange) {
       this.load();
     }
+  }
+
+  handlePageEvent(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.load();
   }
 
   private load(): void {
@@ -95,6 +109,9 @@ export class WateringCommandsTableComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.wateringCommandService.getAll(this.deviceId, 1, 10).subscribe(response => this.commands = response.data);
+    this.wateringCommandService.getAll(this.deviceId, this.pageIndex + 1, this.pageSize).subscribe(response => {
+      this.commands = response.data;
+      this.totalRecords = response.totalRecords;
+    });
   }
 }

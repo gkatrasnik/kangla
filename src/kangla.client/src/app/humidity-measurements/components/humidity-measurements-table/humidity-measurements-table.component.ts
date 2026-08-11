@@ -4,11 +4,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { HumidityMeasurementService } from '../../humidity-measurement.service';
 import { HumidityMeasurement } from '../../humidity-measurement';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-humidity-measurements-table',
   standalone: true,
-  imports: [DatePipe, MatCardModule, MatTableModule],
+  imports: [DatePipe, MatCardModule, MatTableModule, MatPaginatorModule],
   templateUrl: './humidity-measurements-table.component.html',
   styleUrl: './humidity-measurements-table.component.scss'
 })
@@ -25,9 +26,18 @@ export class HumidityMeasurementsTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['reloadTrigger'] && !changes['reloadTrigger'].firstChange) {
+    if (changes['deviceId'] && !changes['deviceId'].firstChange) {
+      this.pageIndex = 0;
+      this.load();
+    } else if (changes['reloadTrigger'] && !changes['reloadTrigger'].firstChange) {
       this.load();
     }
+  }
+
+  handlePageEvent(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.load();
   }
 
   private load(): void {
@@ -35,6 +45,9 @@ export class HumidityMeasurementsTableComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.humidityMeasurementService.getAll(this.deviceId, 1, 10).subscribe(response => this.measurements = response.data);
+    this.humidityMeasurementService.getAll(this.deviceId, this.pageIndex + 1, this.pageSize).subscribe(response => {
+      this.measurements = response.data;
+      this.totalRecords = response.totalRecords;
+    });
   }
 }
