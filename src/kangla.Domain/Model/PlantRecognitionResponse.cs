@@ -8,6 +8,7 @@
         public string? WateringInstructions { get; set; }
         public int? WateringInterval { get; set; }
         public string? AdditionalTips { get; set; }
+        public string? IdentificationConfidence { get; set; }
         public string? Error { get; set; }
     }
 }

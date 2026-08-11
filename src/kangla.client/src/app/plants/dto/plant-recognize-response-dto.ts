@@ -6,5 +6,6 @@ export interface PlantRecognizeResponseDto {
     wateringInterval?: number
     wateringInstructions?: string 
     imageId?: string
+    identificationConfidence?: 'low' | 'medium' | 'high'
     error?: string
 }
