@@ -1,19 +1,28 @@
-.pwa-install-prompt {
-  align-items: center;
-  background: var(--app-primary-soft);
-  border-bottom: 1px solid var(--app-border);
-  color: var(--app-text);
-  display: flex;
-  gap: 1rem;
-  padding: 0.8rem max(1rem, calc((100% - 1200px) / 2 + 1.5rem));
+:host {
+  display: contents;
 }
 
-.pwa-install-icon {
-  color: var(--app-primary);
+.pwa-install-prompt {
+  animation: pwa-install-prompt-enter 180ms ease-out;
+  background: var(--app-surface);
+  border: 2px solid var(--app-primary);
+  border-radius: 0.75rem;
+  bottom: 1.5rem;
+  box-shadow: 0 12px 32px rgba(25, 46, 29, 0.18);
+  color: var(--app-text);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: min(26rem, calc(100vw - 3rem));
+  padding: 1.25rem;
+  position: fixed;
+  right: 1.5rem;
+  width: max-content;
+  z-index: 1100;
 }
 
 .pwa-install-copy {
-  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .pwa-install-copy h2,
@@ -22,14 +31,15 @@
 }
 
 .pwa-install-copy h2 {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .pwa-install-copy p {
   color: var(--app-text-muted);
-  font-size: 0.85rem;
-  margin-top: 0.15rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin-top: 0.5rem;
 }
 
 .pwa-install-copy p mat-icon {
@@ -42,17 +52,29 @@
 .pwa-install-actions {
   align-items: center;
   display: flex;
-  flex: 0 0 auto;
-  gap: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 @media (max-width: 680px) {
   .pwa-install-prompt {
-    align-items: flex-start;
-    flex-wrap: wrap;
+    bottom: 1rem;
+    left: 1rem;
+    max-width: none;
+    right: 1rem;
+    width: auto;
   }
+}
 
-  .pwa-install-actions {
-    margin-left: 2.5rem;
+@media (prefers-reduced-motion: reduce) {
+  .pwa-install-prompt {
+    animation: none;
+  }
+}
+
+@keyframes pwa-install-prompt-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
   }
 }

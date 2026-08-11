@@ -83,16 +83,16 @@
   ],
   "screenshots": [
     {
-      "src": "screenshots/kangla-desktop.jpg",
-      "sizes": "960x702",
-      "type": "image/jpg",
+      "src": "screenshots/kangla-desktop.png",
+      "sizes": "1360x890",
+      "type": "image/png",
       "form_factor": "wide",
       "label": "Home screen"
     },
     {
-      "src": "screenshots/kangla-mobile.jpg",
-      "sizes": "392x846",
-      "type": "image/webp",
+      "src": "screenshots/kangla-mobile.png",
+      "sizes": "416x898",
+      "type": "image/png",
       "label": "Home screen"
     }
   ]

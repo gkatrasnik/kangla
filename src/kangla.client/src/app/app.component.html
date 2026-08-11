@@ -5,7 +5,7 @@
 @if (showToolbar) {
   <header class="app-header">
     <mat-toolbar class="app-toolbar">
-      <a routerLink="/home" class="logo" aria-label="Kangla overview">
+      <a routerLink="/home" class="logo" aria-label="Kangla home">
         <span class="logo-mark"><img src="./images/kangla-transparent-96x96.png" alt="" height="36" width="36" /></span>
         <span>Kangla</span>
       </a>
@@ -13,7 +13,7 @@
       <nav class="primary-navigation" aria-label="Main navigation">
         <a mat-button routerLink="/home" routerLinkActive="active-navigation-item" [routerLinkActiveOptions]="{exact: true}" ariaCurrentWhenActive="page">
           <mat-icon>home</mat-icon>
-          Overview
+          Home
         </a>
         <a mat-button routerLink="/plants" routerLinkActive="active-navigation-item" ariaCurrentWhenActive="page">
           <mat-icon>local_florist</mat-icon>

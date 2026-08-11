@@ -1,23 +1,23 @@
 @if (prompt$ | async; as prompt) {
-  <aside class="pwa-install-prompt" role="region" aria-label="Install Kangla">
-    <mat-icon class="pwa-install-icon" aria-hidden="true">get_app</mat-icon>
+  <aside
+    class="pwa-install-prompt"
+    role="dialog"
+    aria-labelledby="pwa-install-title"
+    aria-describedby="pwa-install-description">
     <div class="pwa-install-copy">
-      <h2>Install Kangla</h2>
+      <h2 id="pwa-install-title">Install Kangla</h2>
       @if (prompt === 'ios') {
-        <p>For quick access, tap <mat-icon aria-label="Share">ios_share</mat-icon> Share, then choose <strong>Add to Home Screen</strong>.</p>
+        <p id="pwa-install-description">For quick access, tap <mat-icon aria-label="Share">ios_share</mat-icon> Share, then choose <strong>Add to Home Screen</strong>.</p>
       } @else {
-        <p>Add Kangla to your home screen for quick access to your plants and care schedule.</p>
+        <p id="pwa-install-description">Add Kangla to your home screen for quick access to your plants and care schedule.</p>
       }
     </div>
     <div class="pwa-install-actions">
-      @if (prompt === 'native') {
-        <button mat-flat-button type="button" (click)="install()">
-          <mat-icon>download</mat-icon>
-          Install
-        </button>
-      }
       <button mat-button type="button" (click)="notNow()">Not now</button>
       <button mat-button type="button" (click)="never()">Never</button>
+      @if (prompt === 'native') {
+        <button mat-flat-button type="button" (click)="install()">Install</button>
+      }
     </div>
   </aside>
 }
