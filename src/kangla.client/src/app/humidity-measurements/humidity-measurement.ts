@@ -1,6 +1,7 @@
 export interface HumidityMeasurement {
   id: number;
   dateTime: string;
-  soilHumidity: number;
+  rawSoilMoisture: number;
+  soilMoisturePercentage: number | null;
   wateringDeviceId: number;
 }

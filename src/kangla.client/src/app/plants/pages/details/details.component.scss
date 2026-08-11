@@ -170,6 +170,10 @@
   width: 3.5rem;
 }
 
+.device-moisture-gauge {
+  grid-column: 2 / -1;
+}
+
 .activity-stack {
   display: flex;
   flex-direction: column;
@@ -216,6 +220,10 @@
   .device-empty button {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .device-moisture-gauge {
+    grid-column: 1 / -1;
   }
 
   .hero-actions > * {

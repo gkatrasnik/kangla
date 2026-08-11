@@ -10,6 +10,7 @@ import { PlantRecognizeResponseDto } from './dto/plant-recognize-response-dto';
 import { HttpContext } from '@angular/common/http';
 import { SkipLoading } from '../core/loading/loading.interceptor';
 import { PlantCreateRequestDto } from './dto/plant-create-request-dto';
+import { WateringDevice } from '../watering-devices/watering-device';
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +71,7 @@ export class PlantService {
         location: dto.location,
         notes: dto.notes,
         wateringInterval: dto.wateringInterval,
+        desiredSoilMoisturePercentage: dto.desiredSoilMoisturePercentage,
         wateringInstructions: dto.wateringInstructions,
         createdAt: dto.createdAt,
         updatedAt: dto.updatedAt,
@@ -85,6 +87,21 @@ export class PlantService {
 
     const nextWateringDate = this.getNextWateringDate(plant);
     return nextWateringDate ? new Date() > nextWateringDate : true;
+  }
+
+  isWateringNeeded(plant: Plant, wateringDevice: WateringDevice | null = null): boolean {
+    if (wateringDevice) {
+      const percentage = wateringDevice.latestSoilMoistureMeasurement?.soilMoisturePercentage;
+      const target = plant.desiredSoilMoisturePercentage;
+
+      if (percentage === null || percentage === undefined || target === null || target === undefined) {
+        return false;
+      }
+
+      return Math.abs(percentage - target) > 15;
+    }
+
+    return this.isWateringOverdue(plant);
   }
 
   getNextWateringDate(plant: Plant): Date | null {
@@ -112,7 +129,30 @@ export class PlantService {
     return Math.ceil((nextWateringDate.getTime() - Date.now()) / millisecondsPerDay);
   }
 
-  getCareStatusLabel(plant: Plant): string {
+  getCareStatusLabel(plant: Plant, wateringDevice: WateringDevice | null = null): string {
+    if (wateringDevice) {
+      const percentage = wateringDevice.latestSoilMoistureMeasurement?.soilMoisturePercentage;
+      const target = plant.desiredSoilMoisturePercentage;
+
+      if (percentage === null || percentage === undefined) {
+        return 'Waiting for sensor reading';
+      }
+
+      if (target === null || target === undefined) {
+        return 'Set moisture target';
+      }
+
+      if (percentage < target - 15) {
+        return 'Moisture low';
+      }
+
+      if (percentage > target + 15) {
+        return 'Moisture high';
+      }
+
+      return 'Moisture in range';
+    }
+
     const daysUntilWatering = this.getDaysUntilWatering(plant);
 
     if (daysUntilWatering === null) {

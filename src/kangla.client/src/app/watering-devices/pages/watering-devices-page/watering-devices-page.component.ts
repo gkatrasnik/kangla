@@ -85,7 +85,6 @@ export class WateringDevicesPageComponent implements OnInit {
   save(device: WateringDevice): void {
     const request: WateringDeviceUpdateRequest = {
       plantId: device.plantId,
-      minimumSoilHumidity: device.minimumSoilHumidity,
       wateringIntervalSetting: device.wateringIntervalSetting,
       wateringDurationSetting: device.wateringDurationSetting
     };

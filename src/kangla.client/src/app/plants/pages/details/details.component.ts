@@ -33,6 +33,7 @@ import {
   isActiveWateringCommandStatus
 } from '../../../watering-commands/watering-command';
 import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/components/watering-command-status-badge/watering-command-status-badge.component';
+import { SoilMoistureGaugeComponent } from '../../../shared/components/soil-moisture-gauge/soil-moisture-gauge.component';
 
 @Component({
   selector: 'app-details',
@@ -48,7 +49,8 @@ import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/
     MatCardModule,
     WateringCommandsTableComponent,
     HumidityMeasurementsTableComponent,
-    WateringCommandStatusBadgeComponent
+    WateringCommandStatusBadgeComponent,
+    SoilMoistureGaugeComponent
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.scss'
@@ -108,6 +110,9 @@ export class DetailsComponent {
       }
       if ((matchesPlant || matchesDevice) && change.resources.includes('humidityMeasurements')) {
         this.humidityMeasurementsReloadTrigger++;
+        if (change.deviceId !== null) {
+          this.refreshWateringDevice(change.deviceId);
+        }
       }
     });
     this.realtimeUpdatesService.resync$.pipe(
@@ -237,7 +242,6 @@ export class DetailsComponent {
 
           this.wateringDeviceService.update(device.id, {
             plantId: this.plantId,
-            minimumSoilHumidity: device.minimumSoilHumidity,
             wateringIntervalSetting: device.wateringIntervalSetting,
             wateringDurationSetting: device.wateringDurationSetting
           }).subscribe({
@@ -277,11 +281,11 @@ export class DetailsComponent {
     });
   }
 
-  isWateringOverdue(): boolean {
+  isWateringNeeded(): boolean {
     if (!this.plant) {
       return true;
     }
-    return this.plantService.isWateringOverdue(this.plant);
+    return this.plantService.isWateringNeeded(this.plant, this.wateringDevice);
   }
 
   private refreshPlant(): void {

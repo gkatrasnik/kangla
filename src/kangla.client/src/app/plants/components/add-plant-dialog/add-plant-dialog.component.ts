@@ -43,6 +43,7 @@ export class AddPlantDialogComponent {
       location: ['', [Validators.maxLength(100)]],
       notes: [data?.additionalTips || '', [Validators.maxLength(500)]],
       wateringInterval: [data?.wateringInterval || '', [Validators.required, Validators.min(1), Validators.max(365)]],
+      desiredSoilMoisturePercentage: [data?.desiredSoilMoisturePercentage ?? '', [Validators.required, Validators.min(0), Validators.max(100)]],
       wateringInstructions: [data?.wateringInstructions || '', [Validators.maxLength(500)]],
       imageId: [data?.imageId || null]
     });
@@ -64,6 +65,7 @@ export class AddPlantDialogComponent {
         location: formValues.location || '',
         notes: formValues.notes || '',
         wateringInterval: formValues.wateringInterval,
+        desiredSoilMoisturePercentage: formValues.desiredSoilMoisturePercentage,
         wateringInstructions: formValues.wateringInstructions || '',
         imageId: this.imageId ? this.imageId : null // Ensure imageId is numeric if present
       };

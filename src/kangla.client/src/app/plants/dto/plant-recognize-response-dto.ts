@@ -4,7 +4,8 @@ export interface PlantRecognizeResponseDto {
     description?: string
     additionalTips?: string
     wateringInterval?: number
-    wateringInstructions?: string 
+    desiredSoilMoisturePercentage?: number | null
+    wateringInstructions?: string
     imageId?: string
     error?: string
 }
