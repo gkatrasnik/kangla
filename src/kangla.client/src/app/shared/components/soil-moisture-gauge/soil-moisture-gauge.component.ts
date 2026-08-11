@@ -24,8 +24,15 @@ export class SoilMoistureGaugeComponent {
     }
 
     const deviation = Math.abs(this.percentage - this.target);
-    const hue = 120 * Math.max(0, 1 - Math.max(0, deviation - 15) / 15);
-    return `hsl(${hue} 68% 40%)`;
+    if (deviation <= 10) {
+      return 'hsl(120 68% 40%)';
+    }
+
+    if (deviation <= 20) {
+      return 'hsl(48 100% 42%)';
+    }
+
+    return 'hsl(0 68% 40%)';
   }
 
   get statusLabel(): string {

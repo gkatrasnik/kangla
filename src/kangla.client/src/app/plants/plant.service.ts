@@ -98,7 +98,7 @@ export class PlantService {
         return false;
       }
 
-      return Math.abs(percentage - target) > 15;
+      return Math.abs(percentage - target) > 10;
     }
 
     return this.isWateringOverdue(plant);
@@ -142,11 +142,11 @@ export class PlantService {
         return 'Set moisture target';
       }
 
-      if (percentage < target - 15) {
+      if (percentage < target - 10) {
         return 'Moisture low';
       }
 
-      if (percentage > target + 15) {
+      if (percentage > target + 10) {
         return 'Moisture high';
       }
 

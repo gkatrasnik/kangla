@@ -17,13 +17,13 @@ describe('PlantService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('uses the inclusive 15-point moisture green zone when a device is attached', () => {
+  it('uses the inclusive 10-point moisture green zone when a device is attached', () => {
     const plant = createPlant(50);
 
-    expect(service.isWateringNeeded(plant, createDevice(35))).toBeFalse();
-    expect(service.isWateringNeeded(plant, createDevice(65))).toBeFalse();
-    expect(service.isWateringNeeded(plant, createDevice(34))).toBeTrue();
-    expect(service.isWateringNeeded(plant, createDevice(66))).toBeTrue();
+    expect(service.isWateringNeeded(plant, createDevice(40))).toBeFalse();
+    expect(service.isWateringNeeded(plant, createDevice(60))).toBeFalse();
+    expect(service.isWateringNeeded(plant, createDevice(39))).toBeTrue();
+    expect(service.isWateringNeeded(plant, createDevice(61))).toBeTrue();
   });
 
   it('uses the watering interval only when no device is attached', () => {
@@ -38,9 +38,9 @@ describe('PlantService', () => {
   it('describes sensor-based care status', () => {
     const plant = createPlant(50);
 
-    expect(service.getCareStatusLabel(plant, createDevice(34))).toBe('Moisture low');
+    expect(service.getCareStatusLabel(plant, createDevice(39))).toBe('Moisture low');
     expect(service.getCareStatusLabel(plant, createDevice(50))).toBe('Moisture in range');
-    expect(service.getCareStatusLabel(plant, createDevice(66))).toBe('Moisture high');
+    expect(service.getCareStatusLabel(plant, createDevice(61))).toBe('Moisture high');
   });
 
   function createPlant(target: number): Plant {

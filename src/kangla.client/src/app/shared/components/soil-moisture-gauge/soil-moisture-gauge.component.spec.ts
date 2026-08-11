@@ -11,15 +11,18 @@ describe('SoilMoistureGaugeComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('stays green through 15 points of deviation and is red at 30 points', () => {
+  it('is green through 10 points, yellow through 20, and red beyond that', () => {
     component.target = 50;
     component.measurement = createMeasurement(50);
     expect(component.gaugeColor).toBe('hsl(120 68% 40%)');
 
-    component.measurement = createMeasurement(35);
+    component.measurement = createMeasurement(40);
     expect(component.gaugeColor).toBe('hsl(120 68% 40%)');
 
-    component.measurement = createMeasurement(20);
+    component.measurement = createMeasurement(30);
+    expect(component.gaugeColor).toBe('hsl(48 100% 42%)');
+
+    component.measurement = createMeasurement(29);
     expect(component.gaugeColor).toBe('hsl(0 68% 40%)');
   });
 
