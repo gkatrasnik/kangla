@@ -18,6 +18,9 @@ namespace kangla.Application.Plants.DTO
         [Required]
         [Range(1, 365, ErrorMessage = "Watering interval must be between 1 and 365 days.")]
         public int WateringInterval { get; set; } = 0;
+        [Required]
+        [Range(0, 100, ErrorMessage = "Desired soil moisture must be between 0 and 100 percent.")]
+        public int? DesiredSoilMoisturePercentage { get; set; }
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
         public string? WateringInstructions { get; set; } = default!;
         public Guid? ImageId { get; set; }

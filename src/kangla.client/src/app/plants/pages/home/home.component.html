@@ -76,12 +76,18 @@
               </div>
               <div class="attention-copy">
                 <a [routerLink]="['/details', plant.id]" class="plant-name">{{ plant.name }}</a>
-                <p>{{ plant.location || 'Location not set' }} · {{ plantService.getCareStatusLabel(plant) }}</p>
+                <p>{{ plant.location || 'Location not set' }} · {{ plantService.getCareStatusLabel(plant, wateringDevicesByPlantId.get(plant.id) ?? null) }}</p>
                 @if (wateringDevicesByPlantId.has(plant.id)) {
                   <span class="device-label"><mat-icon>water_drop</mat-icon>Watering device attached</span>
                 }
                 @if (getActiveWateringCommandStatus(plant.id); as commandStatus) {
                   <app-watering-command-status-badge [status]="commandStatus" />
+                }
+                @if (wateringDevicesByPlantId.get(plant.id); as device) {
+                  <app-soil-moisture-gauge
+                    [measurement]="device.latestSoilMoistureMeasurement ?? null"
+                    [target]="plant.desiredSoilMoisturePercentage"
+                    [compact]="true" />
                 }
               </div>
               <span class="care-badge care-badge-warning"><mat-icon>water_drop</mat-icon>Needs water</span>
@@ -122,11 +128,17 @@
             <a class="upcoming-item" [routerLink]="['/details', plant.id]">
               <div class="upcoming-icon"><mat-icon>calendar_today</mat-icon></div>
               <div>
-                <span class="upcoming-date">{{ plantService.getCareStatusLabel(plant) }}</span>
+                <span class="upcoming-date">{{ plantService.getCareStatusLabel(plant, wateringDevicesByPlantId.get(plant.id) ?? null) }}</span>
                 <h3>{{ plant.name }}</h3>
                 <p>{{ plant.location || 'Location not set' }}</p>
                 @if (getActiveWateringCommandStatus(plant.id); as commandStatus) {
                   <app-watering-command-status-badge [status]="commandStatus" />
+                }
+                @if (wateringDevicesByPlantId.get(plant.id); as device) {
+                  <app-soil-moisture-gauge
+                    [measurement]="device.latestSoilMoistureMeasurement ?? null"
+                    [target]="plant.desiredSoilMoisturePercentage"
+                    [compact]="true" />
                 }
               </div>
               <mat-icon class="upcoming-arrow">chevron_right</mat-icon>

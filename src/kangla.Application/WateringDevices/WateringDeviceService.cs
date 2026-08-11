@@ -12,6 +12,7 @@ namespace kangla.Application.WateringDevices
     {
         private readonly IWateringDeviceRepository _wateringDeviceRepository;
         private readonly IWateringCommandRepository _wateringCommandRepository;
+        private readonly IHumidityMeasurementRepository _humidityMeasurementRepository;
         private readonly IPlantsRepository _plantsRepository;
         private readonly IMapper _mapper;
         private readonly IImageProcessingService _imageProcessingService;
@@ -22,6 +23,7 @@ namespace kangla.Application.WateringDevices
         public WateringDeviceService(
             IWateringDeviceRepository wateringDeviceRepository,
             IWateringCommandRepository wateringCommandRepository,
+            IHumidityMeasurementRepository humidityMeasurementRepository,
             IPlantsRepository plantsRepository,
             IMapper mapper,
             IImageProcessingService imageProcessingService,
@@ -31,6 +33,7 @@ namespace kangla.Application.WateringDevices
         {
             _wateringDeviceRepository = wateringDeviceRepository;
             _wateringCommandRepository = wateringCommandRepository;
+            _humidityMeasurementRepository = humidityMeasurementRepository;
             _plantsRepository = plantsRepository;
             _mapper = mapper;
             _imageProcessingService = imageProcessingService;
@@ -47,10 +50,15 @@ namespace kangla.Application.WateringDevices
                 wateringDevices.Data.Select(device => device.Id).ToArray(),
                 _timeProvider.GetUtcNow().UtcDateTime);
             var statusesByDeviceId = activeCommands.ToDictionary(command => command.WateringDeviceId, command => command.Status);
+            var latestMeasurements = await _humidityMeasurementRepository.GetLatestHumidityMeasurementsByDeviceIdsAsync(
+                wateringDevices.Data.Select(device => device.Id).ToArray());
             foreach (var device in response.Data)
             {
                 device.ActiveWateringCommandStatus = statusesByDeviceId.TryGetValue(device.Id, out var status)
                     ? status
+                    : null;
+                device.LatestSoilMoistureMeasurement = latestMeasurements.TryGetValue(device.Id, out var measurement)
+                    ? ToLatestMeasurementResponse(measurement)
                     : null;
             }
 
@@ -118,7 +126,6 @@ namespace kangla.Application.WateringDevices
                 await CancelPendingCommandOrBlockInProgressCommandAsync(existingEntity);
             }
 
-            existingEntity.MinimumSoilHumidity = wateringDeviceDto.MinimumSoilHumidity;
             existingEntity.WateringIntervalSetting = wateringDeviceDto.WateringIntervalSetting;
             existingEntity.WateringDurationSetting = wateringDeviceDto.WateringDurationSetting;
             if (wateringDeviceDto.PlantId.HasValue)
@@ -205,7 +212,21 @@ namespace kangla.Application.WateringDevices
                 device.Id,
                 _timeProvider.GetUtcNow().UtcDateTime);
             response.ActiveWateringCommandStatus = activeCommand?.Status;
+            var latestMeasurements = await _humidityMeasurementRepository.GetLatestHumidityMeasurementsByDeviceIdsAsync(new[] { device.Id });
+            response.LatestSoilMoistureMeasurement = latestMeasurements.TryGetValue(device.Id, out var measurement)
+                ? ToLatestMeasurementResponse(measurement)
+                : null;
             return response;
+        }
+
+        private static LatestSoilMoistureMeasurementDto ToLatestMeasurementResponse(HumidityMeasurement measurement)
+        {
+            return new LatestSoilMoistureMeasurementDto
+            {
+                RawSoilMoisture = measurement.RawSoilMoisture,
+                SoilMoisturePercentage = measurement.SoilMoisturePercentage!.Value,
+                MeasuredAtUtc = measurement.DateTime
+            };
         }
 
         public static string HashDeviceAccessKey(string accessKey)

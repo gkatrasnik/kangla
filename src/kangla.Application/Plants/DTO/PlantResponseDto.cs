@@ -9,6 +9,7 @@
         public string? Location { get; set; }
         public string? Notes { get; set; }
         public int WateringInterval { get; set; } //days
+        public int? DesiredSoilMoisturePercentage { get; set; }
         public string? WateringInstructions { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

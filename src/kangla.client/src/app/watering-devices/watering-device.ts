@@ -4,9 +4,15 @@ export interface WateringDevice {
   id: number;
   active: boolean;
   deleted: boolean;
-  minimumSoilHumidity: number;
   wateringIntervalSetting: number;
   wateringDurationSetting: number;
   plantId: number | null;
   activeWateringCommandStatus: ActiveWateringCommandStatus | null;
+  latestSoilMoistureMeasurement?: LatestSoilMoistureMeasurement | null;
+}
+
+export interface LatestSoilMoistureMeasurement {
+  rawSoilMoisture: number;
+  soilMoisturePercentage: number;
+  measuredAtUtc: Date;
 }

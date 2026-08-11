@@ -6,6 +6,7 @@ export interface Plant {
     location?: string;
     notes?: string;
     wateringInterval: number;
+    desiredSoilMoisturePercentage?: number | null;
     wateringInstructions?: string;
     createdAt: Date;
     updatedAt: Date;

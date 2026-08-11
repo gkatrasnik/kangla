@@ -18,6 +18,13 @@
       <span matTextSuffix>days</span>
     </mat-form-field>
 
+    <mat-form-field>
+      <mat-label>Desired soil moisture</mat-label>
+      <input matInput type="number" formControlName="desiredSoilMoisturePercentage" required min="0" max="100">
+      <span matTextSuffix>%</span>
+      <mat-hint>Exact target for the soil-moisture gauge.</mat-hint>
+    </mat-form-field>
+
     <details class="optional-details">
       <summary>Plant details and care notes</summary>
       <div class="optional-fields">

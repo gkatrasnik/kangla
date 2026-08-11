@@ -17,11 +17,12 @@ import {
   WateringCommand
 } from '../../../watering-commands/watering-command';
 import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/components/watering-command-status-badge/watering-command-status-badge.component';
+import { SoilMoistureGaugeComponent } from '../../../shared/components/soil-moisture-gauge/soil-moisture-gauge.component';
 
 @Component({
   selector: 'app-plant-card',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective, WateringCommandStatusBadgeComponent],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, RouterLink, ImageSrcDirective, WateringCommandStatusBadgeComponent, SoilMoistureGaugeComponent],
   templateUrl: './plant-card.component.html',
   styleUrl: './plant-card.component.scss'
 })

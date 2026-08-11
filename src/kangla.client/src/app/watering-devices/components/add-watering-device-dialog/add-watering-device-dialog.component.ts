@@ -31,7 +31,6 @@ export class AddWateringDeviceDialogComponent {
     this.form = formBuilder.group({
       deviceAccessKey: ['', [Validators.required, Validators.maxLength(128)]],
       plantId: [data.plantId ?? null],
-      minimumSoilHumidity: [400, [Validators.required, Validators.min(250), Validators.max(750)]],
       wateringIntervalSetting: [7, [Validators.required, Validators.min(1), Validators.max(365)]],
       wateringDurationSetting: [3, [Validators.required, Validators.min(1), Validators.max(60)]]
     });

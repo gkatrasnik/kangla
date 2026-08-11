@@ -30,6 +30,27 @@ namespace kangla.Infrastructure.Repositories
             return new PagedResponse<HumidityMeasurement>(humidityMeasurements, pageNumber, pageSize, totalRecords);
         }
 
+        public async Task<IReadOnlyDictionary<int, HumidityMeasurement>> GetLatestHumidityMeasurementsByDeviceIdsAsync(IReadOnlyCollection<int> deviceIds)
+        {
+            if (deviceIds.Count == 0)
+            {
+                return new Dictionary<int, HumidityMeasurement>();
+            }
+
+            var measurements = await _context.HumidityMeasurements.AsNoTracking()
+                .Where(measurement =>
+                    deviceIds.Contains(measurement.WateringDeviceId) &&
+                    measurement.SoilMoisturePercentage.HasValue)
+                .GroupBy(measurement => measurement.WateringDeviceId)
+                .Select(group => group
+                    .OrderByDescending(measurement => measurement.DateTime)
+                    .ThenByDescending(measurement => measurement.Id)
+                    .First())
+                .ToListAsync();
+
+            return measurements.ToDictionary(measurement => measurement.WateringDeviceId);
+        }
+
         public async Task AddHumidityMeasurementAsync(HumidityMeasurement humidityMeasurement)
         {
             _context.HumidityMeasurements.Add(humidityMeasurement);

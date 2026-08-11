@@ -47,6 +47,7 @@ export class EditPlantDialogComponent {
         location: [data.location || '', [Validators.maxLength(100)]],
         notes: [data.notes || '', [Validators.maxLength(500)]],
         wateringInterval: [data.wateringInterval, [Validators.required, Validators.min(1), Validators.max(365)]],
+        desiredSoilMoisturePercentage: [data.desiredSoilMoisturePercentage ?? '', [Validators.required, Validators.min(0), Validators.max(100)]],
         wateringInstructions: [data.wateringInstructions || '', [Validators.maxLength(500)]],
       });
 
@@ -66,6 +67,7 @@ export class EditPlantDialogComponent {
       formData.append('location', formValues.location || '');
       formData.append('notes', formValues.notes || '');
       formData.append('wateringInterval', formValues.wateringInterval);
+      formData.append('desiredSoilMoisturePercentage', formValues.desiredSoilMoisturePercentage);
       formData.append('wateringInstructions', formValues.wateringInstructions || '');
   
       if (this.selectedFile) {
@@ -107,6 +109,7 @@ export class EditPlantDialogComponent {
       original.location === current.location &&
       original.notes === current.notes &&
       original.wateringInterval === current.wateringInterval &&
+      original.desiredSoilMoisturePercentage === current.desiredSoilMoisturePercentage &&
       original.wateringInstructions === current.wateringInstructions
     );
   }

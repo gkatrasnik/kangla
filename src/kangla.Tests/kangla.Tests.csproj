@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\kangla.DeviceSimulator\kangla.DeviceSimulator.csproj" />
     <ProjectReference Include="..\kangla.Infrastructure\kangla.Infrastructure.csproj" />
   </ItemGroup>
 

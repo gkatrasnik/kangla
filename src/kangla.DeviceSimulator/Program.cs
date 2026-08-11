@@ -2,18 +2,23 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using kangla.DeviceSimulator;
 
 const string DeviceAccessKey = "kangla-simulator-01";
+const int DryValue = 3200;
+const int WetValue = 1500;
 
 var baseUrl = args.Length > 0 ? args[0].TrimEnd('/') : "https://localhost:7049";
-var soilHumidity = args.Length > 1 && int.TryParse(args[1], out var parsedHumidity) ? parsedHumidity : 500;
+var rawSoilMoisture = args.Length > 1 && int.TryParse(args[1], out var parsedHumidity) ? parsedHumidity : 2350;
 var checkInSeconds = args.Length > 2 && int.TryParse(args[2], out var parsedInterval) ? parsedInterval : 60;
 
-if (soilHumidity is < 0 or > 1000 || checkInSeconds < 1)
+if (rawSoilMoisture is < 0 or > 4095 || checkInSeconds < 1)
 {
-    Console.Error.WriteLine("Soil humidity must be 0-1000 and check-in seconds must be at least 1.");
+    Console.Error.WriteLine("Raw soil moisture must be 0-4095 and check-in seconds must be at least 1.");
     return;
 }
+
+var soilMoisturePercentage = SoilMoistureCalibration.CalculatePercentage(rawSoilMoisture, DryValue, WetValue);
 
 using var client = new HttpClient { BaseAddress = new Uri($"{baseUrl}/") };
 client.DefaultRequestHeaders.Add("X-Device-Access-Key", DeviceAccessKey);
@@ -25,7 +30,9 @@ while (true)
 {
     try
     {
-        var response = await client.PostAsJsonAsync("api/device/check-ins", new DeviceCheckInRequest(soilHumidity));
+        var response = await client.PostAsJsonAsync(
+            "api/device/check-ins",
+            new DeviceCheckInRequest(rawSoilMoisture, soilMoisturePercentage));
         if (!response.IsSuccessStatusCode)
         {
             var details = await response.Content.ReadAsStringAsync();
@@ -41,7 +48,7 @@ while (true)
             var checkIn = await response.Content.ReadFromJsonAsync<DeviceCheckInResponse>(jsonOptions)
                 ?? throw new InvalidOperationException("The check-in response was empty.");
 
-            Console.WriteLine($"{DateTimeOffset.Now:T} Check-in recorded; humidity: {soilHumidity}.");
+            Console.WriteLine($"{DateTimeOffset.Now:T} Check-in recorded; moisture: {soilMoisturePercentage}% (raw {rawSoilMoisture}).");
             if (checkIn.Command is not null)
             {
                 await ExecuteWateringCommandAsync(client, checkIn.Command, jsonOptions);
@@ -79,7 +86,7 @@ static async Task ExecuteWateringCommandAsync(HttpClient client, DeviceWateringC
     Console.WriteLine($"Watering command {command.Id} completed; API status: {completed?.Status ?? "unknown"}.");
 }
 
-internal sealed record DeviceCheckInRequest(int SoilHumidity);
+internal sealed record DeviceCheckInRequest(int RawSoilMoisture, int SoilMoisturePercentage);
 
 internal sealed record DeviceCheckInResponse(DeviceWateringCommand? Command);
 

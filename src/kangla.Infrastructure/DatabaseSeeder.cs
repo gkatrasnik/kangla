@@ -63,6 +63,7 @@ namespace kangla.Infrastructure
                     Location = "Garden",
                     Notes = "Needs regular pruning",
                     WateringInterval = 7,
+                    DesiredSoilMoisturePercentage = 45,
                     WateringInstructions = "Water weekly during the growing season.",
                     UserId = demoUser1Id,
                     WateringEvents = new List<WateringEvent>
@@ -78,6 +79,7 @@ namespace kangla.Infrastructure
                     Location = "Greenhouse",
                     Notes = "Check soil moisture frequently",
                     WateringInterval = 3,
+                    DesiredSoilMoisturePercentage = 65,
                     WateringInstructions = "Water every 3 days during fruiting.",
                     UserId = demoUser1Id,
                     WateringEvents = new List<WateringEvent>
@@ -93,6 +95,7 @@ namespace kangla.Infrastructure
                     Location = "Front Yard",
                     Notes = "Attracts bees",
                     WateringInterval = 14,
+                    DesiredSoilMoisturePercentage = 30,
                     WateringInstructions = "Water biweekly, less in winter.",
                     UserId = demoUser2Id,
                     WateringEvents = new List<WateringEvent>
@@ -108,6 +111,7 @@ namespace kangla.Infrastructure
                     Location = "Front Yard 2",
                     Notes = "Spreads quickly",
                     WateringInterval = 5,
+                    DesiredSoilMoisturePercentage = 60,
                     WateringInstructions = "Water every 5 days.",
                     UserId = demoUser2Id,
                     WateringEvents = new List<WateringEvent>
@@ -132,7 +136,6 @@ namespace kangla.Infrastructure
 
             _context.WateringDevices.Add(new WateringDevice
             {
-                MinimumSoilHumidity = 400,
                 WateringIntervalSetting = 7,
                 WateringDurationSetting = 3,
                 DeviceAccessKeyHash = accessKeyHash

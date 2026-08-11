@@ -35,7 +35,7 @@ describe('HomeComponent', () => {
           useValue: {
             getAllPlants: () => of({ pageNumber: 1, pageSize: 1000, totalPages: 0, totalRecords: 0, data: [] }),
             getPlantById,
-            isWateringOverdue: (plant: Plant) => !plant.lastWateringDateTime,
+            isWateringNeeded: (plant: Plant) => !plant.lastWateringDateTime,
             getNextWateringDate: () => new Date(),
             getCareStatusLabel: () => 'Water today'
           }
@@ -138,7 +138,6 @@ describe('HomeComponent', () => {
       id,
       active: true,
       deleted: false,
-      minimumSoilHumidity: 400,
       wateringIntervalSetting: 7,
       wateringDurationSetting: 3,
       plantId,

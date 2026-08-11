@@ -2,11 +2,12 @@
   <mat-card-header><mat-card-title>Recent soil moisture</mat-card-title></mat-card-header>
   <mat-card-content>
     @if (measurements.length) {
-      <p class="measurement-help">Sensor readings use the device’s raw 0–1000 scale.</p>
+      <p class="measurement-help">Percentages are calibrated on the device. Raw 12-bit readings are retained for diagnostics.</p>
       <div class="activity-table-container">
         <table mat-table [dataSource]="measurements">
-          <ng-container matColumnDef="dateTime"><th mat-header-cell *matHeaderCellDef>Measured</th><td mat-cell *matCellDef="let measurement">{{ measurement.dateTime | date:'short' }}</td></ng-container>
-          <ng-container matColumnDef="soilHumidity"><th mat-header-cell *matHeaderCellDef>Sensor reading</th><td mat-cell *matCellDef="let measurement">{{ measurement.soilHumidity }}</td></ng-container>
+          <ng-container matColumnDef="dateTime"><th mat-header-cell *matHeaderCellDef>Measured</th><td mat-cell *matCellDef="let measurement">{{ measurement.dateTime | date:'dd/MM/yyyy' }}</td></ng-container>
+          <ng-container matColumnDef="soilMoisturePercentage"><th mat-header-cell *matHeaderCellDef>Soil moisture</th><td mat-cell *matCellDef="let measurement">{{ measurement.soilMoisturePercentage !== null && measurement.soilMoisturePercentage !== undefined ? measurement.soilMoisturePercentage + '%' : 'Legacy raw reading' }}</td></ng-container>
+          <ng-container matColumnDef="rawSoilMoisture"><th mat-header-cell *matHeaderCellDef>Raw ADC</th><td mat-cell *matCellDef="let measurement">{{ measurement.rawSoilMoisture }}</td></ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>

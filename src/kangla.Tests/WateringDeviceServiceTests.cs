@@ -25,6 +25,13 @@ public class WateringDeviceServiceTests
         var activeDevice = AddDevice(context, "user-1", WateringCommandStatus.Acknowledged, nowUtc.UtcDateTime);
         var completedDevice = AddDevice(context, "user-1", WateringCommandStatus.Completed, nowUtc.UtcDateTime);
         AddDevice(context, "user-2", WateringCommandStatus.Pending, nowUtc.UtcDateTime);
+        context.HumidityMeasurements.Add(new HumidityMeasurement
+        {
+            WateringDevice = activeDevice,
+            DateTime = nowUtc.UtcDateTime,
+            RawSoilMoisture = 2350,
+            SoilMoisturePercentage = 50
+        });
         await context.SaveChangesAsync();
         context.ChangeTracker.Clear();
 
@@ -32,6 +39,7 @@ public class WateringDeviceServiceTests
         var service = new WateringDeviceService(
             new WateringDeviceRepository(context),
             new WateringCommandRepository(context),
+            new HumidityMeasurementRepository(context),
             null!,
             mapperConfiguration.CreateMapper(),
             null!,
@@ -45,6 +53,9 @@ public class WateringDeviceServiceTests
         Assert.Equal(
             WateringCommandStatus.Acknowledged,
             response.Data.Single(device => device.Id == activeDevice.Id).ActiveWateringCommandStatus);
+        Assert.Equal(
+            50,
+            response.Data.Single(device => device.Id == activeDevice.Id).LatestSoilMoistureMeasurement?.SoilMoisturePercentage);
         Assert.Null(response.Data.Single(device => device.Id == completedDevice.Id).ActiveWateringCommandStatus);
     }
 

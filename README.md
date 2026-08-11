@@ -44,9 +44,10 @@ key printed on its sticker. The user enters that key to claim and attach the dev
 to one plant. Kangla stores only a SHA-256 hash of the key; the key is sent by the
 device in the `X-Device-Access-Key` header and is never returned by the API.
 
-The device calls `POST /api/device/check-ins` every minute. Include an optional raw
-`soilHumidity` value from `0` through `1000` once per hour; Kangla stores it as a
-humidity measurement for the linked device. The response contains any pending
+The device calls `POST /api/device/check-ins` every minute. Include `rawSoilMoisture`
+from `0` through `4095` and its calibrated `soilMoisturePercentage` from `0` through
+`100` together when reporting telemetry; Kangla stores both values for the linked
+device. The response contains any pending
 manual watering command. A device must acknowledge a command before activating its
 pump, then report either completion or failure. Kangla records a watering event only
 after confirmed completion.
@@ -56,9 +57,18 @@ Users create a manual watering request with
 minutes if the device does not acknowledge them, and only one active command is
 allowed per device.
 
-Automatic watering is not implemented yet. `minimumSoilHumidity` and
-`wateringIntervalSetting` are stored as device settings for that future feature,
-but Kangla currently does not evaluate them or send automatic watering commands.
+For an ESP32 using the default 12-bit ADC resolution, start with dry and wet
+calibration values of `3200` and `1500` and calibrate each physical sensor:
+
+```cpp
+analogReadResolution(12);
+const int rawValue = analogRead(sensorPin);
+int moisturePercentage = map(rawValue, 3200, 1500, 0, 100);
+moisturePercentage = constrain(moisturePercentage, 0, 100);
+```
+
+Keep ADC attenuation unchanged after calibrating. Automatic watering is not
+implemented yet; `wateringIntervalSetting` remains reserved for that future mode.
 
 ## Device simulator
 
@@ -67,12 +77,13 @@ the current device protocol against a running API. Its development-only sticker
 access key is `kangla-simulator-01`. Attach that key to a plant in the UI, then run:
 
 ```powershell
-dotnet run --project src/kangla.DeviceSimulator -- https://localhost:7049 500 5
+dotnet run --project src/kangla.DeviceSimulator -- https://localhost:7049 2350 5
 ```
 
-The optional final arguments are the simulated raw soil-humidity value and
-check-in interval in seconds. It acknowledges and completes any manual watering
-command returned by a check-in, using the device's configured duration.
+The optional final arguments are the simulated raw 12-bit soil-moisture value and
+check-in interval in seconds. The simulator maps the raw value to a percentage with
+the default 3200/1500 calibration, then acknowledges and completes any manual
+watering command returned by a check-in using the device's configured duration.
 
 On Windows, [run-device-simulator.bat](run-device-simulator.bat) starts the
 simulator against the local HTTPS API address with its built-in development key.

@@ -23,11 +23,12 @@ import {
   WateringCommand
 } from '../../../watering-commands/watering-command';
 import { WateringCommandStatusBadgeComponent } from '../../../watering-commands/components/watering-command-status-badge/watering-command-status-badge.component';
+import { SoilMoistureGaugeComponent } from '../../../shared/components/soil-moisture-gauge/soil-moisture-gauge.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, ImageSrcDirective, WateringCommandStatusBadgeComponent],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, ImageSrcDirective, WateringCommandStatusBadgeComponent, SoilMoistureGaugeComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
@@ -59,7 +60,7 @@ export class HomeComponent implements OnInit {
       if (change.plantId !== null && change.resources.includes('plant')) {
         this.refreshPlant(change.plantId);
       }
-      if (change.deviceId !== null && change.resources.includes('wateringCommands')) {
+      if (change.deviceId !== null && (change.resources.includes('wateringCommands') || change.resources.includes('humidityMeasurements'))) {
         this.refreshWateringDevice(change.deviceId);
       }
     });
@@ -70,13 +71,13 @@ export class HomeComponent implements OnInit {
 
   get overduePlants(): Plant[] {
     return this.plants
-      .filter(plant => this.plantService.isWateringOverdue(plant))
+      .filter(plant => this.plantService.isWateringNeeded(plant, this.wateringDevicesByPlantId.get(plant.id) ?? null))
       .sort((first, second) => this.nextWateringTime(first) - this.nextWateringTime(second));
   }
 
   get upcomingPlants(): Plant[] {
     return this.plants
-      .filter(plant => !this.plantService.isWateringOverdue(plant))
+      .filter(plant => !this.plantService.isWateringNeeded(plant, this.wateringDevicesByPlantId.get(plant.id) ?? null))
       .sort((first, second) => this.nextWateringTime(first) - this.nextWateringTime(second))
       .slice(0, 4);
   }

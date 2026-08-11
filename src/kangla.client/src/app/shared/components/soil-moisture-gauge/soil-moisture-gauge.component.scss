@@ -1,0 +1,89 @@
+:host {
+  display: block;
+}
+
+.moisture-gauge {
+  align-items: center;
+  background: var(--app-surface-muted);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-medium);
+  display: flex;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+}
+
+.gauge-visual {
+  flex: 0 0 7.5rem;
+  position: relative;
+}
+
+svg {
+  display: block;
+  overflow: visible;
+  width: 100%;
+}
+
+.gauge-track,
+.gauge-value {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 10;
+}
+
+.gauge-track {
+  stroke: var(--app-border);
+}
+
+.gauge-value {
+  transition: stroke 180ms ease, stroke-dasharray 180ms ease;
+}
+
+.target-marker {
+  stroke: var(--app-text);
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.gauge-visual strong {
+  bottom: 0;
+  color: var(--app-text);
+  font-size: 1.25rem;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.gauge-copy {
+  color: var(--app-text-muted);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.gauge-status {
+  color: var(--app-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.moisture-gauge-compact {
+  gap: 0.65rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.moisture-gauge-compact .gauge-visual {
+  flex-basis: 5.4rem;
+}
+
+.moisture-gauge-compact .gauge-visual strong {
+  font-size: 1rem;
+}
+
+@media (max-width: 420px) {
+  .moisture-gauge {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

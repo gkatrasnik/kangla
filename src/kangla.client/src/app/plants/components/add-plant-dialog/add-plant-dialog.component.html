@@ -33,6 +33,14 @@
       <mat-error>Choose a schedule between 1 and 365 days</mat-error>
     </mat-form-field>
 
+    <mat-form-field>
+      <mat-label>Desired soil moisture</mat-label>
+      <input matInput type="number" formControlName="desiredSoilMoisturePercentage" required min="0" max="100">
+      <span matTextSuffix>%</span>
+      <mat-hint>Exact target for the soil-moisture gauge.</mat-hint>
+      <mat-error>Choose a target between 0 and 100%</mat-error>
+    </mat-form-field>
+
     <details class="optional-details" [open]="isRecognizedPlant">
       <summary>Plant details and care notes</summary>
       <div class="optional-fields">

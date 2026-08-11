@@ -6,7 +6,6 @@ import { WateringDevice } from './watering-device';
 import { PagedResponse } from '../shared/interfaces/paged-response';
 
 export interface WateringDeviceCreateRequest {
-  minimumSoilHumidity: number;
   wateringIntervalSetting: number;
   wateringDurationSetting: number;
   deviceAccessKey: string;
@@ -14,7 +13,6 @@ export interface WateringDeviceCreateRequest {
 }
 
 export interface WateringDeviceUpdateRequest {
-  minimumSoilHumidity: number;
   wateringIntervalSetting: number;
   wateringDurationSetting: number;
   plantId?: number | null;

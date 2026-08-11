@@ -18,6 +18,7 @@ namespace kangla.Infrastructure.Services
                 "Description": { "type": ["string", "null"] },
                 "WateringInstructions": { "type": ["string", "null"] },
                 "WateringInterval": { "type": ["integer", "null"] },
+                "DesiredSoilMoisturePercentage": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
                 "AdditionalTips": { "type": ["string", "null"] },
                 "IdentificationConfidence": {
                   "type": ["string", "null"],
@@ -31,6 +32,7 @@ namespace kangla.Infrastructure.Services
                 "Description",
                 "WateringInstructions",
                 "WateringInterval",
+                "DesiredSoilMoisturePercentage",
                 "AdditionalTips",
                 "IdentificationConfidence",
                 "Error"
@@ -64,7 +66,7 @@ namespace kangla.Infrastructure.Services
             BinaryData imageBytes = BinaryData.FromBytes(imageData);
 
             List<ChatMessage> messages = [
-                new SystemChatMessage("You are a plant-recognition service. Identify the most likely plant in the image. Keep each text value to 300 characters or fewer. WateringInterval is the recommended watering interval in days. Set IdentificationConfidence to high when distinctive visible characteristics strongly support one plant, medium when the identification is likely but similar alternatives exist, or low when the visual evidence is insufficient or ambiguous. If the plant cannot be recognized or the image does not contain a plant, set Error to a concise explanation and every other property to null. Otherwise, set Error to an empty string."),
+                new SystemChatMessage("You are a plant-recognition service. Identify the most likely plant in the image. Keep each text value to 300 characters or fewer. WateringInterval is the recommended watering interval in days. DesiredSoilMoisturePercentage is a suggested exact volumetric soil-moisture target from 0 to 100 for the user to review. Set IdentificationConfidence to high when distinctive visible characteristics strongly support one plant, medium when the identification is likely but similar alternatives exist, or low when the visual evidence is insufficient or ambiguous. If the plant cannot be recognized or the image does not contain a plant, set Error to a concise explanation and every other property to null. Otherwise, set Error to an empty string."),
                 new UserChatMessage(
                     ChatMessageContentPart.CreateImagePart(imageBytes, "image/jpeg")
                 )

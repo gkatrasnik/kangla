@@ -178,6 +178,7 @@ namespace kangla.Application.Plants
                 Description = recognizedPlant.Description,
                 WateringInstructions = recognizedPlant.WateringInstructions,
                 WateringInterval = recognizedPlant.WateringInterval,
+                DesiredSoilMoisturePercentage = recognizedPlant.DesiredSoilMoisturePercentage,
                 ImageId = newImageEntity?.Id,
                 AdditionalTips = recognizedPlant.AdditionalTips,
                 IdentificationConfidence = recognizedPlant.IdentificationConfidence,

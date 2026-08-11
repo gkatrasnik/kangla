@@ -25,7 +25,7 @@ describe('PlantCardComponent', () => {
         {
           provide: PlantService,
           useValue: {
-            isWateringOverdue: () => false,
+            isWateringNeeded: () => false,
             getCareStatusLabel: () => 'Water in 7 days'
           }
         }
@@ -45,7 +45,6 @@ describe('PlantCardComponent', () => {
       id: 10,
       active: true,
       deleted: false,
-      minimumSoilHumidity: 400,
       wateringIntervalSetting: 7,
       wateringDurationSetting: 3,
       plantId: 1,
