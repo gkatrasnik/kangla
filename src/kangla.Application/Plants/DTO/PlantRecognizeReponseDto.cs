@@ -10,6 +10,7 @@
         public int? DesiredSoilMoisturePercentage { get; set; }
         public string? WateringInstructions { get; set; }
         public Guid? ImageId { get; set; }
+        public string? IdentificationConfidence { get; set; }
         public string? Error { get; set; }
     }
 }

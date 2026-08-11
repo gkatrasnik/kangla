@@ -41,6 +41,13 @@ export class PlantCreationService {
     );
 
     return recognition$.pipe(switchMap(result => {
+      if (result.identificationConfidence === 'low') {
+        return this.notificationService.showServerError(
+          'Low identification confidence',
+          'We could not identify this plant confidently. Please upload a clearer photo showing the leaves, stems, and overall plant.'
+        ).afterClosed().pipe(switchMap(() => EMPTY));
+      }
+
       if (!result.error) {
         return this.openDialog(result);
       }

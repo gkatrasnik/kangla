@@ -158,7 +158,8 @@ namespace kangla.Application.Plants
             var recognizedPlant = await _plantRecognitionService.RecognizePlantAsync(resizedImage);
 
             MediaImage? newImageEntity = null;
-            if (string.IsNullOrEmpty(recognizedPlant.Error))
+            if (string.IsNullOrEmpty(recognizedPlant.Error) &&
+                !string.Equals(recognizedPlant.IdentificationConfidence, "low", StringComparison.OrdinalIgnoreCase))
             {
                 newImageEntity = await _imageService.CreateImageAsync(new MediaImage { Data = resizedImage, ContentType = image.ContentType, ETag = eTag }, userId);
 
@@ -180,6 +181,7 @@ namespace kangla.Application.Plants
                 DesiredSoilMoisturePercentage = recognizedPlant.DesiredSoilMoisturePercentage,
                 ImageId = newImageEntity?.Id,
                 AdditionalTips = recognizedPlant.AdditionalTips,
+                IdentificationConfidence = recognizedPlant.IdentificationConfidence,
                 Error = recognizedPlant.Error
             };
         }

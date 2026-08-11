@@ -7,5 +7,6 @@ export interface PlantRecognizeResponseDto {
     desiredSoilMoisturePercentage?: number | null
     wateringInstructions?: string
     imageId?: string
+    identificationConfidence?: 'low' | 'medium' | 'high'
     error?: string
 }
