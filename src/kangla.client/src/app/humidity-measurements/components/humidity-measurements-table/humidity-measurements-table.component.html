@@ -11,6 +11,17 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
       </div>
+      @if (totalRecords > pageSize) {
+        <div class="paginator-container">
+          <mat-paginator (page)="handlePageEvent($event)"
+                         [length]="totalRecords"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions"
+                         [pageIndex]="pageIndex"
+                         [showFirstLastButtons]="true"
+                         aria-label="Soil moisture pages" />
+        </div>
+      }
     } @else {
       <div class="table-state"><p>No soil-moisture readings yet. Readings will appear after the device checks in.</p></div>
     }
