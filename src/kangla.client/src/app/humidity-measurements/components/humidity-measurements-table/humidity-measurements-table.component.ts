@@ -16,7 +16,7 @@ export class HumidityMeasurementsTableComponent implements OnInit, OnChanges {
   @Input({ required: true }) deviceId!: number;
   @Input() reloadTrigger = 0;
   measurements: HumidityMeasurement[] = [];
-  displayedColumns = ['dateTime', 'soilHumidity'];
+  displayedColumns = ['dateTime', 'soilMoisturePercentage', 'rawSoilMoisture'];
 
   constructor(private humidityMeasurementService: HumidityMeasurementService) {}
 

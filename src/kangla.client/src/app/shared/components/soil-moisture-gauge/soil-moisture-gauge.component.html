@@ -1,0 +1,33 @@
+<div class="moisture-gauge" [class.moisture-gauge-compact]="compact" role="img" [attr.aria-label]="ariaLabel">
+  <div class="gauge-visual">
+    <svg viewBox="0 0 120 68" aria-hidden="true">
+      <path class="gauge-track" pathLength="100" d="M 10 60 A 50 50 0 0 1 110 60" />
+      @if (percentage !== null) {
+        <path
+          class="gauge-value"
+          pathLength="100"
+          d="M 10 60 A 50 50 0 0 1 110 60"
+          [attr.stroke]="gaugeColor"
+          [attr.stroke-dasharray]="percentage + ' 100'" />
+      }
+      @if (targetMarker; as marker) {
+        <line
+          class="target-marker"
+          [attr.x1]="marker.x1"
+          [attr.y1]="marker.y1"
+          [attr.x2]="marker.x2"
+          [attr.y2]="marker.y2" />
+      }
+    </svg>
+    <strong>{{ percentage !== null ? percentage + '%' : '—' }}</strong>
+  </div>
+  <div class="gauge-copy">
+    <span class="gauge-status" [attr.title]="statusDescription">{{ statusLabel }}</span>
+    @if (target !== null && target !== undefined) {
+      <span>Target {{ target }}%</span>
+    }
+    @if (measurement) {
+      <span>{{ measurement.measuredAtUtc | date:'dd/MM/yyyy' }}</span>
+    }
+  </div>
+</div>

@@ -46,6 +46,10 @@ namespace kangla.Infrastructure
                 .WithOne(h => h.WateringDevice)
                 .HasForeignKey(h => h.WateringDeviceId);
 
+            modelBuilder.Entity<HumidityMeasurement>()
+                .Property(h => h.RawSoilMoisture)
+                .HasColumnName("SoilHumidity");
+
             modelBuilder.Entity<WateringDevice>()
                 .HasMany(w => w.WateringCommands)
                 .WithOne(c => c.WateringDevice)

@@ -30,6 +30,8 @@ namespace kangla.Domain.Entities
         /// WateringInterval unit is days.
         /// </summary>
         public int WateringInterval { get; set; } = 0;
+        [Range(0, 100, ErrorMessage = "Desired soil moisture must be between 0 and 100 percent.")]
+        public int? DesiredSoilMoisturePercentage { get; set; }
         [StringLength(500, ErrorMessage = "Watering instructions must be less than 500 characters long.")]
         public string? WateringInstructions { get; set; } = default!;
         public List<WateringEvent>? WateringEvents { get; set; }        

@@ -37,18 +37,18 @@
 
         <div class="care-summary">
           <div class="care-badges">
-            <span class="care-badge" [class.care-badge-warning]="plantService.isWateringOverdue(plant)" [class.care-badge-calm]="!plantService.isWateringOverdue(plant)">
-              <mat-icon>{{ plantService.isWateringOverdue(plant) ? 'water_drop' : 'event' }}</mat-icon>
-              {{ plantService.getCareStatusLabel(plant) }}
+            <span class="care-badge" [class.care-badge-warning]="plantService.isWateringNeeded(plant, wateringDevice)" [class.care-badge-calm]="!plantService.isWateringNeeded(plant, wateringDevice)">
+              <mat-icon>{{ plantService.isWateringNeeded(plant, wateringDevice) ? 'water_drop' : 'event' }}</mat-icon>
+              {{ plantService.getCareStatusLabel(plant, wateringDevice) }}
             </span>
             @if (wateringDevice?.activeWateringCommandStatus; as commandStatus) {
               <app-watering-command-status-badge [status]="commandStatus" />
             }
           </div>
           <dl>
-            <div><dt>Last watered</dt><dd>{{ plant.lastWateringDateTime ? (plant.lastWateringDateTime | date:'mediumDate') : 'Not recorded yet' }}</dd></div>
+            <div><dt>Last watered</dt><dd>{{ plant.lastWateringDateTime ? (plant.lastWateringDateTime | date:'dd/MM/yyyy') : 'Not recorded yet' }}</dd></div>
             <div><dt>Schedule</dt><dd>Every {{ plant.wateringInterval }} {{ plant.wateringInterval === 1 ? 'day' : 'days' }}</dd></div>
-            <div><dt>Next watering</dt><dd>{{ plantService.getNextWateringDate(plant) ? (plantService.getNextWateringDate(plant) | date:'mediumDate') : 'Due now' }}</dd></div>
+            <div><dt>Next watering</dt><dd>{{ plantService.getNextWateringDate(plant) ? (plantService.getNextWateringDate(plant) | date:'dd/MM/yyyy') : 'Due now' }}</dd></div>
           </dl>
         </div>
 
@@ -98,6 +98,10 @@
           <div><h3>Watering device #{{ wateringDevice.id }}</h3><p>Attached to {{ plant.name }} · Pump runs for {{ wateringDevice.wateringDurationSetting }} seconds</p></div>
           <span class="care-badge care-badge-calm"><mat-icon>link</mat-icon>Attached</span>
           <button mat-stroked-button (click)="detachWateringDevice()">Detach</button>
+          <app-soil-moisture-gauge
+            class="device-moisture-gauge"
+            [measurement]="wateringDevice.latestSoilMoistureMeasurement ?? null"
+            [target]="plant.desiredSoilMoisturePercentage" />
         </div>
       } @else {
         <div class="device-empty">

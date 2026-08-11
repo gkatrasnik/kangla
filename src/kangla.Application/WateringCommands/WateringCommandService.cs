@@ -9,7 +9,7 @@ namespace kangla.Application.WateringCommands
 {
     /// <summary>
     /// Coordinates the manual device-watering lifecycle: request, device acknowledgement, and result.
-    /// It also handles device check-ins, storing an optional raw <see cref="HumidityMeasurement"/>
+    /// It also handles device check-ins, storing optional calibrated <see cref="HumidityMeasurement"/> telemetry
     /// before returning a pending watering command.
     /// </summary>
     public class WateringCommandService : IWateringCommandService
@@ -122,7 +122,7 @@ namespace kangla.Application.WateringCommands
         }
 
         /// <summary>
-        /// Authenticates a device check-in, persists the supplied raw humidity reading when present,
+        /// Authenticates a device check-in, persists the supplied soil-moisture telemetry when present,
         /// and returns the pending command that the device should execute.
         /// </summary>
         public async Task<DeviceCheckInResponseDto> CheckInAsync(DeviceCheckInRequestDto request, string deviceAccessKey)
@@ -130,12 +130,18 @@ namespace kangla.Application.WateringCommands
             var device = await GetDeviceForAccessKeyAsync(deviceAccessKey);
             var nowUtc = GetUtcNow();
 
-            if (request.SoilHumidity.HasValue)
+            if (request.RawSoilMoisture.HasValue != request.SoilMoisturePercentage.HasValue)
+            {
+                throw new ArgumentException("Raw soil moisture and soil moisture percentage must be supplied together.");
+            }
+
+            if (request.RawSoilMoisture.HasValue)
             {
                 await _humidityMeasurementRepository.AddHumidityMeasurementAsync(new HumidityMeasurement
                 {
                     DateTime = nowUtc,
-                    SoilHumidity = request.SoilHumidity.Value,
+                    RawSoilMoisture = request.RawSoilMoisture.Value,
+                    SoilMoisturePercentage = request.SoilMoisturePercentage!.Value,
                     WateringDeviceId = device.Id
                 });
                 await NotifyAsync(

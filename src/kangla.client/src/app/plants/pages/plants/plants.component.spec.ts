@@ -124,7 +124,6 @@ describe('PlantsComponent', () => {
       id: 10,
       active: true,
       deleted: false,
-      minimumSoilHumidity: 400,
       wateringIntervalSetting: 7,
       wateringDurationSetting: 3,
       plantId: 1,

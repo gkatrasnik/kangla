@@ -68,7 +68,7 @@ export class PlantsComponent {
       if (change.plantId !== null && change.resources.includes('plant')) {
         this.refreshPlant(change.plantId);
       }
-      if (change.deviceId !== null && change.resources.includes('wateringCommands')) {
+      if (change.deviceId !== null && (change.resources.includes('wateringCommands') || change.resources.includes('humidityMeasurements'))) {
         this.refreshWateringDevice(change.deviceId);
       }
     });

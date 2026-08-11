@@ -13,13 +13,6 @@ namespace kangla.Domain.Entities
         /// </summary>
         public string? UserId { get; set; }
         /// <summary>
-        /// Reserved for a future automatic-watering mode.
-        /// This is a raw value from a capacitive humidity sensor.
-        /// </summary>
-        [Required]
-        [Range(250, 750, ErrorMessage = "Humidity reading must be between 250 and 750.")]
-        public int MinimumSoilHumidity { get; set; } = 400;
-        /// <summary>
         /// Reserved for a future automatic-watering mode. Unit is days.
         /// </summary>
         [Required]

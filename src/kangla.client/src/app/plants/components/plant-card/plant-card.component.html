@@ -13,9 +13,9 @@
         <a class="plant-card-title" [routerLink]="['/details', plant.id]">{{ plant.name }}</a>
         <p>{{ plant.location || 'Location not set' }}</p>
       </div>
-      <span class="care-badge" [class.care-badge-warning]="plantService.isWateringOverdue(plant)" [class.care-badge-calm]="!plantService.isWateringOverdue(plant)">
-        <mat-icon>{{ plantService.isWateringOverdue(plant) ? 'water_drop' : 'event' }}</mat-icon>
-        {{ plantService.getCareStatusLabel(plant) }}
+      <span class="care-badge" [class.care-badge-warning]="plantService.isWateringNeeded(plant, wateringDevice)" [class.care-badge-calm]="!plantService.isWateringNeeded(plant, wateringDevice)">
+        <mat-icon>{{ plantService.isWateringNeeded(plant, wateringDevice) ? 'water_drop' : 'event' }}</mat-icon>
+        {{ plantService.getCareStatusLabel(plant, wateringDevice) }}
       </span>
     </div>
 
@@ -24,6 +24,10 @@
       @if (wateringDevice.activeWateringCommandStatus) {
         <app-watering-command-status-badge [status]="wateringDevice.activeWateringCommandStatus" />
       }
+      <app-soil-moisture-gauge
+        [measurement]="wateringDevice.latestSoilMoistureMeasurement ?? null"
+        [target]="plant.desiredSoilMoisturePercentage"
+        [compact]="true" />
     }
 
     @if (plant.description) {
@@ -33,7 +37,7 @@
 
   <mat-card-actions class="plant-card-actions">
     <a mat-stroked-button [routerLink]="['/details', plant.id]">View plant</a>
-    @if (plantService.isWateringOverdue(plant)) {
+    @if (plantService.isWateringNeeded(plant, wateringDevice)) {
       <button mat-flat-button (click)="triggerWatering()" [disabled]="watering">
         @if (watering) { Saving… } @else { Mark as watered }
       </button>
