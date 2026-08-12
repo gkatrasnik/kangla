@@ -18,6 +18,10 @@ export class HumidityMeasurementsTableComponent implements OnInit, OnChanges {
   @Input() reloadTrigger = 0;
   measurements: HumidityMeasurement[] = [];
   displayedColumns = ['dateTime', 'soilMoisturePercentage', 'rawSoilMoisture'];
+  totalRecords = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  readonly pageSizeOptions = [10, 20, 50];
 
   constructor(private humidityMeasurementService: HumidityMeasurementService) {}
 
