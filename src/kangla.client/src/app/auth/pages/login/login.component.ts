@@ -57,10 +57,14 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/home'], { replaceUrl: true });        
         },
         error: (error) => {
-          const { title, errors } = this.errorService.parseErrorResponse(error);
-          const errorMessage = `${errors.join(', ')}`;
+          const { title, errors, statusCode } = this.errorService.parseErrorResponse(error);
+          const isInvalidLogin = statusCode === 401;
+          const dialogTitle = isInvalidLogin ? 'Unable to sign in' : title;
+          const errorMessage = isInvalidLogin
+            ? 'The email or password is incorrect, or the account has not been confirmed yet. Please check your details and try again.'
+            : errors.join(', ');
           this.isErrorDialogOpen = true;
-          this.notificationService.showServerError(title, errorMessage)
+          this.notificationService.showServerError(dialogTitle, errorMessage)
             .afterClosed()
             .subscribe(() => this.isErrorDialogOpen = false);
         }

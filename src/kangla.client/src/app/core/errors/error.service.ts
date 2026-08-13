@@ -10,24 +10,34 @@ export class ErrorService {
     parseErrorResponse(error: any): { title: string; errors: string[], statusCode: number } {
       let title = 'An error occurred';
       let errors: string[] = [];
-      let statusCode: number = 0;
-  
-      if (error && error.error && typeof error.error == 'string') { //api will normally return string
+      let statusCode = typeof error?.status === 'number' ? error.status : 0;
+      let errorResponse: AuthErrorResponse | null = null;
+
+      if (typeof error?.error === 'string') {
         try {
-          const errorResponse: AuthErrorResponse = JSON.parse(error.error);
-          title = errorResponse.title || title;
-          statusCode = errorResponse.status || 0;
-          if (errorResponse.errors) {
-            errors = Object.values(errorResponse.errors).flat();
-          }
-          if (errorResponse.detail) {
-            errors.unshift(errorResponse.detail);
-          }
+          errorResponse = JSON.parse(error.error) as AuthErrorResponse;
         } catch (e) {
           console.error('Failed to parse error response', e);
         }
-      } else { //if app is offline, error.error is object
-        errors.push("Check your connection and try reloading the application.");
+      } else if (error?.error && typeof error.error === 'object') {
+        errorResponse = error.error as AuthErrorResponse;
+      }
+
+      if (errorResponse) {
+        title = errorResponse.title || title;
+        statusCode = errorResponse.status || statusCode;
+        if (errorResponse.errors) {
+          errors = Object.values(errorResponse.errors).flat();
+        }
+        if (errorResponse.detail) {
+          errors.unshift(errorResponse.detail);
+        }
+      }
+
+      if (errors.length === 0) {
+        errors.push(statusCode === 0
+          ? 'Check your connection and try reloading the application.'
+          : 'Please try again.');
       }
   
       return { title, errors, statusCode };
